@@ -106,6 +106,15 @@ class ShowsRepository {
     });
   });
 
+  /// F4(f): null "Varsayılan" (TMDB afişi).
+  Future<void> setPosterPath(int showId, String? path) => _guard(() async {
+    await _client
+        .from('user_shows')
+        .update({'poster_path': path})
+        .eq('user_id', _userId)
+        .eq('show_id', showId);
+  });
+
   Future<void> removeFromMyShows(int showId) => _guard(() async {
     await _client
         .from('user_shows')

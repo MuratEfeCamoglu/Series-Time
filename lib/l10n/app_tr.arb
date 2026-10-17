@@ -541,5 +541,8 @@
         "type": "int"
       }
     }
-  }
+  },
+  "posterPickerTitle": "Afiş",
+  "posterPickerEmpty": "Bu dizinin başka afişi yok.",
+  "posterDefault": "Varsayılan"
 }

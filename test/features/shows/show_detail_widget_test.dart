@@ -10,6 +10,7 @@ import 'package:sezonluk/features/shows/data/models.dart';
 import 'package:sezonluk/features/shows/screens/season_screen.dart';
 import 'package:sezonluk/features/tracking/data/models.dart';
 import 'package:sezonluk/features/tracking/providers.dart';
+import 'package:sezonluk/shared/widgets/poster_card.dart';
 import 'package:sezonluk/features/tracking/screens/shows_screen.dart';
 
 import '../../helpers.dart';
@@ -404,5 +405,49 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('En fazla 4 favori seçebilirsin.'), findsOneWidget);
     verifyNever(() => backend.tracking.setFavorite(any(), any()));
+  });
+
+  testWidgets('Hakkında\'da afiş seçilir, başlıktaki afiş değişir (F4f)', (
+    tester,
+  ) async {
+    tester.view
+      ..physicalSize = const Size(800, 2400)
+      ..devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final backend = await _openDetail(
+      tester,
+      myShows: [UserShow(show: testShow, addedAt: DateTime.utc(2026, 10, 1))],
+    );
+    when(() => backend.shows.fetchShowImages(1399)).thenAnswer(
+      (_) async => const ShowImages(posters: ['/poster.jpg', '/diger.jpg']),
+    );
+    when(() => backend.shows.setPosterPath(1399, '/diger.jpg'))
+        .thenAnswer((_) async {});
+    await tester.tap(find.text('Hakkında'));
+    await tester.pumpAndSettle();
+    final other = find.byKey(const Key('posterPicker.1'));
+    await tester.ensureVisible(other);
+    await tester.pumpAndSettle();
+    // TMDB afişi "Varsayılan" olarak ilk sırada ve seçili.
+    expect(find.text('Varsayılan'), findsOneWidget);
+    await tester.tap(other);
+    await tester.pumpAndSettle();
+
+    verify(() => backend.shows.setPosterPath(1399, '/diger.jpg')).called(1);
+    await tester.drag(find.byType(NestedScrollView), const Offset(0, 2000));
+    await tester.pumpAndSettle();
+    expect(
+      tester
+          .widget<PosterCard>(find.byKey(const Key('showDetail.poster')))
+          .posterPath,
+      '/diger.jpg',
+    );
+  });
+
+  testWidgets('listede olmayan dizide afiş seçilemez (F4f)', (tester) async {
+    await _openDetail(tester);
+    await tester.tap(find.text('Hakkında'));
+    await tester.pumpAndSettle();
+    expect(find.text('Afiş'), findsNothing);
   });
 }

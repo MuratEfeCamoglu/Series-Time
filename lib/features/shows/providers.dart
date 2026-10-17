@@ -105,6 +105,23 @@ class MyShowsNotifier extends AsyncNotifier<List<UserShow>> {
       ..invalidate(userStatsProvider);
   }
 
+  /// F4(f): iyimser; seçilen afiş sahibinin tüm listelerine yansır.
+  Future<void> setPoster(int showId, String? path) async {
+    await _mutate(
+      (current) => [
+        for (final entry in current)
+          entry.show.id == showId ? entry.withPoster(path) : entry,
+      ],
+      (repository) => repository.setPosterPath(showId, path),
+    );
+    ref
+      ..invalidate(watchlistProvider)
+      ..invalidate(myShowProgressProvider)
+      ..invalidate(showProgressProvider)
+      ..invalidate(upcomingProvider)
+      ..invalidate(recentActivityProvider);
+  }
+
   Future<void> _mutate(
     List<UserShow> Function(List<UserShow> current) optimistic,
     Future<void> Function(ShowsRepository repository) request,
@@ -132,4 +149,13 @@ final isInMyShowsProvider = Provider.autoDispose.family<bool, int>(
           .value
           ?.any((entry) => entry.show.id == showId) ??
       false,
+);
+
+/// Oturum sahibinin listesindeki bu dizi; listede değilse null (F4f afiş seçimi).
+final myShowEntryProvider = Provider.autoDispose.family<UserShow?, int>(
+  (ref, showId) => ref
+      .watch(myShowsProvider)
+      .value
+      ?.where((entry) => entry.show.id == showId)
+      .firstOrNull,
 );

@@ -1785,6 +1785,24 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'{rating} yıldız: {count} bölüm'**
   String ratingBarLabel(String rating, int count);
+
+  /// No description provided for @posterPickerTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Afiş'**
+  String get posterPickerTitle;
+
+  /// No description provided for @posterPickerEmpty.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu dizinin başka afişi yok.'**
+  String get posterPickerEmpty;
+
+  /// No description provided for @posterDefault.
+  ///
+  /// In tr, this message translates to:
+  /// **'Varsayılan'**
+  String get posterDefault;
 }
 
 class _AppLocalizationsDelegate

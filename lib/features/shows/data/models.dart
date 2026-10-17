@@ -178,6 +178,7 @@ class UserShow {
     required this.show,
     required this.addedAt,
     this.lastWatchedAt,
+    this.customPosterPath,
   });
 
   factory UserShow.fromJson(Map<String, dynamic> json) => UserShow(
@@ -187,11 +188,24 @@ class UserShow {
       final String value => DateTime.parse(value),
       _ => null,
     },
+    customPosterPath: json['poster_path'] as String?,
   );
 
   final Show show;
   final DateTime addedAt;
   final DateTime? lastWatchedAt;
+
+  /// F4(f): kullanıcının seçtiği afiş; null ise TMDB afişi.
+  final String? customPosterPath;
+
+  String? get posterPath => customPosterPath ?? show.posterPath;
+
+  UserShow withPoster(String? path) => UserShow(
+    show: show,
+    addedAt: addedAt,
+    lastWatchedAt: lastWatchedAt,
+    customPosterPath: path,
+  );
 }
 
 /// `tmdb-proxy` `show_images` yanıtı (F2). Eski sürüm `posters` döndürmeyebilir.

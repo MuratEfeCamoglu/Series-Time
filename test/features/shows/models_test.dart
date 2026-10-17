@@ -150,4 +150,16 @@ void main() {
     // Eski proxy yalnızca arka plan döndürür.
     expect(ShowImages.fromJson({'backdrops': []}).posters, isEmpty);
   });
+
+  test('UserShow.fromJson seçilen afişi ayrıştırır (F4f)', () {
+    final entry = UserShow.fromJson({
+      'added_at': '2026-10-01T00:00:00Z',
+      'last_watched_at': null,
+      'poster_path': '/secilen.jpg',
+      'shows': {'id': 1, 'name': 'D', 'poster_path': '/tmdb.jpg'},
+    });
+    expect(entry.customPosterPath, '/secilen.jpg');
+    expect(entry.posterPath, '/secilen.jpg');
+    expect(entry.withPoster(null).posterPath, '/tmdb.jpg');
+  });
 }

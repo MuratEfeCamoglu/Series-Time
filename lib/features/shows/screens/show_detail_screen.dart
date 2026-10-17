@@ -152,15 +152,16 @@ class _TabBarDelegate extends SliverPersistentHeaderDelegate {
       oldDelegate.tabBar != tabBar;
 }
 
-class _Header extends StatelessWidget {
+class _Header extends ConsumerWidget {
   const _Header({required this.show, required this.seasonNumbers});
 
   final Show show;
   final List<int> seasonNumbers;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    final mine = ref.watch(myShowEntryProvider(show.id));
     final year = show.firstAirDate?.year;
     final status = switch (showRunStatus(show.status)) {
       ShowRunStatus.ongoing => l10n.showStatusOngoing,
@@ -172,7 +173,11 @@ class _Header extends StatelessWidget {
       children: [
         SizedBox(
           width: AppSpacing.detailPosterWidth,
-          child: PosterCard(title: show.name, posterPath: show.posterPath),
+          child: PosterCard(
+            key: const Key('showDetail.poster'),
+            title: show.name,
+            posterPath: mine?.posterPath ?? show.posterPath,
+          ),
         ),
         const SizedBox(width: AppSpacing.md),
         Expanded(
@@ -243,8 +248,129 @@ class _AboutTab extends ConsumerWidget {
                 onRetry: () => ref.invalidate(showCastProvider(show.id)),
               ),
             ),
+        // F4(f): yalnızca listedeki dizinin afişi seçilebilir.
+        if (ref.watch(myShowEntryProvider(show.id)) != null) ...[
+          const SizedBox(height: AppSpacing.lg),
+          Text(l10n.posterPickerTitle, style: AppTextStyles.title),
+          const SizedBox(height: AppSpacing.sm),
+          _PosterPicker(show: show),
+        ],
       ],
     );
+  }
+}
+
+/// F4(f): dizinin TMDB afişleri; seçilen işaretli, "Varsayılan" TMDB afişine döner.
+class _PosterPicker extends ConsumerWidget {
+  const _PosterPicker({required this.show});
+
+  final Show show;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final selected = ref.watch(myShowEntryProvider(show.id))?.customPosterPath;
+    Future<void> choose(String? path) async {
+      final messenger = ScaffoldMessenger.of(context);
+      try {
+        await ref.read(myShowsProvider.notifier).setPoster(show.id, path);
+      } catch (_) {
+        messenger.showSnackBar(SnackBar(content: Text(l10n.saveFailed)));
+      }
+    }
+
+    return ref
+        .watch(showImagesProvider(show.id))
+        .when(
+          data: (images) {
+            final paths = [
+              ?show.posterPath,
+              for (final p in images.posters)
+                if (p != show.posterPath) p,
+            ];
+            if (paths.isEmpty) {
+              return Text(
+                l10n.posterPickerEmpty,
+                style: AppTextStyles.bodySecondary,
+              );
+            }
+            return GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: AppSpacing.posterGridColumns,
+                mainAxisSpacing: AppSpacing.sm,
+                crossAxisSpacing: AppSpacing.sm,
+                childAspectRatio: AppSpacing.posterAspectRatio,
+              ),
+              itemCount: paths.length,
+              itemBuilder: (context, index) {
+                final path = paths[index];
+                // TMDB afişi seçimi "Varsayılan"dır (null kaydedilir).
+                final isDefault = path == show.posterPath;
+                final isSelected = isDefault
+                    ? selected == null || selected == path
+                    : selected == path;
+                return Semantics(
+                  selected: isSelected,
+                  button: true,
+                  label: isDefault ? l10n.posterDefault : show.name,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      PosterCard(
+                        key: Key('posterPicker.$index'),
+                        title: show.name,
+                        posterPath: path,
+                        onTap: () => choose(isDefault ? null : path),
+                      ),
+                      if (isDefault)
+                        Positioned(
+                          left: AppSpacing.xs,
+                          bottom: AppSpacing.xs,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: AppColors.surfaceAlt,
+                              borderRadius: BorderRadius.circular(
+                                AppSpacing.xs,
+                              ),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: AppSpacing.xs,
+                              ),
+                              child: Text(
+                                l10n.posterDefault,
+                                style: AppTextStyles.caption,
+                              ),
+                            ),
+                          ),
+                        ),
+                      if (isSelected)
+                        const IgnorePointer(
+                          child: Align(
+                            alignment: Alignment.topRight,
+                            child: Padding(
+                              padding: EdgeInsets.all(AppSpacing.xs),
+                              child: Icon(
+                                Icons.check_circle,
+                                color: AppColors.accent,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                );
+              },
+            );
+          },
+          loading: () => const LinearProgressIndicator(),
+          error: (error, _) => ErrorView(
+            error: error,
+            onRetry: () => ref.invalidate(showImagesProvider(show.id)),
+          ),
+        );
   }
 }
 

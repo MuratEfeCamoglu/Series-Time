@@ -938,4 +938,13 @@ class AppLocalizationsTr extends AppLocalizations {
   String ratingBarLabel(String rating, int count) {
     return '$rating yıldız: $count bölüm';
   }
+
+  @override
+  String get posterPickerTitle => 'Afiş';
+
+  @override
+  String get posterPickerEmpty => 'Bu dizinin başka afişi yok.';
+
+  @override
+  String get posterDefault => 'Varsayılan';
 }
