@@ -11,3 +11,7 @@ DateTime? parseDbDate(Object? value) {
 /// "17 Ekim 2026". `tr` tarih verisi MaterialApp yerelleştirmesiyle yüklenir.
 String formatLongDate(DateTime date) =>
     DateFormat('d MMMM y', 'tr').format(date);
+
+/// Yaklaşan başlığı: "17 Ekim Cuma" (F7).
+String formatDayMonthWeekday(DateTime date) =>
+    DateFormat('d MMMM EEEE', 'tr').format(date);

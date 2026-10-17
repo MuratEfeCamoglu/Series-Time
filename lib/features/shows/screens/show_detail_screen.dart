@@ -80,7 +80,12 @@ class _DetailBody extends StatelessWidget {
         ),
         SliverPadding(
           padding: const EdgeInsets.all(AppSpacing.md),
-          sliver: SliverToBoxAdapter(child: _Header(show: show)),
+          sliver: SliverToBoxAdapter(
+            child: _Header(
+              show: show,
+              seasonNumbers: [for (final s in seasons.regular) s.seasonNumber],
+            ),
+          ),
         ),
         if (seasons.regular.isNotEmpty)
           _SeasonSection(title: l10n.showSeasons, seasons: seasons.regular),
@@ -93,9 +98,10 @@ class _DetailBody extends StatelessWidget {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({required this.show});
+  const _Header({required this.show, required this.seasonNumbers});
 
   final Show show;
+  final List<int> seasonNumbers;
 
   @override
   Widget build(BuildContext context) {
@@ -128,7 +134,7 @@ class _Header extends StatelessWidget {
                     style: AppTextStyles.bodySecondary,
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  _MyShowsButton(show: show),
+                  _MyShowsButton(show: show, seasonNumbers: seasonNumbers),
                 ],
               ),
             ),
@@ -145,9 +151,10 @@ class _Header extends StatelessWidget {
 
 /// "Ekle" / "Listeden çıkar". Çıkarma onay ister (F4c); hata olursa liste geri alınır.
 class _MyShowsButton extends ConsumerWidget {
-  const _MyShowsButton({required this.show});
+  const _MyShowsButton({required this.show, required this.seasonNumbers});
 
   final Show show;
+  final List<int> seasonNumbers;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -156,8 +163,12 @@ class _MyShowsButton extends ConsumerWidget {
     if (!inList) {
       return FilledButton.icon(
         key: const Key('showDetail.add'),
-        onPressed: () =>
-            _run(context, ref.read(myShowsProvider.notifier).add(show)),
+        onPressed: () => _run(
+          context,
+          ref
+              .read(myShowsProvider.notifier)
+              .add(show, seasonNumbers: seasonNumbers),
+        ),
         icon: const Icon(Icons.add),
         label: Text(l10n.showAdd),
       );

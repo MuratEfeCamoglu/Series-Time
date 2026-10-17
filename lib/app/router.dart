@@ -9,6 +9,7 @@ import '../features/auth/screens/reset_password_screen.dart';
 import '../features/auth/screens/sign_in_screen.dart';
 import '../features/auth/screens/sign_up_screen.dart';
 import '../features/discover/screens/discover_screen.dart';
+import '../features/episode_feedback/screens/episode_screen.dart';
 import '../features/profile/screens/edit_profile_screen.dart';
 import '../features/profile/screens/profile_screen.dart';
 import '../features/settings/screens/settings_screen.dart';
@@ -31,6 +32,7 @@ abstract final class AppRoutes {
   static String showDetail(int showId) => '/show/$showId';
   static String season(int showId, int seasonNumber) =>
       '/show/$showId/season/$seasonNumber';
+  static String episode(int episodeId) => '/episode/$episodeId';
 }
 
 const _authRoutes = {
@@ -107,6 +109,13 @@ final routerProvider = Provider<GoRouter>((ref) {
             ),
           ),
         ],
+      ),
+      GoRoute(
+        path: '/episode/:id',
+        redirect: (context, state) =>
+            _intParam(state, 'id') == null ? AppRoutes.shows : null,
+        builder: (context, state) =>
+            EpisodeScreen(episodeId: _intParam(state, 'id')!),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) =>

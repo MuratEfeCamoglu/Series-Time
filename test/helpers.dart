@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:sezonluk/core/preferences.dart';
 import 'package:sezonluk/features/auth/data/repository.dart';
 import 'package:sezonluk/features/auth/logic.dart';
 import 'package:sezonluk/features/auth/providers.dart';
@@ -14,7 +15,10 @@ import 'package:sezonluk/features/shows/data/repository.dart';
 import 'package:sezonluk/features/shows/providers.dart';
 import 'package:sezonluk/features/social/data/repository.dart';
 import 'package:sezonluk/features/social/providers.dart';
+import 'package:sezonluk/features/tracking/data/repository.dart';
+import 'package:sezonluk/features/tracking/providers.dart';
 import 'package:sezonluk/main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MockAuthRepository extends Mock implements AuthRepository {}
 
@@ -23,6 +27,8 @@ class MockProfileRepository extends Mock implements ProfileRepository {}
 class MockShowsRepository extends Mock implements ShowsRepository {}
 
 class MockSocialRepository extends Mock implements SocialRepository {}
+
+class MockTrackingRepository extends Mock implements TrackingRepository {}
 
 const testUserId = '11111111-1111-1111-1111-111111111111';
 
@@ -57,12 +63,18 @@ class TestBackend {
         .thenReturn('https://example.test/a.jpg');
     when(() => shows.fetchMyShows()).thenAnswer((_) async => const []);
     when(() => shows.trendingShows()).thenAnswer((_) async => const []);
+    when(() => tracking.fetchWatchlist()).thenAnswer((_) async => const []);
+    when(() => tracking.fetchUpcoming(any())).thenAnswer((_) async => const []);
+    when(() => tracking.fetchWatchedEpisodeIds(any()))
+        .thenAnswer((_) async => <int>{});
   }
 
   final auth = MockAuthRepository();
   final profiles = MockProfileRepository();
   final shows = MockShowsRepository();
   final social = MockSocialRepository();
+  final tracking = MockTrackingRepository();
+  late SharedPreferences preferences;
   final statusController = StreamController<AuthStatus>.broadcast();
 
   /// Oturum değişimini taklit eder; yönlendirici bu değere göre çalışır.
@@ -72,8 +84,14 @@ class TestBackend {
     statusController.add(status);
   }
 
-  Future<void> pumpApp(WidgetTester tester) async {
+  /// [preferenceValues]: cihazda önceden saklanmış tercihler.
+  Future<void> pumpApp(
+    WidgetTester tester, {
+    Map<String, Object> preferenceValues = const {},
+  }) async {
     addTearDown(statusController.close);
+    SharedPreferences.setMockInitialValues(preferenceValues);
+    preferences = await SharedPreferences.getInstance();
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
@@ -81,6 +99,8 @@ class TestBackend {
           profileRepositoryProvider.overrideWithValue(profiles),
           showsRepositoryProvider.overrideWithValue(shows),
           socialRepositoryProvider.overrideWithValue(social),
+          trackingRepositoryProvider.overrideWithValue(tracking),
+          sharedPreferencesProvider.overrideWithValue(preferences),
         ],
         child: const SezonlukApp(),
       ),

@@ -50,6 +50,13 @@ bool isAired(Episode episode, DateTime now) {
       !airDate.isAfter(utcDate(now));
 }
 
+/// İşaretlenebilir bölüm (F5d): yayın tarihi dolu ve bugün (UTC) veya önce. Özel bölümler
+/// de işaretlenebilir; yalnızca ilerlemeye girmezler ([isAired]).
+bool isReleased(Episode episode, DateTime now) {
+  final airDate = episode.airDate;
+  return airDate != null && !airDate.isAfter(utcDate(now));
+}
+
 /// "S01B05" biçimi.
 String episodeCode(int seasonNumber, int episodeNumber) =>
     'S${seasonNumber.toString().padLeft(2, '0')}'

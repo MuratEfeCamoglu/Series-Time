@@ -1,0 +1,148 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:sezonluk/features/shows/data/models.dart';
+import 'package:sezonluk/features/tracking/data/models.dart';
+import 'package:sezonluk/features/tracking/logic.dart';
+
+final _now = DateTime.utc(2026, 10, 17, 12);
+
+WatchlistItem _item(int showId, {DateTime? lastWatchedAt, DateTime? addedAt}) =>
+    WatchlistItem(
+      showId: showId,
+      name: 'Dizi $showId',
+      addedAt: addedAt ?? DateTime.utc(2026, 1, 1),
+      lastWatchedAt: lastWatchedAt,
+      nextEpisodeId: showId * 100,
+      nextSeasonNumber: 1,
+      nextEpisodeNumber: 1,
+      airedCount: 10,
+      watchedCount: 0,
+    );
+
+Episode _episode(int number, {int season = 1, DateTime? airDate}) => Episode(
+  id: season * 100 + number,
+  showId: 1,
+  seasonNumber: season,
+  episodeNumber: number,
+  airDate: airDate,
+);
+
+UpcomingEpisode _upcoming(int id, DateTime airDate) => UpcomingEpisode(
+  episodeId: id,
+  showId: 1,
+  showName: 'Dizi',
+  seasonNumber: 1,
+  episodeNumber: id,
+  airDate: airDate,
+);
+
+void main() {
+  group('watchProgress', () {
+    test('izlenen / yayınlanan', () {
+      expect(watchProgress(3, 4), 0.75);
+    });
+
+    test('yayınlanmış bölüm yoksa 0 (boş dizi)', () {
+      expect(watchProgress(0, 0), 0);
+    });
+
+    test('1\'i aşmaz', () {
+      expect(watchProgress(5, 4), 1);
+    });
+  });
+
+  group('sortWatchlist (F6g)', () {
+    test('hiç izlenmemişler eklenme tarihine göre azalan, en üstte', () {
+      final sorted = sortWatchlist([
+        _item(1, lastWatchedAt: DateTime.utc(2026, 10, 16)),
+        _item(2, addedAt: DateTime.utc(2026, 5, 1)),
+        _item(3, lastWatchedAt: DateTime.utc(2026, 10, 10)),
+        _item(4, addedAt: DateTime.utc(2026, 6, 1)),
+      ]);
+
+      expect(sorted.map((i) => i.showId), [4, 2, 1, 3]);
+    });
+  });
+
+  group('splitWatchlist (F6a, F6e)', () {
+    test('30 günden eski izleme ayrı bölüme gider', () {
+      final split = splitWatchlist([
+        _item(1, lastWatchedAt: _now.subtract(const Duration(days: 30))),
+        _item(2, lastWatchedAt: _now.subtract(const Duration(days: 31))),
+        _item(3),
+      ], _now);
+
+      expect(split.upNext.map((i) => i.showId), [3, 1]);
+      expect(split.notRecently.map((i) => i.showId), [2]);
+    });
+
+    test('boş liste', () {
+      final split = splitWatchlist(const [], _now);
+      expect(split.upNext, isEmpty);
+      expect(split.notRecently, isEmpty);
+    });
+  });
+
+  group('Yaklaşan (F7)', () {
+    test('bugün, yarın ve sonrası', () {
+      expect(
+        upcomingDayKind(DateTime.utc(2026, 10, 17), _now),
+        UpcomingDay.today,
+      );
+      expect(
+        upcomingDayKind(DateTime.utc(2026, 10, 18), _now),
+        UpcomingDay.tomorrow,
+      );
+      expect(
+        upcomingDayKind(DateTime.utc(2026, 10, 19), _now),
+        UpcomingDay.later,
+      );
+    });
+
+    test('aynı güne düşen bölümler tek grupta, gruplar artan tarihte', () {
+      final groups = groupUpcoming([
+        _upcoming(3, DateTime.utc(2026, 10, 20)),
+        _upcoming(1, DateTime.utc(2026, 10, 18)),
+        _upcoming(2, DateTime.utc(2026, 10, 18)),
+      ]);
+
+      expect(groups.map((g) => g.date), [
+        DateTime.utc(2026, 10, 18),
+        DateTime.utc(2026, 10, 20),
+      ]);
+      expect(groups.first.episodes.map((e) => e.episodeId), [1, 2]);
+    });
+
+    test('boş liste boş grup verir', () {
+      expect(groupUpcoming(const []), isEmpty);
+    });
+  });
+
+  group('iyimser işaretleme kümeleri (F5b, F5c, F5d)', () {
+    final past = DateTime.utc(2026, 10, 1);
+    final future = DateTime.utc(2026, 11, 1);
+    final season = [
+      _episode(1, airDate: past),
+      _episode(2, airDate: past),
+      _episode(3, airDate: future),
+      _episode(4),
+    ];
+
+    test('sezonun tamamı: yalnızca yayınlanmış bölümler', () {
+      expect(markableEpisodeIds(season, _now), {101, 102});
+    });
+
+    test('buraya kadar: hedef ve önceki yayınlanmışlar', () {
+      expect(episodeIdsUntil(season, season[1], _now), {101, 102});
+      expect(episodeIdsUntil(season, season[0], _now), {101});
+    });
+
+    test('buraya kadar: gelecekteki hedefte yalnızca yayınlanmışlar', () {
+      expect(episodeIdsUntil(season, season[2], _now), {101, 102});
+    });
+
+    test('özel bölümde buraya kadar yalnızca kendisi', () {
+      final special = _episode(5, season: 0, airDate: past);
+      expect(episodeIdsUntil([special], special, _now), {special.id});
+    });
+  });
+}

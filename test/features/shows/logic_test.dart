@@ -85,6 +85,25 @@ void main() {
     });
   });
 
+  group('isReleased', () {
+    final now = DateTime.utc(2026, 10, 17, 12);
+
+    test('yayın tarihi geçmiş özel bölüm işaretlenebilir', () {
+      expect(
+        isReleased(_episode(season: 0, airDate: DateTime.utc(2020, 1, 1)), now),
+        isTrue,
+      );
+    });
+
+    test('gelecekteki ve tarihsiz bölüm işaretlenemez (F5d)', () {
+      expect(
+        isReleased(_episode(airDate: DateTime.utc(2026, 10, 18)), now),
+        isFalse,
+      );
+      expect(isReleased(_episode(), now), isFalse);
+    });
+  });
+
   test('episodeCode iki haneli doldurur', () {
     expect(episodeCode(1, 5), 'S01B05');
     expect(episodeCode(12, 103), 'S12B103');

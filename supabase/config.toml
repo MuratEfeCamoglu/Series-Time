@@ -46,3 +46,7 @@ file_size_limit = "2MiB"
 [functions.tmdb-proxy]
 # Ağ geçidi JWT ister; fonksiyon ayrıca anon anahtarını reddedip gerçek kullanıcı arar.
 verify_jwt = true
+
+[functions.tmdb-sync]
+# Kullanıcı değil pg_cron çağırır; fonksiyon service role anahtarını kendisi denetler.
+verify_jwt = false

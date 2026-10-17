@@ -6,8 +6,8 @@ import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:sezonluk/core/failures.dart';
 import 'package:sezonluk/features/shows/data/models.dart';
+import 'package:sezonluk/features/tracking/data/models.dart';
 import 'package:sezonluk/features/tracking/screens/shows_screen.dart';
-import 'package:sezonluk/shared/widgets/poster_card.dart';
 
 import '../../helpers.dart';
 
@@ -54,34 +54,48 @@ void main() {
     expect(find.text('Özel'), findsOneWidget);
   });
 
-  testWidgets('"Ekle" diziyi beklemeden Diziler sekmesine koyar (F4b)', (
-    tester,
-  ) async {
-    final backend = await _openDetail(tester);
-    final request = Completer<void>();
-    when(() => backend.shows.addToMyShows(1399))
-        .thenAnswer((_) => request.future);
+  testWidgets(
+    '"Ekle" düğmeyi beklemeden değiştirir, bölümleri çeker ve dizi Diziler sekmesinde görünür (F4b)',
+    (tester) async {
+      final backend = await _openDetail(tester);
+      final request = Completer<void>();
+      when(() => backend.shows.addToMyShows(1399))
+          .thenAnswer((_) => request.future);
+      when(() => backend.shows.fetchSeasonEpisodes(1399, 1))
+          .thenAnswer((_) async => const []);
+      when(() => backend.tracking.fetchWatchlist()).thenAnswer(
+        (_) async => [
+          WatchlistItem(
+            showId: 1399,
+            name: 'Taht Oyunları',
+            addedAt: DateTime.utc(2026, 10, 17),
+            nextEpisodeId: 63056,
+            nextSeasonNumber: 1,
+            nextEpisodeNumber: 1,
+            airedCount: 73,
+            watchedCount: 0,
+          ),
+        ],
+      );
 
-    await tester.tap(find.byKey(const Key('showDetail.add')));
-    await tester.pump();
+      await tester.tap(find.byKey(const Key('showDetail.add')));
+      await tester.pump();
 
-    // Sunucu henüz yanıt vermedi; düğme ve liste iyimser olarak güncellendi.
-    expect(find.byKey(const Key('showDetail.remove')), findsOneWidget);
-    request.complete();
-    await tester.pumpAndSettle();
-    verify(() => backend.shows.addToMyShows(1399)).called(1);
+      // Sunucu henüz yanıt vermedi; düğme iyimser olarak değişti.
+      expect(find.byKey(const Key('showDetail.remove')), findsOneWidget);
+      request.complete();
+      await tester.pumpAndSettle();
+      verify(() => backend.shows.addToMyShows(1399)).called(1);
+      // Özel bölümler (sezon 0) sıradaki bölüm hesabına girmediği için çekilmez.
+      verify(() => backend.shows.fetchSeasonEpisodes(1399, 1)).called(1);
+      verifyNever(() => backend.shows.fetchSeasonEpisodes(1399, 0));
 
-    GoRouter.of(tester.element(find.byType(Scaffold).last)).pop();
-    await tester.pumpAndSettle();
-    expect(find.byType(ShowsScreen), findsOneWidget);
-    expect(
-      find.descendant(
-        of: find.byType(ShowsScreen),
-        matching: find.byType(PosterCard),
-      ),
-      findsOneWidget,
-    );
-  });
+      GoRouter.of(tester.element(find.byType(Scaffold).last)).pop();
+      await tester.pumpAndSettle();
+      expect(find.byType(ShowsScreen), findsOneWidget);
+      expect(find.text('S01B01'), findsOneWidget);
+    },
+  );
 
   testWidgets('ekleme başarısız olursa geri alınır ve hata gösterilir', (
     tester,

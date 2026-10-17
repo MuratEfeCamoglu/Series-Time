@@ -276,4 +276,55 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get showsGoToDiscover => 'Keşfet\'e git';
+
+  @override
+  String get tabWatchlist => 'İzleme Listesi';
+
+  @override
+  String get tabUpcoming => 'Yaklaşan';
+
+  @override
+  String get watchlistUpNext => 'Sıradaki';
+
+  @override
+  String get watchlistNotRecently => 'Bir süredir izlemediklerin';
+
+  @override
+  String get watchlistAllCaughtUp => 'İzleyecek yeni bölüm yok';
+
+  @override
+  String get watchlistShowGrid => 'Izgara görünümü';
+
+  @override
+  String get watchlistShowList => 'Liste görünümü';
+
+  @override
+  String markNextEpisode(String code) {
+    return '$code bölümünü izledim';
+  }
+
+  @override
+  String get upcomingEmpty => 'Yaklaşan bölüm yok';
+
+  @override
+  String get upcomingToday => 'Bugün';
+
+  @override
+  String get upcomingTomorrow => 'Yarın';
+
+  @override
+  String get seasonMarkAll => 'Sezonun tamamını izledim';
+
+  @override
+  String get episodeMarkUntil => 'Buraya kadar izledim';
+
+  @override
+  String get episodeMarkWatched => 'İzlendi';
+
+  @override
+  String get episodeTitle => 'Bölüm';
+
+  @override
+  String get episodeFeedbackSoon =>
+      'Tepkiler, bölümün yıldızı ve yorumlar burada olacak.';
 }

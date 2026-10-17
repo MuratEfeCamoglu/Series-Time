@@ -22,4 +22,7 @@ abstract final class AppSpacing {
   static const double detailPosterWidth = 110;
   static const double detailBackdropHeight = 220;
   static const double emptyStateIconSize = 48;
+
+  /// İzleme Listesi ızgara hücresi: 2:3 afiş + ilerleme çubuğu + bölüm kodu satırı.
+  static const double watchlistGridAspectRatio = 0.58;
 }

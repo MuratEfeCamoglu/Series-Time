@@ -1,8 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/supabase_client.dart';
 import '../auth/logic.dart';
 import '../auth/providers.dart';
+import '../tracking/providers.dart';
 import 'data/models.dart';
 import 'data/repository.dart';
 
@@ -30,22 +32,43 @@ class MyShowsNotifier extends AsyncNotifier<List<UserShow>> {
     return ref.read(showsRepositoryProvider).fetchMyShows();
   }
 
-  Future<void> add(Show show) => _mutate(
-    (current) => [
-      UserShow(show: show, addedAt: DateTime.now().toUtc()),
-      for (final entry in current)
-        if (entry.show.id != show.id) entry,
-    ],
-    (repository) => repository.addToMyShows(show.id),
-  );
+  /// [seasonNumbers]: dizinin normal sezonları. Sıradaki bölüm ve ilerleme `episodes`
+  /// tablosundan hesaplandığı için eklenen dizinin bölümleri önbelleğe çekilir.
+  Future<void> add(Show show, {List<int> seasonNumbers = const []}) async {
+    await _mutate(
+      (current) => [
+        UserShow(show: show, addedAt: DateTime.now().toUtc()),
+        for (final entry in current)
+          if (entry.show.id != show.id) entry,
+      ],
+      (repository) => repository.addToMyShows(show.id),
+    );
+    final repository = ref.read(showsRepositoryProvider);
+    try {
+      await Future.wait([
+        for (final n in seasonNumbers)
+          repository.fetchSeasonEpisodes(show.id, n),
+      ]);
+    } catch (error) {
+      // Dizi listeye eklendi; eksik sezonlar açıldıklarında veya tmdb-sync ile gelir.
+      debugPrint('Sezon bölümleri önbelleğe alınamadı (${show.id}): $error');
+    }
+    ref.invalidate(watchlistProvider);
+  }
 
-  Future<void> remove(int showId) => _mutate(
-    (current) => [
-      for (final entry in current)
-        if (entry.show.id != showId) entry,
-    ],
-    (repository) => repository.removeFromMyShows(showId),
-  );
+  Future<void> remove(int showId) async {
+    await _mutate(
+      (current) => [
+        for (final entry in current)
+          if (entry.show.id != showId) entry,
+      ],
+      (repository) => repository.removeFromMyShows(showId),
+    );
+    // İzleme kayıtları veritabanında silindi (F4c).
+    ref
+      ..invalidate(watchlistProvider)
+      ..invalidate(watchedEpisodesProvider(showId));
+  }
 
   Future<void> _mutate(
     List<UserShow> Function(List<UserShow> current) optimistic,

@@ -597,6 +597,102 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Keşfet\'e git'**
   String get showsGoToDiscover;
+
+  /// No description provided for @tabWatchlist.
+  ///
+  /// In tr, this message translates to:
+  /// **'İzleme Listesi'**
+  String get tabWatchlist;
+
+  /// No description provided for @tabUpcoming.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yaklaşan'**
+  String get tabUpcoming;
+
+  /// No description provided for @watchlistUpNext.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sıradaki'**
+  String get watchlistUpNext;
+
+  /// No description provided for @watchlistNotRecently.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bir süredir izlemediklerin'**
+  String get watchlistNotRecently;
+
+  /// No description provided for @watchlistAllCaughtUp.
+  ///
+  /// In tr, this message translates to:
+  /// **'İzleyecek yeni bölüm yok'**
+  String get watchlistAllCaughtUp;
+
+  /// No description provided for @watchlistShowGrid.
+  ///
+  /// In tr, this message translates to:
+  /// **'Izgara görünümü'**
+  String get watchlistShowGrid;
+
+  /// No description provided for @watchlistShowList.
+  ///
+  /// In tr, this message translates to:
+  /// **'Liste görünümü'**
+  String get watchlistShowList;
+
+  /// No description provided for @markNextEpisode.
+  ///
+  /// In tr, this message translates to:
+  /// **'{code} bölümünü izledim'**
+  String markNextEpisode(String code);
+
+  /// No description provided for @upcomingEmpty.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yaklaşan bölüm yok'**
+  String get upcomingEmpty;
+
+  /// No description provided for @upcomingToday.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bugün'**
+  String get upcomingToday;
+
+  /// No description provided for @upcomingTomorrow.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yarın'**
+  String get upcomingTomorrow;
+
+  /// No description provided for @seasonMarkAll.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sezonun tamamını izledim'**
+  String get seasonMarkAll;
+
+  /// No description provided for @episodeMarkUntil.
+  ///
+  /// In tr, this message translates to:
+  /// **'Buraya kadar izledim'**
+  String get episodeMarkUntil;
+
+  /// No description provided for @episodeMarkWatched.
+  ///
+  /// In tr, this message translates to:
+  /// **'İzlendi'**
+  String get episodeMarkWatched;
+
+  /// No description provided for @episodeTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bölüm'**
+  String get episodeTitle;
+
+  /// No description provided for @episodeFeedbackSoon.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tepkiler, bölümün yıldızı ve yorumlar burada olacak.'**
+  String get episodeFeedbackSoon;
 }
 
 class _AppLocalizationsDelegate
