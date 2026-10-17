@@ -11,14 +11,13 @@ import '../../auth/providers.dart';
 import '../../profile/providers.dart';
 import '../providers.dart';
 
-// Özgün rozet çizimleri (V16) Aşama 7'de assets/ altına gelir; o zamana kadar simge.
-const _icons = {
-  'first_episode': Icons.play_circle,
-  'episodes_100': Icons.local_movies,
-  'episodes_1000': Icons.military_tech,
-  'shows_10': Icons.collections_bookmark,
-  'first_comment': Icons.chat_bubble,
-};
+// Kazanılmamış rozet gri gösterilir (F14): görselin renkleri ışıklılığa indirgenir.
+const _grayscale = ColorFilter.matrix([
+  0.2126, 0.7152, 0.0722, 0, 0, //
+  0.2126, 0.7152, 0.0722, 0, 0, //
+  0.2126, 0.7152, 0.0722, 0, 0, //
+  0, 0, 0, 0.5, 0, //
+]);
 
 /// `/badges` (F14): kazanılanlar renkli, kazanılmayanlar gri ve koşuluyla.
 /// [username] verilirse o kullanıcının rafı, yoksa oturum sahibininki.
@@ -70,11 +69,11 @@ class _Shelf extends ConsumerWidget {
                 key: Key('badge.${badge.code}'),
                 color: AppColors.surface,
                 child: ListTile(
-                  leading: Icon(
-                    _icons[badge.code] ?? Icons.emoji_events,
-                    size: AppSpacing.emptyStateIconSize,
-                    color: earned ? AppColors.accent : AppColors.border,
-                    semanticLabel: earned ? null : l10n.badgeLocked,
+                  leading: _BadgeImage(
+                    // `icon` kolonu assets/badges/ altındaki dosya adıdır (V16).
+                    asset: 'assets/badges/${badge.icon}.png',
+                    earned: earned,
+                    semanticLabel: earned ? badge.name : l10n.badgeLocked,
                   ),
                   title: Text(
                     badge.name,
@@ -98,5 +97,33 @@ class _Shelf extends ConsumerWidget {
             onRetry: () => ref.invalidate(badgeShelfProvider(userId)),
           ),
         );
+  }
+}
+
+class _BadgeImage extends StatelessWidget {
+  const _BadgeImage({
+    required this.asset,
+    required this.earned,
+    required this.semanticLabel,
+  });
+
+  final String asset;
+  final bool earned;
+  final String semanticLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    final image = Image.asset(
+      asset,
+      width: AppSpacing.emptyStateIconSize,
+      height: AppSpacing.emptyStateIconSize,
+      semanticLabel: semanticLabel,
+      // Tanımı yeni eklenmiş, görseli henüz olmayan rozet için genel simge.
+      errorBuilder: (_, _, _) =>
+          const Icon(Icons.emoji_events, size: AppSpacing.emptyStateIconSize),
+    );
+    return earned
+        ? image
+        : ColorFiltered(colorFilter: _grayscale, child: image);
   }
 }

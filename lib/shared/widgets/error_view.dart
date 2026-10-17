@@ -20,6 +20,7 @@ String failureMessage(AppLocalizations l10n, Object error) {
     AppFailureType.tmdbUnavailable => l10n.errorTmdbUnavailable,
     AppFailureType.commentRateLimited => l10n.errorCommentRateLimited,
     AppFailureType.commentBannedWord => l10n.errorCommentBannedWord,
+    AppFailureType.usernameMismatch => l10n.errorUsernameMismatch,
     AppFailureType.unknown => l10n.errorUnknown,
   };
 }

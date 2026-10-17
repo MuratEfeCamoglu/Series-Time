@@ -50,3 +50,6 @@ verify_jwt = true
 [functions.tmdb-sync]
 # Kullanıcı değil pg_cron çağırır; fonksiyon service role anahtarını kendisi denetler.
 verify_jwt = false
+
+[functions.delete-account]
+verify_jwt = true

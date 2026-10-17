@@ -44,4 +44,7 @@ abstract final class AppSpacing {
   static const double reactionEmojiSize = 28;
   static const double avatarSmall = 36;
   static const double reactionTileAspectRatio = 1.4;
+
+  /// TMDB atıf logosu (F17); uygulama ikonundan küçük kalmalı.
+  static const double tmdbLogoHeight = 20;
 }

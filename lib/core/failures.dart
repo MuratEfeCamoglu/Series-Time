@@ -12,6 +12,7 @@ enum AppFailureType {
   tmdbUnavailable,
   commentRateLimited,
   commentBannedWord,
+  usernameMismatch,
   unknown,
 }
 

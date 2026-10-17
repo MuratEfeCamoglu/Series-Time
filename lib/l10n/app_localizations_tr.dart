@@ -619,4 +619,37 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get badgeLocked => 'Henüz kazanılmadı';
+
+  @override
+  String get errorUsernameMismatch => 'Kullanıcı adı eşleşmiyor.';
+
+  @override
+  String get deleteAccountTitle => 'Hesabı sil';
+
+  @override
+  String get deleteAccountBody =>
+      'Hesabın, profilin, izleme geçmişin, yorumların, tepkilerin, takip ilişkilerin ve avatarın kalıcı olarak silinir. Bu işlem geri alınamaz.';
+
+  @override
+  String deleteAccountPrompt(String username) {
+    return 'Onaylamak için kullanıcı adını yaz: $username';
+  }
+
+  @override
+  String get deleteAccountButton => 'Hesabımı kalıcı olarak sil';
+
+  @override
+  String get aboutTitle => 'Hakkında';
+
+  @override
+  String get aboutTmdbAttribution =>
+      'This product uses the TMDB API but is not endorsed or certified by TMDB.';
+
+  @override
+  String get aboutTmdbLogo => 'TMDB logosu';
+
+  @override
+  String aboutVersion(String version) {
+    return 'Sürüm $version';
+  }
 }

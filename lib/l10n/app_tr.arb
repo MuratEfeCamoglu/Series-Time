@@ -324,5 +324,28 @@
       }
     }
   },
-  "badgeLocked": "Henüz kazanılmadı"
+  "badgeLocked": "Henüz kazanılmadı",
+  "errorUsernameMismatch": "Kullanıcı adı eşleşmiyor.",
+  "deleteAccountTitle": "Hesabı sil",
+  "deleteAccountBody": "Hesabın, profilin, izleme geçmişin, yorumların, tepkilerin, takip ilişkilerin ve avatarın kalıcı olarak silinir. Bu işlem geri alınamaz.",
+  "deleteAccountPrompt": "Onaylamak için kullanıcı adını yaz: {username}",
+  "@deleteAccountPrompt": {
+    "placeholders": {
+      "username": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteAccountButton": "Hesabımı kalıcı olarak sil",
+  "aboutTitle": "Hakkında",
+  "aboutTmdbAttribution": "This product uses the TMDB API but is not endorsed or certified by TMDB.",
+  "aboutTmdbLogo": "TMDB logosu",
+  "aboutVersion": "Sürüm {version}",
+  "@aboutVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  }
 }

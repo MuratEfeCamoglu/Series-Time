@@ -1221,6 +1221,60 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Henüz kazanılmadı'**
   String get badgeLocked;
+
+  /// No description provided for @errorUsernameMismatch.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kullanıcı adı eşleşmiyor.'**
+  String get errorUsernameMismatch;
+
+  /// No description provided for @deleteAccountTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hesabı sil'**
+  String get deleteAccountTitle;
+
+  /// No description provided for @deleteAccountBody.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hesabın, profilin, izleme geçmişin, yorumların, tepkilerin, takip ilişkilerin ve avatarın kalıcı olarak silinir. Bu işlem geri alınamaz.'**
+  String get deleteAccountBody;
+
+  /// No description provided for @deleteAccountPrompt.
+  ///
+  /// In tr, this message translates to:
+  /// **'Onaylamak için kullanıcı adını yaz: {username}'**
+  String deleteAccountPrompt(String username);
+
+  /// No description provided for @deleteAccountButton.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hesabımı kalıcı olarak sil'**
+  String get deleteAccountButton;
+
+  /// No description provided for @aboutTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hakkında'**
+  String get aboutTitle;
+
+  /// No description provided for @aboutTmdbAttribution.
+  ///
+  /// In tr, this message translates to:
+  /// **'This product uses the TMDB API but is not endorsed or certified by TMDB.'**
+  String get aboutTmdbAttribution;
+
+  /// No description provided for @aboutTmdbLogo.
+  ///
+  /// In tr, this message translates to:
+  /// **'TMDB logosu'**
+  String get aboutTmdbLogo;
+
+  /// No description provided for @aboutVersion.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sürüm {version}'**
+  String aboutVersion(String version);
 }
 
 class _AppLocalizationsDelegate

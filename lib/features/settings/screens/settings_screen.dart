@@ -8,7 +8,7 @@ import '../../../shared/widgets/error_view.dart';
 import '../../../theme/app_colors.dart';
 import '../../auth/providers.dart';
 
-/// Ayarlar. Hesap silme (F16) ve Hakkında (F17) Aşama 7'de eklenir.
+/// Ayarlar: profil, engellenenler (F15c), Hakkında (F17), çıkış ve hesap silme (F16).
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
@@ -45,9 +45,24 @@ class SettingsScreen extends ConsumerWidget {
             onTap: () => context.push(AppRoutes.blockedUsers),
           ),
           ListTile(
+            key: const Key('settings.about'),
+            leading: const Icon(Icons.info_outline),
+            title: Text(l10n.aboutTitle),
+            onTap: () => context.push(AppRoutes.about),
+          ),
+          ListTile(
             leading: const Icon(Icons.logout, color: AppColors.danger),
             title: Text(l10n.signOut),
             onTap: () => _signOut(context, ref),
+          ),
+          ListTile(
+            key: const Key('settings.deleteAccount'),
+            leading: const Icon(Icons.delete_forever, color: AppColors.danger),
+            title: Text(
+              l10n.deleteAccountTitle,
+              style: const TextStyle(color: AppColors.danger),
+            ),
+            onTap: () => context.push(AppRoutes.deleteAccount),
           ),
         ],
       ),

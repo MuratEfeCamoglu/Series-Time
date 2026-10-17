@@ -36,6 +36,12 @@ AppFailure toAppFailure(Object error) {
     return AppFailure(AppFailureType.fileTooLarge, cause: error);
   }
   // tmdb-proxy TMDB'ye ulaşamayınca ve önbellekte kayıt yokken 502 döner (ISKELET.md §3.5).
+  if (error is FunctionException &&
+      error.status == 400 &&
+      error.details is Map &&
+      (error.details as Map)['error'] == 'username_mismatch') {
+    return AppFailure(AppFailureType.usernameMismatch, cause: error);
+  }
   if (error is FunctionException && error.status == 502) {
     return AppFailure(AppFailureType.tmdbUnavailable, cause: error);
   }

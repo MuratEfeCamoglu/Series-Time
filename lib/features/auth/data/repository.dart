@@ -68,6 +68,16 @@ class AuthRepository {
 
   Future<void> signOut() => _guard(_auth.signOut);
 
+  /// F16: `delete-account` hesabı, tüm satırları (cascade) ve avatarları siler. Sunucuda
+  /// oturum kalmadığı için yalnızca cihazdaki oturum kapatılır; yönlendirici girişe döner.
+  Future<void> deleteAccount(String confirmUsername) => _guard(() async {
+    await _client.functions.invoke(
+      'delete-account',
+      body: {'confirmUsername': confirmUsername.trim()},
+    );
+    await _auth.signOut(scope: SignOutScope.local);
+  });
+
   Future<void> _guard(Future<void> Function() action) async {
     try {
       await action();
