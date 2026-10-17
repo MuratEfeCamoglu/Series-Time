@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/error_view.dart';
+import '../../../shared/widgets/guest_gate.dart';
+import '../../auth/providers.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_text_styles.dart';
 import '../../shows/logic.dart';
@@ -30,6 +32,13 @@ class _EpisodeScreenState extends ConsumerState<EpisodeScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    // F19(c): Bölüm Sonrası (tepki, oy, yorum) hesap ister.
+    if (ref.watch(isGuestProvider)) {
+      return Scaffold(
+        appBar: AppBar(title: Text(l10n.episodeTitle)),
+        body: const GuestGate(),
+      );
+    }
     final info = ref.watch(episodeInfoProvider(widget.episodeId));
     final episode = info.value?.episode;
     final watched = episode == null

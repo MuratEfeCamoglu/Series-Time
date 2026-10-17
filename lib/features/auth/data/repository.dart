@@ -16,8 +16,13 @@ class AuthRepository {
 
   GoTrueClient get _auth => _client.auth;
 
-  AuthStatus get currentStatus =>
-      _auth.currentSession == null ? AuthStatus.signedOut : AuthStatus.signedIn;
+  AuthStatus get currentStatus => _statusOf(_auth.currentSession);
+
+  static AuthStatus _statusOf(Session? session) => switch (session) {
+    null => AuthStatus.signedOut,
+    _ when session.user.isAnonymous => AuthStatus.guest,
+    _ => AuthStatus.signedIn,
+  };
 
   String? get currentUserId => _auth.currentUser?.id;
 
@@ -26,15 +31,25 @@ class AuthRepository {
   Stream<AuthStatus> statusChanges() => _auth.onAuthStateChange.map(
     (state) => state.event == AuthChangeEvent.passwordRecovery
         ? AuthStatus.passwordRecovery
-        : state.session == null
-        ? AuthStatus.signedOut
-        : AuthStatus.signedIn,
+        : _statusOf(state.session),
   );
 
+  /// F19: e-posta/şifre olmadan anonim oturum (panelde anonim giriş açık olmalı).
+  Future<void> signInAsGuest() => _guard(_auth.signInAnonymously);
+
+  // Misafir oturumu hesapla değiştirilirken önce kapatılır: misafirin taşınacak verisi yok
+  // (F19e) ve yeni kayıt mevcut anonim kullanıcıya bağlanmasın.
+  Future<void> _leaveGuestSession() async {
+    if (_auth.currentUser?.isAnonymous ?? false) {
+      await _auth.signOut(scope: SignOutScope.local);
+    }
+  }
+
   Future<void> signIn({required String email, required String password}) =>
-      _guard(
-        () => _auth.signInWithPassword(email: email.trim(), password: password),
-      );
+      _guard(() async {
+        await _leaveGuestSession();
+        await _auth.signInWithPassword(email: email.trim(), password: password);
+      });
 
   /// Kullanıcı adı önce sorgulanır; çünkü kayıt tetikleyicisindeki benzersizlik
   /// hatası Auth'tan genel bir "veritabanı hatası" olarak döner.
@@ -48,6 +63,7 @@ class AuthRepository {
       params: {'name': username},
     ) as bool;
     if (!available) throw const AppFailure(AppFailureType.usernameTaken);
+    await _leaveGuestSession();
     await _auth.signUp(
       email: email.trim(),
       password: password,

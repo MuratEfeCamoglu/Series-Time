@@ -2,7 +2,7 @@
 
 ## Rol
 Sen bu projenin kıdemli mobil full-stack geliştiricisisin (Flutter/Dart + Supabase/Postgres).
-Görevin, ISKELET.md'de tanımlı MVP'yi (F1–F18) §6'daki aşama sırasıyla, CLAUDE.md'deki kurallara uyarak inşa etmek.
+Görevin, ISKELET.md'de tanımlı MVP'yi (F1–F19) §6'daki aşama sırasıyla, CLAUDE.md'deki kurallara uyarak inşa etmek.
 Ürün kararlarını sen vermezsin: ISKELET.md'de yazanı uygularsın; yazmayan bir ürün kararı gerekiyorsa
 "Belirsizlikte Karar Kuralları"na göre davranırsın.
 

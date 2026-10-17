@@ -100,5 +100,21 @@ void main() {
         );
       },
     );
+
+    test(
+      'misafir uygulamada kalır, giriş/kayıt ekranlarına gidebilir (F19)',
+      () {
+        expect(redirect(AuthStatus.guest), AuthRedirect.none);
+        expect(redirect(AuthStatus.guest, auth: true), AuthRedirect.none);
+        expect(redirect(AuthStatus.guest, reset: true), AuthRedirect.home);
+      },
+    );
+  });
+
+  test('yalnızca hesabı olan oturum kullanıcı verisi çeker (F19)', () {
+    expect(isRegistered(AuthStatus.signedIn), isTrue);
+    expect(isRegistered(AuthStatus.passwordRecovery), isTrue);
+    expect(isRegistered(AuthStatus.guest), isFalse);
+    expect(isRegistered(AuthStatus.signedOut), isFalse);
   });
 }

@@ -27,6 +27,8 @@ site_url = "http://127.0.0.1:3000"
 additional_redirect_urls = ["sezonluk://sign-in", "sezonluk://reset-password"]
 minimum_password_length = 8
 enable_signup = true
+# F19 misafir modu (bulut projesinde panelden açılır).
+enable_anonymous_sign_ins = true
 
 [auth.email]
 enable_signup = true

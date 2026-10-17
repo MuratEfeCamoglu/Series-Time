@@ -7,6 +7,8 @@ import '../../../app/router.dart';
 import '../../../core/tmdb_image.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/error_view.dart';
+import '../../../shared/widgets/guest_gate.dart';
+import '../../auth/providers.dart';
 import '../../../shared/widgets/poster_card.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_spacing.dart';
@@ -163,12 +165,14 @@ class _MyShowsButton extends ConsumerWidget {
     if (!inList) {
       return FilledButton.icon(
         key: const Key('showDetail.add'),
-        onPressed: () => _run(
-          context,
-          ref
-              .read(myShowsProvider.notifier)
-              .add(show, seasonNumbers: seasonNumbers),
-        ),
+        onPressed: ref.watch(isGuestProvider)
+            ? () => showGuestGate(context)
+            : () => _run(
+                context,
+                ref
+                    .read(myShowsProvider.notifier)
+                    .add(show, seasonNumbers: seasonNumbers),
+              ),
         icon: const Icon(Icons.add),
         label: Text(l10n.showAdd),
       );

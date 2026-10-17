@@ -30,7 +30,7 @@ final seasonEpisodesProvider = FutureProvider.autoDispose
 class MyShowsNotifier extends AsyncNotifier<List<UserShow>> {
   @override
   Future<List<UserShow>> build() async {
-    if (ref.watch(authStatusProvider) == AuthStatus.signedOut) return const [];
+    if (!isRegistered(ref.watch(authStatusProvider))) return const [];
     return ref.read(showsRepositoryProvider).fetchMyShows();
   }
 

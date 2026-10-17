@@ -24,7 +24,7 @@ class MyProfileNotifier extends AsyncNotifier<Profile> {
     // Oturum değişince (çıkış/başka hesapla giriş) profil yeniden yüklenir.
     final status = ref.watch(authStatusProvider);
     final userId = ref.read(authRepositoryProvider).currentUserId;
-    if (status == AuthStatus.signedOut || userId == null) {
+    if (!isRegistered(status) || userId == null) {
       throw const AppFailure(AppFailureType.unknown);
     }
     return ref.read(profileRepositoryProvider).fetchProfile(userId);

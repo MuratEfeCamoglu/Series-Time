@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/widgets/guest_gate.dart';
+import '../../auth/providers.dart';
 import '../logic.dart';
 import '../providers.dart';
 import '../widgets/upcoming_tab.dart';
@@ -14,6 +16,12 @@ class ShowsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    if (ref.watch(isGuestProvider)) {
+      return Scaffold(
+        appBar: AppBar(title: Text(l10n.tabShows)),
+        body: const GuestGate(),
+      );
+    }
     final layout = ref.watch(watchlistLayoutProvider);
     return DefaultTabController(
       length: 2,

@@ -26,3 +26,8 @@ class AuthStatusNotifier extends Notifier<AuthStatus> {
 final authStatusProvider = NotifierProvider<AuthStatusNotifier, AuthStatus>(
   AuthStatusNotifier.new,
 );
+
+/// F19: misafir yalnızca okur; yazma gerektiren yerler hesap çağrısı gösterir.
+final isGuestProvider = Provider<bool>(
+  (ref) => ref.watch(authStatusProvider) == AuthStatus.guest,
+);

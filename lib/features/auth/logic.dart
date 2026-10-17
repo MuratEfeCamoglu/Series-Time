@@ -1,7 +1,12 @@
 /// F1 saf kuralları: alan doğrulama ve oturuma göre yönlendirme.
 library;
 
-enum AuthStatus { signedOut, signedIn, passwordRecovery }
+/// [guest]: hesapsız (anonim) oturum, yalnızca okuma (F19).
+enum AuthStatus { signedOut, signedIn, passwordRecovery, guest }
+
+/// Hesabı olan oturum: kullanıcı verisi (liste, profil, bildirim) yalnızca bunlarda çekilir.
+bool isRegistered(AuthStatus status) =>
+    status == AuthStatus.signedIn || status == AuthStatus.passwordRecovery;
 
 /// Yönlendirmenin hedefi; yollar `lib/app/router.dart` içinde eşlenir.
 enum AuthRedirect { none, signIn, home, resetPassword }
@@ -43,5 +48,8 @@ AuthRedirect authRedirect({
       return isAuthRoute || isResetRoute
           ? AuthRedirect.home
           : AuthRedirect.none;
+    case AuthStatus.guest:
+      // Misafir hesap açmak veya giriş yapmak için giriş/kayıt ekranlarına gidebilir.
+      return isResetRoute ? AuthRedirect.home : AuthRedirect.none;
   }
 }

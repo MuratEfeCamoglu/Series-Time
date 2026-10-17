@@ -6,6 +6,8 @@ import '../../../app/router.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_view.dart';
+import '../../../shared/widgets/guest_gate.dart';
+import '../../auth/providers.dart';
 import '../../../shared/widgets/poster_card.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_spacing.dart';
@@ -260,6 +262,7 @@ class _SuggestionPoster extends ConsumerWidget {
             tooltip: l10n.suggestAddShow(show.name),
             icon: const Icon(Icons.add),
             onPressed: () async {
+              if (ref.read(isGuestProvider)) return showGuestGate(context);
               final messenger = ScaffoldMessenger.of(context);
               try {
                 await ref.read(myShowsProvider.notifier).add(show);

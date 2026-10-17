@@ -5,7 +5,7 @@ Yalnızca dizi takip eden, TV Time arayüzüne benzeyen iOS/Android uygulaması:
 istatistikler, kategoriye göre dizi önerileri, bölüm sonrası tepki/oylama/yorum ve takipçi sistemi. "Sezonluk" geçici addır.
 TV Time adı, logosu, ikonları ve görselleri hiçbir yerde kullanılmaz.
 
-- Kapsam, kabul kriterleri (F1–F18), veri modeli, `tmdb-proxy` sözleşmesi (§3.5), aşamalar: @ISKELET.md
+- Kapsam, kabul kriterleri (F1–F19), veri modeli, `tmdb-proxy` sözleşmesi (§3.5), aşamalar: @ISKELET.md
 - Agent rolü, yetkiler, yasaklar, "bitti" tanımı: @AGENT.md
 
 ## Teknoloji Yığını

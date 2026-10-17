@@ -1275,6 +1275,30 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Sürüm {version}'**
   String aboutVersion(String version);
+
+  /// No description provided for @guestContinue.
+  ///
+  /// In tr, this message translates to:
+  /// **'Misafir olarak devam et'**
+  String get guestContinue;
+
+  /// No description provided for @guestGateTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu özellik için hesap oluştur'**
+  String get guestGateTitle;
+
+  /// No description provided for @guestGateBody.
+  ///
+  /// In tr, this message translates to:
+  /// **'Dizilerini takip etmek, bölüm işaretlemek, yorum yapmak ve arkadaşlarını takip etmek için ücretsiz bir hesap aç.'**
+  String get guestGateBody;
+
+  /// No description provided for @guestHaveAccount.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hesabım var, giriş yap'**
+  String get guestHaveAccount;
 }
 
 class _AppLocalizationsDelegate

@@ -12,7 +12,7 @@ final notificationsRepositoryProvider = Provider<NotificationsRepository>(
 
 /// Profildeki zilin sayacı (F8b).
 final unreadCountProvider = FutureProvider<int>((ref) async {
-  if (ref.watch(authStatusProvider) == AuthStatus.signedOut) return 0;
+  if (!isRegistered(ref.watch(authStatusProvider))) return 0;
   return ref.read(notificationsRepositoryProvider).fetchUnreadCount();
 });
 

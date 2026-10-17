@@ -1,7 +1,7 @@
 # Sezonluk — Proje İskeleti ve Sınırları
 
 > "Sezonluk" geçici çalışma adıdır (bkz. V2). Bu dosya projenin tek doğruluk kaynağıdır; CLAUDE.md ve AGENT.md buraya dayanır.
-> Bölüm numaraları (§) ve özellik kodları (F1…F18) diğer dosyalarda bu adlarla anılır.
+> Bölüm numaraları (§) ve özellik kodları (F1…F19) diğer dosyalarda bu adlarla anılır.
 
 ## 1. Amaç ve Hedef Kullanıcı
 
@@ -41,6 +41,7 @@ Tüm özellikler "Zorunlu"dur; kullanıcı ilk sürümde hepsini istemiştir. "A
 | F16 | **Hesap silme** | 7 | Ayarlar › Hesabı sil → kullanıcı adını yazarak onay → `delete-account` Edge Function kullanıcıyı, tüm satırlarını (cascade) ve Storage'daki avatarını siler; işlem ≤ 10 sn sürer ve kullanıcı giriş ekranına döner. Silinen hesapla tekrar giriş yapılamaz. (Apple Guideline 5.1.1(v) zorunluluğu.) |
 | F17 | **Yasal ve atıf ekranları** | 7 | Ayarlar › Hakkında: TMDB logosu ve "This product uses the TMDB API but is not endorsed or certified by TMDB." metni; Gizlilik Politikası ve Kullanım Şartları bağlantıları (yayında erişilebilir URL); uygulama sürümü. `docs/privacy.md` ve `docs/terms.md` GitHub Pages'te yayında ve bağlantılar HTTP 200 döner. Kullanım Şartları yorumlar için sıfır tolerans maddesi içerir. |
 | F18 | **Öneriler sayfası** (`/suggest`): kategoriye göre kişisel dizi önerisi | 4 | (a) Keşfet ekranının en üstünde "Sana Özel Öneriler" kartı vardır; dokununca `/suggest` açılır. (b) Kategori çipleri: TMDB dizi türleri Türkçe adlarıyla (`genres` tablosu); aynı anda 1–3 kategori seçilebilir, 4. seçimde "En fazla 3 kategori seçebilirsin" mesajı çıkar ve seçim eklenmez. (c) Varsayılan seçim: cihazda saklanan son seçim (`shared_preferences`); yoksa kullanıcının listesindeki dizilerde en sık geçen 3 tür (`get_top_genres()`); listesi boşsa hiçbir tür seçili değildir ve "Öneri almak için en az bir kategori seç" mesajı görünür. (d) Sonuçlar: seçili türlerden en az birine sahip, TMDB oy sayısı ≥ 100 olan diziler, popülerliğe göre azalan; kullanıcının listesindeki diziler **hariç**; 3'lü afiş ızgarası, 20'şerli sayfa, aşağı kaydırınca sonraki sayfa yüklenir. Seçim değişince sonuçlar ≤ 2 sn içinde yenilenir (geliştirme projesinde, `tmdb-proxy` logundan ölçülür). (e) Her afişte "+" kısayolu diziyi listeye ekler (F4(b) kuralı); eklenen dizi öneri ızgarasından hemen kalkar. Afişe dokunmak dizi detayını açar. (f) "İzlediklerine benzer" bölümü: en son izlenen dizi için TMDB önerileri, en fazla 20 dizi, listedekiler hariç, başlık "<Dizi adı> izlediğin için"; kullanıcı hiç bölüm izlememişse bölüm gösterilmez. (g) Sonuç yoksa "Bu kategorilerde yeni öneri kalmadı" boş durumu görünür. |
+| F19 | **Misafir modu**: hesap açmadan uygulamayı gezme | 7 | (a) Giriş ekranında "Misafir olarak devam et" düğmesi vardır; e-posta/şifre istemeden Supabase anonim girişiyle oturum açar (panelde "Allow anonymous sign-ins" açık). (b) Misafir Keşfet'i (dizi arama, trendler, Sana Özel Öneriler — benzer bölümü yok), dizi detayını ve sezon bölüm listelerini kullanabilir. (c) Listeye ekleme, bölüm işaretleme, Bölüm Sonrası ekranı (tepki, oy, yorum), kullanıcı profilleri, takip ve kendi profili hesap ister: misafir bunları denediğinde "Bu özellik için hesap oluştur" iletisi ile Kayıt ol / Giriş yap düğmeleri çıkar; Diziler ve Profil sekmeleri aynı çağrıyı gösterir. (d) Misafirin tüm yazma işlemleri veritabanında da reddedilir (kısıtlayıcı RLS politikası, JWT `is_anonymous`); misafir için profil satırı oluşmaz. (e) Misafir yazma yapamadığı için hesap açınca taşınacak veri yoktur; Kayıt ol/Giriş yap misafir oturumunu kapatıp normal akışa geçer. |
 
 ### 2.2 Sonraki Sürümler (MVP sonrası, öncelik sırasıyla)
 
@@ -137,7 +138,7 @@ Tüm kullanıcı tablolarında `user_id uuid references auth.users on delete cas
 
 **Storage:** `avatars` kovası herkese okunur; kullanıcı yalnızca `avatars/<kendi uid>/` yoluna yazar/siler (Storage RLS politikası).
 
-**RLS özeti:** TMDB tabloları (`genres` dahil) ve `badges`: herkese okuma, istemciye yazma yok. `profiles`, `user_shows`, `watched_episodes`, `user_badges`, `follows`, `reactions`, `star_votes`, `comments`(hidden_at null olanlar), `comment_likes`: oturum açmış herkes okur, yalnızca sahibi (`auth.uid() = user_id`) ekler/siler/günceller. `notifications`, `blocks`: yalnızca sahibi okur/yazar. `reports`: sahibi ekler, kimse istemciden okuyamaz. `banned_words`: istemci erişimi yok.
+**RLS özeti:** Misafir (anonim) oturumlar hiçbir kullanıcı tablosuna ve `avatars` kovasına yazamaz (F19, kısıtlayıcı politika). TMDB tabloları (`genres` dahil) ve `badges`: herkese okuma, istemciye yazma yok. `profiles`, `user_shows`, `watched_episodes`, `user_badges`, `follows`, `reactions`, `star_votes`, `comments`(hidden_at null olanlar), `comment_likes`: oturum açmış herkes okur, yalnızca sahibi (`auth.uid() = user_id`) ekler/siler/günceller. `notifications`, `blocks`: yalnızca sahibi okur/yazar. `reports`: sahibi ekler, kimse istemciden okuyamaz. `banned_words`: istemci erişimi yok.
 
 ### 3.4 Önemli İş Kuralları
 
@@ -309,7 +310,7 @@ Kullanıcı tarafından onaylanmamış, sonradan değiştirilebilir kararlar. Et
 - **V4:** Arka uç **Supabase Free plan**; kendi sunucu yok.
 - **V5:** Tek geliştirici + AI agent, haftada ~15 saat, ~12 hafta.
 - **V6:** İlk 6 ayda ≤ 1.000 kullanıcı; ücretsiz katman yeterli.
-- **V7:** Kimlik doğrulama yalnızca e-posta+şifre; sosyal giriş yok (bu yüzden Apple ile Giriş zorunlu değil).
+- **V7:** Kimlik doğrulama e-posta+şifre; ayrıca hesapsız gezinme için Supabase anonim girişi (F19, kullanıcı kararı 2026-10-17). Sosyal giriş yok (bu yüzden Apple ile Giriş zorunlu değil).
 - **V8:** Arayüz yalnızca Türkçe; metinler i18n dosyasında, İngilizce sonraki sürümde.
 - **V9:** Kapak görseli kullanıcı yüklemesi değil, kullanıcının listesindeki bir dizinin TMDB arka planıdır (moderasyon ve depolama yükünü azaltır). Kapak seçilmemişse en son izlenen dizinin arka planı, o da yoksa düz `surface` rengi kullanılır.
 - **V10:** Tüm profiller ve izleme listeleri herkese açık; gizli profil yok.

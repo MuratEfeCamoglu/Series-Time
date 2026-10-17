@@ -8,6 +8,8 @@ import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_view.dart';
 import '../../../theme/app_text_styles.dart';
+import '../../../shared/widgets/guest_gate.dart';
+import '../../auth/providers.dart';
 import '../../tracking/providers.dart';
 import '../data/models.dart';
 import '../logic.dart';
@@ -38,6 +40,7 @@ class SeasonScreen extends ConsumerWidget {
     final watched = ref.watch(watchedEpisodesProvider(showId));
     final loaded = episodes.value;
     final now = DateTime.now();
+    final isGuest = ref.watch(isGuestProvider);
     final canMarkAll =
         loaded != null &&
         watched.hasValue &&
@@ -51,7 +54,10 @@ class SeasonScreen extends ConsumerWidget {
             key: const Key('season.markAll'),
             tooltip: l10n.seasonMarkAll,
             icon: const Icon(Icons.done_all),
-            onPressed: canMarkAll
+            // F19(c): misafir işaretleyemez; düğme hesap çağrısını açar.
+            onPressed: isGuest
+                ? () => showGuestGate(context)
+                : canMarkAll
                 ? () => runMarking(
                     context,
                     ref
@@ -114,6 +120,24 @@ class _EpisodeTile extends ConsumerWidget {
     final released = isReleased(episode, DateTime.now());
     final notifier = ref.read(watchedEpisodesProvider(episode.showId).notifier);
     final isWatched = watched;
+    if (ref.watch(isGuestProvider)) {
+      void gate() => showGuestGate(context);
+      return ListTile(
+        leading: Text('${episode.episodeNumber}', style: AppTextStyles.title),
+        title: Text(episode.name ?? '', style: AppTextStyles.body),
+        subtitle: Text(
+          airDate == null ? l10n.episodeNoAirDate : formatLongDate(airDate),
+          style: AppTextStyles.bodySecondary,
+        ),
+        trailing: Checkbox(
+          key: Key('episode.check.${episode.id}'),
+          semanticLabel: l10n.episodeMarkWatched,
+          value: false,
+          onChanged: released ? (_) => gate() : null,
+        ),
+        onTap: gate,
+      );
+    }
 
     return ListTile(
       leading: Text('${episode.episodeNumber}', style: AppTextStyles.title),

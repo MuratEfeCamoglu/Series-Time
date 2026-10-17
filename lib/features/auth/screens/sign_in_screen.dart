@@ -23,6 +23,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
   final _email = TextEditingController();
   final _password = TextEditingController();
   bool _loading = false;
+  bool _guestLoading = false;
   Object? _error;
 
   @override
@@ -47,6 +48,22 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
       if (mounted) setState(() => _error = error);
     } finally {
       if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  /// F19(a): misafir girişi. Misafir giriş ekranında kalabildiği için Keşfet'e elle gidilir.
+  Future<void> _continueAsGuest() async {
+    setState(() {
+      _guestLoading = true;
+      _error = null;
+    });
+    try {
+      await ref.read(authRepositoryProvider).signInAsGuest();
+      if (mounted) context.go(AppRoutes.discover);
+    } catch (error) {
+      if (mounted) setState(() => _error = error);
+    } finally {
+      if (mounted) setState(() => _guestLoading = false);
     }
   }
 
@@ -104,6 +121,19 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         TextButton(
           onPressed: () => context.go(AppRoutes.signUp),
           child: Text(l10n.signInToSignUp),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        OutlinedButton(
+          key: const Key('signIn.guest'),
+          onPressed: _loading || _guestLoading ? null : _continueAsGuest,
+          child: _guestLoading
+              ? const SizedBox.square(
+                  dimension: AppSpacing.progressIndicatorSize,
+                  child: CircularProgressIndicator(
+                    strokeWidth: AppSpacing.progressIndicatorStroke,
+                  ),
+                )
+              : Text(l10n.guestContinue),
         ),
       ],
     );

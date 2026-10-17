@@ -652,4 +652,17 @@ class AppLocalizationsTr extends AppLocalizations {
   String aboutVersion(String version) {
     return 'Sürüm $version';
   }
+
+  @override
+  String get guestContinue => 'Misafir olarak devam et';
+
+  @override
+  String get guestGateTitle => 'Bu özellik için hesap oluştur';
+
+  @override
+  String get guestGateBody =>
+      'Dizilerini takip etmek, bölüm işaretlemek, yorum yapmak ve arkadaşlarını takip etmek için ücretsiz bir hesap aç.';
+
+  @override
+  String get guestHaveAccount => 'Hesabım var, giriş yap';
 }

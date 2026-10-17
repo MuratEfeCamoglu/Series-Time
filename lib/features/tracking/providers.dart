@@ -22,7 +22,7 @@ final trackingRepositoryProvider = Provider<TrackingRepository>(
 class WatchlistNotifier extends AsyncNotifier<List<WatchlistItem>> {
   @override
   Future<List<WatchlistItem>> build() async {
-    if (ref.watch(authStatusProvider) == AuthStatus.signedOut) return const [];
+    if (!isRegistered(ref.watch(authStatusProvider))) return const [];
     return ref.read(trackingRepositoryProvider).fetchWatchlist();
   }
 
@@ -71,7 +71,7 @@ class WatchedEpisodesNotifier extends AsyncNotifier<Set<int>> {
 
   @override
   Future<Set<int>> build() async {
-    if (ref.watch(authStatusProvider) == AuthStatus.signedOut) return const {};
+    if (!isRegistered(ref.watch(authStatusProvider))) return const {};
     return ref.read(trackingRepositoryProvider).fetchWatchedEpisodeIds(showId);
   }
 
