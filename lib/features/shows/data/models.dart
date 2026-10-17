@@ -117,6 +117,28 @@ class Episode {
   final String? stillPath;
 }
 
+/// `tmdb-proxy` `show_credits` satırı: Hakkında sekmesindeki oyuncu (F4a).
+class ShowCastMember {
+  const ShowCastMember({
+    required this.personId,
+    required this.name,
+    this.character,
+    this.profilePath,
+  });
+
+  factory ShowCastMember.fromJson(Map<String, dynamic> json) => ShowCastMember(
+    personId: json['person_id'] as int,
+    name: json['name'] as String,
+    character: json['character'] as String?,
+    profilePath: json['profile_path'] as String?,
+  );
+
+  final int personId;
+  final String name;
+  final String? character;
+  final String? profilePath;
+}
+
 /// `tmdb-proxy` `show` eyleminin yanıtı.
 class ShowDetail {
   const ShowDetail({required this.show, required this.seasons});

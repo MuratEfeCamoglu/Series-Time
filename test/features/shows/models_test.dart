@@ -126,4 +126,17 @@ void main() {
     expect(userShow.addedAt, DateTime.utc(2026, 10, 17, 10));
     expect(userShow.lastWatchedAt, isNull);
   });
+
+  test('ShowCastMember.fromJson show_credits satırını ayrıştırır', () {
+    final member = ShowCastMember.fromJson({
+      'person_id': 22970,
+      'name': 'Peter Dinklage',
+      'character': 'Tyrion Lannister',
+      'profile_path': '/p.jpg',
+    });
+    expect(member.personId, 22970);
+    expect(member.name, 'Peter Dinklage');
+    expect(member.character, 'Tyrion Lannister');
+    expect(member.profilePath, '/p.jpg');
+  });
 }

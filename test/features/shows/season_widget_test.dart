@@ -142,7 +142,7 @@ void main() {
     final backend = await _openSeason(tester);
     when(() => backend.tracking.markEpisodesUntil(2)).thenAnswer((_) async {});
 
-    await tester.longPress(find.text('İki'));
+    await tester.longPress(find.byKey(const Key('episode.banner.2')));
     await tester.pumpAndSettle();
     when(() => backend.tracking.fetchWatchedEpisodeIds(1399))
         .thenAnswer((_) async => {1, 2});

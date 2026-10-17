@@ -15,11 +15,13 @@ import '../../../theme/app_colors.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_text_styles.dart';
 import '../../auth/providers.dart';
+import '../../profile/widgets/profile_avatar.dart';
 import '../../tracking/logic.dart';
 import '../../tracking/providers.dart';
 import '../data/models.dart';
 import '../logic.dart';
 import '../providers.dart';
+import '../widgets/episode_banner.dart';
 import 'season_screen.dart';
 
 /// Dizi detayı (F4): arka plan, afiş, ad, yıl, durum, listeye ekleme/çıkarma; Hakkında
@@ -191,24 +193,90 @@ class _Header extends StatelessWidget {
   }
 }
 
-class _AboutTab extends StatelessWidget {
+class _AboutTab extends ConsumerWidget {
   const _AboutTab({required this.show});
 
   final Show show;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     return ListView(
       padding: const EdgeInsets.all(AppSpacing.md),
       children: [
-        if (show.overview.isNotEmpty)
+        if (show.overview.isNotEmpty) ...[
           Text(show.overview, style: AppTextStyles.body),
+          const SizedBox(height: AppSpacing.lg),
+        ],
+        Text(l10n.showCastTitle, style: AppTextStyles.title),
+        const SizedBox(height: AppSpacing.sm),
+        ref
+            .watch(showCastProvider(show.id))
+            .when(
+              data: (cast) => cast.isEmpty
+                  ? Text(l10n.showCastEmpty, style: AppTextStyles.bodySecondary)
+                  : SizedBox(
+                      height: AppSpacing.castRowHeight,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: cast.length,
+                        separatorBuilder: (_, _) =>
+                            const SizedBox(width: AppSpacing.sm),
+                        itemBuilder: (context, index) =>
+                            _CastPerson(member: cast[index]),
+                      ),
+                    ),
+              loading: () => const LinearProgressIndicator(),
+              error: (error, _) => ErrorView(
+                error: error,
+                onRetry: () => ref.invalidate(showCastProvider(show.id)),
+              ),
+            ),
       ],
     );
   }
 }
 
-/// Bölümler sekmesi: "Sıradaki" bandı ve sezon kartları (F4a, F5b).
+class _CastPerson extends StatelessWidget {
+  const _CastPerson({required this.member});
+
+  final ShowCastMember member;
+
+  @override
+  Widget build(BuildContext context) {
+    final character = member.character;
+    return SizedBox(
+      key: Key('cast.${member.personId}'),
+      width: AppSpacing.castCardWidth,
+      child: Column(
+        children: [
+          ProfileAvatar(
+            size: AppSpacing.castPhotoSize,
+            url: tmdbImageUrl(member.profilePath, TmdbImageSize.w185),
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            member.name,
+            style: AppTextStyles.caption.copyWith(color: AppColors.textPrimary),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          if (character != null)
+            Text(
+              character,
+              style: AppTextStyles.caption,
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Bölümler sekmesi: "Sıradaki" bandı ve açılır sezon kartları (F4a, F5b).
 class _EpisodesTab extends ConsumerWidget {
   const _EpisodesTab({
     required this.showId,
@@ -239,7 +307,16 @@ class _EpisodesTab extends ConsumerWidget {
           const SizedBox(height: AppSpacing.sm),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-            child: _NextEpisodeBanner(episode: next),
+            child: EpisodeBanner(
+              key: const Key('showDetail.next'),
+              episode: next,
+              label: next == null ? l10n.showAllWatched : null,
+              onTap: next == null
+                  ? null
+                  : ref.read(isGuestProvider)
+                  ? () => showGuestGate(context)
+                  : () => context.push(AppRoutes.episode(next.id)),
+            ),
           ),
           const SizedBox(height: AppSpacing.lg),
         ],
@@ -247,8 +324,9 @@ class _EpisodesTab extends ConsumerWidget {
         const SizedBox(height: AppSpacing.sm),
         for (final season in [...regular, ...specials])
           _SeasonCard(
+            key: ValueKey(season.id),
             season: season,
-            episodes: [
+            cachedEpisodes: [
               for (final e in episodes)
                 if (e.seasonNumber == season.seasonNumber) e,
             ],
@@ -259,186 +337,178 @@ class _EpisodesTab extends ConsumerWidget {
   }
 }
 
-/// Sıradaki bölümün sahne görseli; hepsi izlendiyse "Hepsini izledin!".
-class _NextEpisodeBanner extends ConsumerWidget {
-  const _NextEpisodeBanner({required this.episode});
-
-  /// null: yayınlanmış tüm bölümler izlendi.
-  final Episode? episode;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context);
-    final next = episode;
-    final image = tmdbImageUrl(next?.stillPath, TmdbImageSize.w780);
-    final name = next?.name;
-    final label = next == null
-        ? l10n.showAllWatched
-        : [
-            episodeLabel(next.seasonNumber, next.episodeNumber),
-            if (name != null && name.isNotEmpty) name,
-          ].join(' · ');
-    return SizedBox(
-      height: AppSpacing.nextEpisodeBannerHeight,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(AppSpacing.posterRadius),
-        child: Material(
-          color: AppColors.surfaceAlt,
-          child: InkWell(
-            key: const Key('showDetail.next'),
-            onTap: next == null
-                ? null
-                : ref.read(isGuestProvider)
-                ? () => showGuestGate(context)
-                : () => context.push(AppRoutes.episode(next.id)),
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                if (image != null)
-                  CachedNetworkImage(
-                    imageUrl: image,
-                    fit: BoxFit.cover,
-                    errorWidget: (_, _, _) => const SizedBox.shrink(),
-                  ),
-                const DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [AppColors.scrimClear, AppColors.scrimTop],
-                    ),
-                  ),
-                ),
-                Align(
-                  alignment: next == null
-                      ? Alignment.center
-                      : Alignment.bottomLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.all(AppSpacing.md),
-                    child: Text(
-                      label,
-                      style: AppTextStyles.title.copyWith(
-                        color: next == null
-                            ? AppColors.accent
-                            : AppColors.textPrimary,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// "1. Sezon  ⌄  13/13  ✓" kartı: dokununca sezon ekranı, yuvarlak düğme sezonu işaretler.
-class _SeasonCard extends ConsumerWidget {
+/// "1. Sezon ⌄ 13/13 ✓" kartı: dokununca bölümler altında açılır/kapanır, yuvarlak
+/// düğme sezonu işaretler (F5b).
+class _SeasonCard extends ConsumerStatefulWidget {
   const _SeasonCard({
+    super.key,
     required this.season,
-    required this.episodes,
+    required this.cachedEpisodes,
     required this.watched,
   });
 
   final Season season;
 
   /// Önbellekteki bölümler; sezon hiç açılmadıysa boş olabilir.
-  final List<Episode> episodes;
+  final List<Episode> cachedEpisodes;
   final Set<int> watched;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_SeasonCard> createState() => _SeasonCardState();
+}
+
+class _SeasonCardState extends ConsumerState<_SeasonCard> {
+  bool _expanded = false;
+
+  ({int showId, int seasonNumber}) get _key =>
+      (showId: widget.season.showId, seasonNumber: widget.season.seasonNumber);
+
+  Future<void> _markSeason() async {
+    if (ref.read(isGuestProvider)) return showGuestGate(context);
+    // Bölümler önbellekte yoksa önce çekilir; RPC yalnızca önbellekteki bölümleri işaretler.
+    final seasonEpisodes = widget.cachedEpisodes.isNotEmpty
+        ? widget.cachedEpisodes
+        : await ref.read(seasonEpisodesProvider(_key).future);
+    if (!mounted) return;
+    await runMarking(
+      context,
+      ref
+          .read(watchedEpisodesProvider(widget.season.showId).notifier)
+          .markSeason(widget.season.seasonNumber, seasonEpisodes),
+    );
+    ref.invalidate(showEpisodesProvider(widget.season.showId));
+  }
+
+  void _toggle() {
+    setState(() => _expanded = !_expanded);
+    // Açılınca TMDB'den çekilen bölümler sezon sayılarını da günceller.
+    if (_expanded && widget.cachedEpisodes.isEmpty) {
+      ref
+          .read(seasonEpisodesProvider(_key).future)
+          .then((_) => ref.invalidate(showEpisodesProvider(_key.showId)))
+          .ignore();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final progress = seasonProgress(episodes, watched, DateTime.now());
-    final total = episodes.isEmpty
+    final season = widget.season;
+    final progress = seasonProgress(
+      widget.cachedEpisodes,
+      widget.watched,
+      DateTime.now(),
+    );
+    final total = widget.cachedEpisodes.isEmpty
         ? (season.episodeCount ?? 0)
         : progress.released;
     final complete = total > 0 && progress.watched == total;
 
-    Future<void> markSeason() async {
-      if (ref.read(isGuestProvider)) return showGuestGate(context);
-      // Bölümler önbellekte yoksa önce çekilir; RPC yalnızca önbellekteki bölümleri işaretler.
-      final seasonEpisodes = episodes.isNotEmpty
-          ? episodes
-          : await ref.read(
-              seasonEpisodesProvider((
-                showId: season.showId,
-                seasonNumber: season.seasonNumber,
-              )).future,
-            );
-      if (!context.mounted) return;
-      await runMarking(
-        context,
-        ref
-            .read(watchedEpisodesProvider(season.showId).notifier)
-            .markSeason(season.seasonNumber, seasonEpisodes),
-      );
-      ref.invalidate(showEpisodesProvider(season.showId));
-    }
-
-    return Card(
-      key: Key('season.${season.seasonNumber}'),
-      color: AppColors.surface,
-      clipBehavior: Clip.antiAlias,
-      margin: const EdgeInsets.symmetric(
+    return Padding(
+      padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.md,
         vertical: AppSpacing.xs,
       ),
-      child: InkWell(
-        onTap: () => context
-            .push(
-              AppRoutes.season(season.showId, season.seasonNumber),
-              extra: season.name,
-            )
-            // Sezon ekranında çekilen bölümler bu sayıları da günceller.
-            .then((_) => ref.invalidate(showEpisodesProvider(season.showId))),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.md,
-                AppSpacing.sm,
-                AppSpacing.sm,
-                AppSpacing.sm,
-              ),
-              child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Card(
+            key: Key('season.${season.seasonNumber}'),
+            color: AppColors.surface,
+            clipBehavior: Clip.antiAlias,
+            margin: EdgeInsets.zero,
+            child: InkWell(
+              onTap: _toggle,
+              child: Column(
                 children: [
-                  Expanded(
-                    child: Text(
-                      season.name ?? l10n.seasonTitle(season.seasonNumber),
-                      style: AppTextStyles.title,
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(
+                      AppSpacing.md,
+                      AppSpacing.sm,
+                      AppSpacing.sm,
+                      AppSpacing.sm,
+                    ),
+                    child: Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            season.name ??
+                                l10n.seasonTitle(season.seasonNumber),
+                            style: AppTextStyles.title,
+                          ),
+                        ),
+                        Icon(
+                          _expanded ? Icons.expand_less : Icons.expand_more,
+                          semanticLabel: _expanded
+                              ? l10n.seasonCollapse
+                              : l10n.seasonExpand,
+                        ),
+                        const Spacer(),
+                        Text(
+                          l10n.seasonProgress(progress.watched, total),
+                          style: AppTextStyles.bodySecondary,
+                        ),
+                        const SizedBox(width: AppSpacing.sm),
+                        IconButton(
+                          key: Key('season.markAll.${season.seasonNumber}'),
+                          tooltip: complete
+                              ? l10n.seasonCompleted
+                              : l10n.seasonMarkAll,
+                          onPressed: complete ? null : _markSeason,
+                          icon: Icon(
+                            complete
+                                ? Icons.check_circle
+                                : Icons.check_circle_outline,
+                            color: complete
+                                ? AppColors.accent
+                                : AppColors.textPrimary,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  Text(
-                    l10n.seasonProgress(progress.watched, total),
-                    style: AppTextStyles.bodySecondary,
-                  ),
-                  const SizedBox(width: AppSpacing.sm),
-                  IconButton(
-                    key: Key('season.markAll.${season.seasonNumber}'),
-                    tooltip: complete
-                        ? l10n.seasonCompleted
-                        : l10n.seasonMarkAll,
-                    onPressed: complete ? null : markSeason,
-                    icon: Icon(
-                      complete
-                          ? Icons.check_circle
-                          : Icons.check_circle_outline,
-                      color: complete
-                          ? AppColors.accent
-                          : AppColors.textPrimary,
-                    ),
-                  ),
+                  ProgressBar(value: total == 0 ? 0 : progress.watched / total),
                 ],
               ),
             ),
-            ProgressBar(value: total == 0 ? 0 : progress.watched / total),
-          ],
-        ),
+          ),
+          if (_expanded)
+            ref
+                .watch(seasonEpisodesProvider(_key))
+                .when(
+                  data: (episodes) => episodes.isEmpty
+                      ? Padding(
+                          padding: const EdgeInsets.all(AppSpacing.md),
+                          child: Text(
+                            l10n.seasonNoEpisodes,
+                            style: AppTextStyles.bodySecondary,
+                          ),
+                        )
+                      : Column(
+                          children: [
+                            for (final episode in episodes)
+                              EpisodeBannerTile(
+                                episode: episode,
+                                seasonEpisodes: episodes,
+                                watched: ref
+                                    .watch(
+                                      watchedEpisodesProvider(season.showId),
+                                    )
+                                    .value
+                                    ?.contains(episode.id),
+                              ),
+                          ],
+                        ),
+                  loading: () => const Padding(
+                    padding: EdgeInsets.all(AppSpacing.md),
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
+                  error: (error, _) => ErrorView(
+                    error: error,
+                    onRetry: () => ref.invalidate(seasonEpisodesProvider(_key)),
+                  ),
+                ),
+        ],
       ),
     );
   }

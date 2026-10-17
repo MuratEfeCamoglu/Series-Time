@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:sezonluk/core/failures.dart';
 import 'package:sezonluk/features/shows/data/models.dart';
+import 'package:sezonluk/features/shows/screens/season_screen.dart';
 import 'package:sezonluk/features/tracking/data/models.dart';
 import 'package:sezonluk/features/tracking/screens/shows_screen.dart';
 
@@ -55,6 +56,33 @@ void main() {
     await tester.tap(find.text('Hakkında'));
     await tester.pumpAndSettle();
     expect(find.text('Yedi krallık...'), findsOneWidget);
+    expect(find.text('Oyuncular'), findsOneWidget);
+  });
+
+  testWidgets('Hakkında sekmesinde oyuncular ve rolleri (F4a)', (tester) async {
+    tester.view
+      ..physicalSize = const Size(800, 1600)
+      ..devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final backend = TestBackend();
+    when(() => backend.shows.fetchShow(1399)).thenAnswer((_) async => _detail);
+    when(() => backend.shows.fetchShowCast(1399)).thenAnswer(
+      (_) async => const [
+        ShowCastMember(
+          personId: 22970,
+          name: 'Peter Dinklage',
+          character: 'Tyrion Lannister',
+        ),
+      ],
+    );
+    await backend.pumpApp(tester);
+    GoRouter.of(tester.element(find.byType(ShowsScreen))).push('/show/1399');
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Hakkında'));
+    await tester.pumpAndSettle();
+    expect(find.text('Peter Dinklage'), findsOneWidget);
+    expect(find.text('Tyrion Lannister'), findsOneWidget);
   });
 
   testWidgets(
@@ -214,11 +242,19 @@ void main() {
       ],
     );
 
+    // Yeni sayfa açılmaz; bölümler sezon kartının altında bant olarak açılır.
     await tester.tap(find.text('1. Sezon'));
     await tester.pumpAndSettle();
+    expect(find.byType(SeasonScreen), findsNothing);
 
-    expect(find.text('Kış Geliyor'), findsOneWidget);
+    await tester.ensureVisible(find.byKey(const Key('episode.banner.63057')));
+    await tester.pumpAndSettle();
+    expect(find.text('S01 | B01 · Kış Geliyor'), findsOneWidget);
     expect(find.text('17 Nisan 2011'), findsOneWidget);
     expect(find.text('Yayın tarihi belli değil'), findsOneWidget);
+
+    await tester.tap(find.text('1. Sezon'));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('episode.banner.63056')), findsNothing);
   });
 }

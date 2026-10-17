@@ -101,7 +101,10 @@ void main() {
       Navigator.of(tester.element(find.byType(GuestGate).last)).pop();
       await tester.pumpAndSettle();
 
+      // Sezon kartı yerinde açılır; bölüm bandı aşağıda kalabilir.
       await tester.tap(find.text('1. Sezon'));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.byKey(const Key('episode.check.1')));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('episode.check.1')));
       await tester.pumpAndSettle();

@@ -61,4 +61,5 @@ abstract final class AppSpacing {
   static const double watchlistImageWidth = 128;
   static const double pillRadius = 24;
   static const double nextEpisodeBannerHeight = 120;
+  static const double bannerCheckScale = 1.4;
 }

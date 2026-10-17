@@ -1,26 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
-import '../../../app/router.dart';
-import '../../../core/format.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_view.dart';
 import '../../../shared/widgets/guest_gate.dart';
-import '../../../theme/app_colors.dart';
 import '../../../theme/app_spacing.dart';
-import '../../../theme/app_text_styles.dart';
 import '../../auth/providers.dart';
 import '../../tracking/providers.dart';
-import '../data/models.dart';
 import '../logic.dart';
 import '../providers.dart';
-import '../widgets/episode_still.dart';
+import '../widgets/episode_banner.dart';
 
-/// Sezonun bölümleri (F4a, F5): no, ad, yayın tarihi, izlendi onay kutusu.
-/// Onay kutusu işaretler (F4e); satırın geri kalanı Bölüm Sonrası ekranını açar.
-/// Satıra uzun basmak "Buraya kadar izledim" seçeneğini gösterir.
+/// Sezonun bölümleri (F4a, F5) bant olarak; derin bağlantı ve bildirimlerden açılır.
+/// Dizi detayında aynı bantlar sezon kartının altında açılır.
 class SeasonScreen extends ConsumerWidget {
   const SeasonScreen({
     super.key,
@@ -75,8 +68,9 @@ class SeasonScreen extends ConsumerWidget {
         data: (episodes) => episodes.isEmpty
             ? EmptyState(message: l10n.seasonNoEpisodes)
             : ListView.builder(
+                padding: const EdgeInsets.all(AppSpacing.md),
                 itemCount: episodes.length,
-                itemBuilder: (context, index) => _EpisodeTile(
+                itemBuilder: (context, index) => EpisodeBannerTile(
                   episode: episodes[index],
                   seasonEpisodes: episodes,
                   watched: watched.value?.contains(episodes[index].id),
@@ -100,132 +94,5 @@ Future<void> runMarking(BuildContext context, Future<void> mutation) async {
     await mutation;
   } catch (_) {
     messenger.showSnackBar(SnackBar(content: Text(message)));
-  }
-}
-
-class _EpisodeTile extends ConsumerWidget {
-  const _EpisodeTile({
-    required this.episode,
-    required this.seasonEpisodes,
-    required this.watched,
-  });
-
-  final Episode episode;
-  final List<Episode> seasonEpisodes;
-
-  /// null: izleme kayıtları henüz yüklenmedi.
-  final bool? watched;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context);
-    final airDate = episode.airDate;
-    final released = isReleased(episode, DateTime.now());
-    final notifier = ref.read(watchedEpisodesProvider(episode.showId).notifier);
-    final isWatched = watched;
-    if (ref.watch(isGuestProvider)) {
-      void gate() => showGuestGate(context);
-      return ListTile(
-        leading: _EpisodeLeading(episode: episode),
-        title: Text(episode.name ?? '', style: AppTextStyles.body),
-        subtitle: Text(
-          airDate == null ? l10n.episodeNoAirDate : formatLongDate(airDate),
-          style: AppTextStyles.bodySecondary,
-        ),
-        trailing: Checkbox(
-          key: Key('episode.check.${episode.id}'),
-          semanticLabel: l10n.episodeMarkWatched,
-          value: false,
-          onChanged: released ? (_) => gate() : null,
-        ),
-        onTap: gate,
-      );
-    }
-
-    return ListTile(
-      leading: _EpisodeLeading(episode: episode),
-      title: Text(episode.name ?? '', style: AppTextStyles.body),
-      subtitle: Text(
-        airDate == null ? l10n.episodeNoAirDate : formatLongDate(airDate),
-        style: AppTextStyles.bodySecondary,
-      ),
-      trailing: Checkbox(
-        key: Key('episode.check.${episode.id}'),
-        semanticLabel: l10n.episodeMarkWatched,
-        value: isWatched ?? false,
-        // F5(d): yayınlanmamış bölüm işaretlenemez.
-        onChanged: !released || isWatched == null
-            ? null
-            : (_) {
-                runMarking(context, notifier.toggle(episode));
-                // F5(f): tek bölüm işaretlenince (geri alınınca değil) Bölüm Sonrası açılır.
-                if (!isWatched) context.push(AppRoutes.episode(episode.id));
-              },
-      ),
-      onTap: () => context.push(AppRoutes.episode(episode.id)),
-      onLongPress: !released || isWatched == null
-          ? null
-          : () => showModalBottomSheet<void>(
-              context: context,
-              builder: (sheetContext) => SafeArea(
-                child: ListTile(
-                  key: const Key('episode.markUntil'),
-                  leading: const Icon(Icons.playlist_add_check),
-                  title: Text(l10n.episodeMarkUntil),
-                  onTap: () {
-                    Navigator.pop(sheetContext);
-                    runMarking(
-                      context,
-                      notifier.markUntil(episode, seasonEpisodes),
-                    );
-                  },
-                ),
-              ),
-            ),
-    );
-  }
-}
-
-/// Bölüm numarası ve sahne görseli (F4a).
-class _EpisodeLeading extends StatelessWidget {
-  const _EpisodeLeading({required this.episode});
-
-  final Episode episode;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    return SizedBox(
-      width: AppSpacing.stillThumbWidth,
-      child: Stack(
-        children: [
-          EpisodeStill(
-            stillPath: episode.stillPath,
-            semanticLabel: l10n.episodeStill(
-              episodeCode(episode.seasonNumber, episode.episodeNumber),
-            ),
-          ),
-          Positioned(
-            left: AppSpacing.xs,
-            bottom: AppSpacing.xs,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: AppColors.background,
-                borderRadius: BorderRadius.circular(AppSpacing.posterRadius),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
-                child: Text(
-                  '${episode.episodeNumber}',
-                  style: AppTextStyles.caption.copyWith(
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }

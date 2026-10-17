@@ -12,7 +12,7 @@ Future<TestBackend> _openDiscover(
   List<Show> trending = const [],
 }) async {
   final backend = TestBackend();
-  when(() => backend.shows.trendingShows()).thenAnswer((_) async => trending);
+  when(() => backend.shows.popularShows()).thenAnswer((_) async => trending);
   await backend.pumpApp(tester);
   await tester.tap(
     find.descendant(
@@ -35,7 +35,7 @@ void main() {
         trending: [for (var i = 1; i <= 3; i++) Show(id: i, name: 'Trend $i')],
       );
 
-      expect(find.text('Haftanın trend dizileri'), findsOneWidget);
+      expect(find.text('En ünlü diziler'), findsOneWidget);
       expect(find.byType(PosterCard), findsNWidgets(3));
       final delegate =
           tester.widget<SliverGrid>(find.byType(SliverGrid)).gridDelegate

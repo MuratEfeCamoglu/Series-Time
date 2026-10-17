@@ -1,6 +1,6 @@
 // TMDB API v3 vekili (ISKELET.md §3.5). API anahtarı yalnızca burada, Edge Function sırrı olarak bulunur.
 // Eylemler: search, trending, show, season, episode_credits, genres, discover, recommendations,
-// on_the_air.
+// on_the_air, popular, show_credits.
 // Ortak TMDB kodu: ../_shared/tmdb.ts.
 import { z } from "npm:zod@3";
 import { createClient, type SupabaseClient } from "jsr:@supabase/supabase-js@2";
@@ -44,6 +44,8 @@ const Body = z.discriminatedUnion("action", [
   }),
   z.object({ action: z.literal("recommendations"), showId: tmdbId }),
   z.object({ action: z.literal("on_the_air") }),
+  z.object({ action: z.literal("popular") }),
+  z.object({ action: z.literal("show_credits"), showId: tmdbId }),
 ]);
 
 type CacheState = "hit" | "miss" | "stale";
@@ -95,6 +97,10 @@ Deno.serve(async (req) => {
         return json(await recommendations(db, userData.user.id, body.showId));
       case "on_the_air":
         return json(await onTheAir(db));
+      case "popular":
+        return json(await popular(db));
+      case "show_credits":
+        return json(await showCredits(body.showId));
     }
   } catch (error) {
     if (error instanceof TmdbError) {
@@ -113,6 +119,25 @@ async function search(db: SupabaseClient, query: string, page: number) {
 }
 
 // F6(i): yeni bölümü yayında olan diziler; kullanıcının listesindekiler de gösterilir.
+// F3(d): en ünlü diziler — TMDB'de en çok oy alanlar (anlık popülerlik değil).
+async function popular(db: SupabaseClient) {
+  const data = await tmdb("/discover/tv", { sort_by: "vote_count.desc" });
+  return { results: await upsertSummaries(db, data.results ?? []) };
+}
+
+// F4(a) Hakkında: dizinin tüm sezonlardaki oyuncuları, en çok bölümde oynayan önce
+// (TMDB sırası). Önbelleğe yazılmaz; yalnızca görüntülenir.
+async function showCredits(showId: number) {
+  const data = await tmdb(`/tv/${showId}/aggregate_credits`);
+  const cast = (data.cast ?? []).slice(0, MAX_CREDITS).map((p: TmdbJson) => ({
+    person_id: p.id,
+    name: p.name,
+    character: p.roles?.[0]?.character || null,
+    profile_path: p.profile_path ?? null,
+  }));
+  return { cast };
+}
+
 async function onTheAir(db: SupabaseClient) {
   const data = await tmdb("/tv/on_the_air");
   return { results: await upsertSummaries(db, data.results ?? []) };

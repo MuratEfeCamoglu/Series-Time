@@ -87,7 +87,6 @@
   "discoverSearchShowsHint": "Dizi ara",
   "discoverSearchUsersHint": "Kullanıcı adı ara",
   "discoverSearchMinChars": "Aramak için en az 2 karakter yaz.",
-  "discoverTrendingTitle": "Haftanın trend dizileri",
   "showStatusOngoing": "Devam ediyor",
   "showStatusEnded": "Bitti",
   "showAdd": "Ekle",
@@ -403,5 +402,10 @@
       }
     }
   },
-  "seasonCompleted": "Sezon tamamlandı"
+  "seasonCompleted": "Sezon tamamlandı",
+  "discoverPopularTitle": "En ünlü diziler",
+  "showCastTitle": "Oyuncular",
+  "showCastEmpty": "Oyuncu bilgisi yok.",
+  "seasonExpand": "Bölümleri göster",
+  "seasonCollapse": "Bölümleri gizle"
 }

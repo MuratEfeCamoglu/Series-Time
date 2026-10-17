@@ -105,7 +105,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
   Widget _results(AppLocalizations l10n) {
     if (_query.isEmpty) {
       return _mode == DiscoverMode.shows
-          ? const _TrendingGrid()
+          ? const _PopularGrid()
           : const SizedBox.shrink();
     }
     if (!canSearch(_query)) {
@@ -121,14 +121,14 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
   }
 }
 
-class _TrendingGrid extends ConsumerWidget {
-  const _TrendingGrid();
+class _PopularGrid extends ConsumerWidget {
+  const _PopularGrid();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     return ref
-        .watch(trendingShowsProvider)
+        .watch(popularShowsProvider)
         .when(
           data: (shows) => CustomScrollView(
             slivers: [
@@ -136,7 +136,7 @@ class _TrendingGrid extends ConsumerWidget {
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
                 sliver: SliverToBoxAdapter(
                   child: Text(
-                    l10n.discoverTrendingTitle,
+                    l10n.discoverPopularTitle,
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                 ),
@@ -166,7 +166,7 @@ class _TrendingGrid extends ConsumerWidget {
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (error, _) => ErrorView(
             error: error,
-            onRetry: () => ref.invalidate(trendingShowsProvider),
+            onRetry: () => ref.invalidate(popularShowsProvider),
           ),
         );
   }

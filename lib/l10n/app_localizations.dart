@@ -502,12 +502,6 @@ abstract class AppLocalizations {
   /// **'Aramak için en az 2 karakter yaz.'**
   String get discoverSearchMinChars;
 
-  /// No description provided for @discoverTrendingTitle.
-  ///
-  /// In tr, this message translates to:
-  /// **'Haftanın trend dizileri'**
-  String get discoverTrendingTitle;
-
   /// No description provided for @showStatusOngoing.
   ///
   /// In tr, this message translates to:
@@ -1425,6 +1419,36 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Sezon tamamlandı'**
   String get seasonCompleted;
+
+  /// No description provided for @discoverPopularTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'En ünlü diziler'**
+  String get discoverPopularTitle;
+
+  /// No description provided for @showCastTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Oyuncular'**
+  String get showCastTitle;
+
+  /// No description provided for @showCastEmpty.
+  ///
+  /// In tr, this message translates to:
+  /// **'Oyuncu bilgisi yok.'**
+  String get showCastEmpty;
+
+  /// No description provided for @seasonExpand.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bölümleri göster'**
+  String get seasonExpand;
+
+  /// No description provided for @seasonCollapse.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bölümleri gizle'**
+  String get seasonCollapse;
 }
 
 class _AppLocalizationsDelegate

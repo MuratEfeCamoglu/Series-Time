@@ -19,6 +19,11 @@ final onTheAirProvider = FutureProvider.autoDispose<List<Show>>(
   (ref) => ref.watch(showsRepositoryProvider).onTheAirShows(),
 );
 
+final showCastProvider = FutureProvider.autoDispose
+    .family<List<ShowCastMember>, int>(
+      (ref, showId) => ref.watch(showsRepositoryProvider).fetchShowCast(showId),
+    );
+
 final showDetailProvider = FutureProvider.autoDispose.family<ShowDetail, int>(
   (ref, showId) => ref.watch(showsRepositoryProvider).fetchShow(showId),
 );

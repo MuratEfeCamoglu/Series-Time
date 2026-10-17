@@ -224,9 +224,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get discoverSearchMinChars => 'Aramak için en az 2 karakter yaz.';
 
   @override
-  String get discoverTrendingTitle => 'Haftanın trend dizileri';
-
-  @override
   String get showStatusOngoing => 'Devam ediyor';
 
   @override
@@ -736,4 +733,19 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get seasonCompleted => 'Sezon tamamlandı';
+
+  @override
+  String get discoverPopularTitle => 'En ünlü diziler';
+
+  @override
+  String get showCastTitle => 'Oyuncular';
+
+  @override
+  String get showCastEmpty => 'Oyuncu bilgisi yok.';
+
+  @override
+  String get seasonExpand => 'Bölümleri göster';
+
+  @override
+  String get seasonCollapse => 'Bölümleri gizle';
 }

@@ -5,9 +5,9 @@ import '../shows/data/models.dart';
 import '../shows/providers.dart';
 import '../social/providers.dart';
 
-/// Arama kutusu boşken gösterilen haftanın trend dizileri (F3d).
-final trendingShowsProvider = FutureProvider.autoDispose<List<Show>>(
-  (ref) => ref.watch(showsRepositoryProvider).trendingShows(),
+/// Arama kutusu boşken gösterilen en ünlü diziler (F3d).
+final popularShowsProvider = FutureProvider.autoDispose<List<Show>>(
+  (ref) => ref.watch(showsRepositoryProvider).popularShows(),
 );
 
 final showSearchProvider = FutureProvider.autoDispose

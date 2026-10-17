@@ -28,6 +28,21 @@ class ShowsRepository {
     return showsFromJson(data['results'] as List);
   });
 
+  /// F3(d): en ünlü diziler (TMDB'de en çok oy alanlar).
+  Future<List<Show>> popularShows() => _guard(() async {
+    final data = await _invoke({'action': 'popular'});
+    return showsFromJson(data['results'] as List);
+  });
+
+  /// F4(a) Hakkında: dizinin oyuncuları.
+  Future<List<ShowCastMember>> fetchShowCast(int showId) => _guard(() async {
+    final data = await _invoke({'action': 'show_credits', 'showId': showId});
+    return [
+      for (final row in data['cast'] as List)
+        ShowCastMember.fromJson(row as Map<String, dynamic>),
+    ];
+  });
+
   /// F6(i): TMDB'de yeni bölümü yayında olan diziler.
   Future<List<Show>> onTheAirShows() => _guard(() async {
     final data = await _invoke({'action': 'on_the_air'});
