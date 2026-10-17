@@ -77,5 +77,51 @@
   "countrySearchHint": "Ülke kodu ara (ör. TR)",
   "profileSaved": "Profil kaydedildi.",
   "settingsTitle": "Ayarlar",
-  "signOut": "Çıkış yap"
+  "signOut": "Çıkış yap",
+  "errorTmdbUnavailable": "Dizi bilgileri şu an alınamıyor. Biraz sonra tekrar dene.",
+  "saveFailed": "Kaydedilemedi, tekrar dene.",
+  "cancel": "Vazgeç",
+  "noResults": "Sonuç bulunamadı",
+  "discoverSegmentShows": "Diziler",
+  "discoverSegmentUsers": "Kullanıcılar",
+  "discoverSearchShowsHint": "Dizi ara",
+  "discoverSearchUsersHint": "Kullanıcı adı ara",
+  "discoverSearchMinChars": "Aramak için en az 2 karakter yaz.",
+  "discoverTrendingTitle": "Haftanın trend dizileri",
+  "showStatusOngoing": "Devam ediyor",
+  "showStatusEnded": "Bitti",
+  "showAdd": "Ekle",
+  "showRemove": "Listeden çıkar",
+  "showRemoveConfirmTitle": "Listeden çıkarılsın mı?",
+  "showRemoveConfirmBody": "{name} listenden çıkarılacak ve bu diziye ait izleme kayıtların silinecek.",
+  "@showRemoveConfirmBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "showRemoveConfirmButton": "Çıkar",
+  "showSeasons": "Sezonlar",
+  "showSpecials": "Özel Bölümler",
+  "seasonTitle": "{number}. Sezon",
+  "@seasonTitle": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "seasonEpisodeCount": "{count} bölüm",
+  "@seasonEpisodeCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "episodeNoAirDate": "Yayın tarihi belli değil",
+  "seasonNoEpisodes": "Bu sezonun bölüm bilgisi henüz yok.",
+  "showsEmpty": "Henüz dizi eklemedin",
+  "showsGoToDiscover": "Keşfet'e git"
 }

@@ -447,6 +447,156 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Çıkış yap'**
   String get signOut;
+
+  /// No description provided for @errorTmdbUnavailable.
+  ///
+  /// In tr, this message translates to:
+  /// **'Dizi bilgileri şu an alınamıyor. Biraz sonra tekrar dene.'**
+  String get errorTmdbUnavailable;
+
+  /// No description provided for @saveFailed.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kaydedilemedi, tekrar dene.'**
+  String get saveFailed;
+
+  /// No description provided for @cancel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Vazgeç'**
+  String get cancel;
+
+  /// No description provided for @noResults.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sonuç bulunamadı'**
+  String get noResults;
+
+  /// No description provided for @discoverSegmentShows.
+  ///
+  /// In tr, this message translates to:
+  /// **'Diziler'**
+  String get discoverSegmentShows;
+
+  /// No description provided for @discoverSegmentUsers.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kullanıcılar'**
+  String get discoverSegmentUsers;
+
+  /// No description provided for @discoverSearchShowsHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Dizi ara'**
+  String get discoverSearchShowsHint;
+
+  /// No description provided for @discoverSearchUsersHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kullanıcı adı ara'**
+  String get discoverSearchUsersHint;
+
+  /// No description provided for @discoverSearchMinChars.
+  ///
+  /// In tr, this message translates to:
+  /// **'Aramak için en az 2 karakter yaz.'**
+  String get discoverSearchMinChars;
+
+  /// No description provided for @discoverTrendingTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Haftanın trend dizileri'**
+  String get discoverTrendingTitle;
+
+  /// No description provided for @showStatusOngoing.
+  ///
+  /// In tr, this message translates to:
+  /// **'Devam ediyor'**
+  String get showStatusOngoing;
+
+  /// No description provided for @showStatusEnded.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bitti'**
+  String get showStatusEnded;
+
+  /// No description provided for @showAdd.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ekle'**
+  String get showAdd;
+
+  /// No description provided for @showRemove.
+  ///
+  /// In tr, this message translates to:
+  /// **'Listeden çıkar'**
+  String get showRemove;
+
+  /// No description provided for @showRemoveConfirmTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Listeden çıkarılsın mı?'**
+  String get showRemoveConfirmTitle;
+
+  /// No description provided for @showRemoveConfirmBody.
+  ///
+  /// In tr, this message translates to:
+  /// **'{name} listenden çıkarılacak ve bu diziye ait izleme kayıtların silinecek.'**
+  String showRemoveConfirmBody(String name);
+
+  /// No description provided for @showRemoveConfirmButton.
+  ///
+  /// In tr, this message translates to:
+  /// **'Çıkar'**
+  String get showRemoveConfirmButton;
+
+  /// No description provided for @showSeasons.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sezonlar'**
+  String get showSeasons;
+
+  /// No description provided for @showSpecials.
+  ///
+  /// In tr, this message translates to:
+  /// **'Özel Bölümler'**
+  String get showSpecials;
+
+  /// No description provided for @seasonTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'{number}. Sezon'**
+  String seasonTitle(int number);
+
+  /// No description provided for @seasonEpisodeCount.
+  ///
+  /// In tr, this message translates to:
+  /// **'{count} bölüm'**
+  String seasonEpisodeCount(int count);
+
+  /// No description provided for @episodeNoAirDate.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yayın tarihi belli değil'**
+  String get episodeNoAirDate;
+
+  /// No description provided for @seasonNoEpisodes.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu sezonun bölüm bilgisi henüz yok.'**
+  String get seasonNoEpisodes;
+
+  /// No description provided for @showsEmpty.
+  ///
+  /// In tr, this message translates to:
+  /// **'Henüz dizi eklemedin'**
+  String get showsEmpty;
+
+  /// No description provided for @showsGoToDiscover.
+  ///
+  /// In tr, this message translates to:
+  /// **'Keşfet\'e git'**
+  String get showsGoToDiscover;
 }
 
 class _AppLocalizationsDelegate

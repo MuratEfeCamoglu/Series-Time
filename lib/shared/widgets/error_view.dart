@@ -17,6 +17,7 @@ String failureMessage(AppLocalizations l10n, Object error) {
     AppFailureType.samePassword => l10n.errorSamePassword,
     AppFailureType.rateLimited => l10n.errorRateLimited,
     AppFailureType.fileTooLarge => l10n.errorFileTooLarge,
+    AppFailureType.tmdbUnavailable => l10n.errorTmdbUnavailable,
     AppFailureType.unknown => l10n.errorUnknown,
   };
 }

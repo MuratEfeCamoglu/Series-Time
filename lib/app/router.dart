@@ -12,6 +12,8 @@ import '../features/discover/screens/discover_screen.dart';
 import '../features/profile/screens/edit_profile_screen.dart';
 import '../features/profile/screens/profile_screen.dart';
 import '../features/settings/screens/settings_screen.dart';
+import '../features/shows/screens/season_screen.dart';
+import '../features/shows/screens/show_detail_screen.dart';
 import '../features/tracking/screens/shows_screen.dart';
 import 'shell.dart';
 
@@ -25,6 +27,10 @@ abstract final class AppRoutes {
   static const signUp = '/sign-up';
   static const forgotPassword = '/forgot-password';
   static const resetPassword = '/reset-password';
+
+  static String showDetail(int showId) => '/show/$showId';
+  static String season(int showId, int seasonNumber) =>
+      '/show/$showId/season/$seasonNumber';
 }
 
 const _authRoutes = {
@@ -82,6 +88,26 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
         ],
       ),
+      // Detay ekranları alt menünün üstünde açılır.
+      GoRoute(
+        path: '/show/:id',
+        redirect: (context, state) =>
+            _intParam(state, 'id') == null ? AppRoutes.shows : null,
+        builder: (context, state) =>
+            ShowDetailScreen(showId: _intParam(state, 'id')!),
+        routes: [
+          GoRoute(
+            path: 'season/:season',
+            redirect: (context, state) =>
+                _intParam(state, 'season') == null ? AppRoutes.shows : null,
+            builder: (context, state) => SeasonScreen(
+              showId: _intParam(state, 'id')!,
+              seasonNumber: _intParam(state, 'season')!,
+              title: state.extra as String?,
+            ),
+          ),
+        ],
+      ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) =>
             AppShell(navigationShell: navigationShell),
@@ -120,3 +146,6 @@ final routerProvider = Provider<GoRouter>((ref) {
   });
   return router;
 });
+
+int? _intParam(GoRouterState state, String name) =>
+    int.tryParse(state.pathParameters[name] ?? '');

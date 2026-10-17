@@ -194,4 +194,86 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get signOut => 'Çıkış yap';
+
+  @override
+  String get errorTmdbUnavailable =>
+      'Dizi bilgileri şu an alınamıyor. Biraz sonra tekrar dene.';
+
+  @override
+  String get saveFailed => 'Kaydedilemedi, tekrar dene.';
+
+  @override
+  String get cancel => 'Vazgeç';
+
+  @override
+  String get noResults => 'Sonuç bulunamadı';
+
+  @override
+  String get discoverSegmentShows => 'Diziler';
+
+  @override
+  String get discoverSegmentUsers => 'Kullanıcılar';
+
+  @override
+  String get discoverSearchShowsHint => 'Dizi ara';
+
+  @override
+  String get discoverSearchUsersHint => 'Kullanıcı adı ara';
+
+  @override
+  String get discoverSearchMinChars => 'Aramak için en az 2 karakter yaz.';
+
+  @override
+  String get discoverTrendingTitle => 'Haftanın trend dizileri';
+
+  @override
+  String get showStatusOngoing => 'Devam ediyor';
+
+  @override
+  String get showStatusEnded => 'Bitti';
+
+  @override
+  String get showAdd => 'Ekle';
+
+  @override
+  String get showRemove => 'Listeden çıkar';
+
+  @override
+  String get showRemoveConfirmTitle => 'Listeden çıkarılsın mı?';
+
+  @override
+  String showRemoveConfirmBody(String name) {
+    return '$name listenden çıkarılacak ve bu diziye ait izleme kayıtların silinecek.';
+  }
+
+  @override
+  String get showRemoveConfirmButton => 'Çıkar';
+
+  @override
+  String get showSeasons => 'Sezonlar';
+
+  @override
+  String get showSpecials => 'Özel Bölümler';
+
+  @override
+  String seasonTitle(int number) {
+    return '$number. Sezon';
+  }
+
+  @override
+  String seasonEpisodeCount(int count) {
+    return '$count bölüm';
+  }
+
+  @override
+  String get episodeNoAirDate => 'Yayın tarihi belli değil';
+
+  @override
+  String get seasonNoEpisodes => 'Bu sezonun bölüm bilgisi henüz yok.';
+
+  @override
+  String get showsEmpty => 'Henüz dizi eklemedin';
+
+  @override
+  String get showsGoToDiscover => 'Keşfet\'e git';
 }

@@ -9,6 +9,7 @@ enum AppFailureType {
   samePassword,
   rateLimited,
   fileTooLarge,
+  tmdbUnavailable,
   unknown,
 }
 

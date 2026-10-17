@@ -35,6 +35,10 @@ AppFailure toAppFailure(Object error) {
   if (error is StorageException && error.statusCode == '413') {
     return AppFailure(AppFailureType.fileTooLarge, cause: error);
   }
+  // tmdb-proxy TMDB'ye ulaşamayınca ve önbellekte kayıt yokken 502 döner (ISKELET.md §3.5).
+  if (error is FunctionException && error.status == 502) {
+    return AppFailure(AppFailureType.tmdbUnavailable, cause: error);
+  }
   if (error is PostgrestException && error.code == '23505') {
     return AppFailure(AppFailureType.usernameTaken, cause: error);
   }

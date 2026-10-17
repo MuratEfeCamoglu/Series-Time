@@ -16,4 +16,10 @@ abstract final class AppSpacing {
   static const double formMaxWidth = 420;
   static const double avatarLarge = 96;
   static const double sheetHeightFactor = 0.75;
+
+  static const int posterGridColumns = 3;
+  static const double posterThumbWidth = 46;
+  static const double detailPosterWidth = 110;
+  static const double detailBackdropHeight = 220;
+  static const double emptyStateIconSize = 48;
 }
