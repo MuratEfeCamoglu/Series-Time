@@ -12,7 +12,8 @@ const staleWatchAfter = Duration(days: 30);
 /// Yaklaşan sekmesinin ufku (V14).
 const upcomingDays = 90;
 
-enum WatchlistLayout { grid, list }
+/// F6(c): Diziler ana ekranının üç görünümü.
+enum WatchlistLayout { list, grid, poster }
 
 /// İzlenen yayınlanmış bölüm / yayınlanmış bölüm (sezon 0 hariç, sayılar RPC'den gelir).
 double watchProgress(int watchedCount, int airedCount) {
@@ -274,3 +275,12 @@ List<ShowProgress> recentlyWatchedShows(List<ShowProgress> shows) {
 /// Profildeki "Şu an izlediklerim": Devam ediyor grubundakiler, sıra korunur (F8e).
 List<ShowProgress> currentlyWatching(List<ShowProgress> shows) =>
     filterByStatus(shows, ShowStatus.watching);
+
+/// F6(k) Afiş görünümü Yaklaşan satırı: her diziden yalnızca en yakın bölüm, tarih sırası korunur.
+List<UpcomingEpisode> nextUpcomingPerShow(List<UpcomingEpisode> episodes) {
+  final seen = <int>{};
+  return [
+    for (final e in episodes)
+      if (seen.add(e.showId)) e,
+  ];
+}

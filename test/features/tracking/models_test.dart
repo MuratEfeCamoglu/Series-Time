@@ -161,4 +161,20 @@ void main() {
     expect(e.episodeName, 'Kral Yolu');
     expect(e.watchedAt, DateTime.utc(2026, 10, 17, 20));
   });
+
+  test('RecentEpisode sahne görseli ve arka planı (F8k)', () {
+    final e = RecentEpisode.fromJson({
+      'episode_id': 1,
+      'show_id': 2,
+      'show_name': 'D',
+      'poster_path': '/p.jpg',
+      'backdrop_path': '/b.jpg',
+      'still_path': '/s.jpg',
+      'season_number': 1,
+      'episode_number': 1,
+      'watched_at': '2026-10-17T20:00:00Z',
+    });
+    expect(e.stillPath, '/s.jpg');
+    expect(e.backdropPath, '/b.jpg');
+  });
 }

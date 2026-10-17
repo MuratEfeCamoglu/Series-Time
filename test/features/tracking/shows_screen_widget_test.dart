@@ -10,7 +10,9 @@ import 'package:sezonluk/features/episode_feedback/screens/episode_screen.dart';
 import 'package:sezonluk/features/shows/data/models.dart';
 import 'package:sezonluk/features/tracking/data/models.dart';
 import 'package:sezonluk/features/tracking/logic.dart';
+import 'package:sezonluk/features/social/data/models.dart';
 import 'package:sezonluk/features/tracking/providers.dart';
+import 'package:sezonluk/features/tracking/widgets/poster_home.dart';
 import 'package:sezonluk/theme/app_colors.dart';
 import 'package:sezonluk/shared/widgets/progress_bar.dart';
 
@@ -112,6 +114,11 @@ void main() {
     expect(find.text('S01 | B05'), findsOneWidget);
 
     await tester.tap(find.byKey(const Key('watchlist.layout')));
+    await tester.pumpAndSettle();
+    // Menüde üç görünüm var (F6c).
+    expect(find.byKey(const Key('layout.list')), findsOneWidget);
+    expect(find.byKey(const Key('layout.poster')), findsOneWidget);
+    await tester.tap(find.byKey(const Key('layout.grid')));
     await tester.pumpAndSettle();
 
     expect(find.byType(SliverGrid), findsOneWidget);
@@ -318,5 +325,89 @@ void main() {
           .color,
       AppColors.statusWatching,
     );
+  });
+
+  testWidgets(
+    'Afiş görünümü: üst görsel, çipler, Yaklaşan, devam et ve arkadaşlar (F6k)',
+    (tester) async {
+      tester.view
+        ..physicalSize = const Size(800, 2400)
+        ..devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final today = DateTime.now().toUtc();
+      final backend = TestBackend();
+      when(() => backend.shows.fetchMyShows()).thenAnswer(
+        (_) async => [UserShow(show: testShow, addedAt: DateTime.utc(2026))],
+      );
+      when(() => backend.tracking.fetchWatchlist()).thenAnswer(
+        (_) async => [
+          _item(1, lastWatchedAt: today.subtract(const Duration(days: 1))),
+        ],
+      );
+      when(() => backend.tracking.fetchUpcoming(90)).thenAnswer(
+        (_) async => [
+          for (final (id, show, day) in [(901, 7, 0), (902, 7, 1), (903, 8, 2)])
+            UpcomingEpisode(
+              episodeId: id,
+              showId: show,
+              showName: 'Yakında $show',
+              seasonNumber: 2,
+              episodeNumber: id - 900,
+              airDate: DateTime.utc(today.year, today.month, today.day + day),
+            ),
+        ],
+      );
+      when(() => backend.social.fetchFriendsActivity()).thenAnswer(
+        (_) async => [
+          FriendActivity(
+            userId: 'u2',
+            username: 'burak',
+            episodeId: 12,
+            showId: 1,
+            showName: 'Bitti',
+            seasonNumber: 1,
+            episodeNumber: 2,
+            rating: 3.5,
+            watchedAt: today,
+          ),
+        ],
+      );
+      when(() => backend.tracking.markEpisode(episodeId: 100, showId: 1))
+          .thenAnswer((_) async {});
+      await backend.pumpApp(
+        tester,
+        preferenceValues: {'watchlist.layout': 'poster'},
+      );
+
+      expect(find.byType(PosterHome), findsOneWidget);
+      expect(find.byKey(const Key('home.hero')), findsOneWidget);
+      expect(find.byKey(const Key('home.chip.upcoming')), findsOneWidget);
+      expect(find.byKey(const Key('home.chip.friends')), findsOneWidget);
+      // Yaklaşan: dizi başına bir afiş, köşede bölüm etiketi, altında "Bugün".
+      expect(find.byKey(const ValueKey('home.upcoming.901')), findsOneWidget);
+      expect(find.byKey(const ValueKey('home.upcoming.902')), findsNothing);
+      expect(find.text('S02B01'), findsOneWidget);
+      expect(find.text('Bugün'), findsOneWidget);
+      // Arkadaşlar: kullanıcı adı ve 3,5 yıldız.
+      expect(find.text('burak'), findsOneWidget);
+      expect(find.byIcon(Icons.star_half), findsOneWidget);
+      expect(find.byIcon(Icons.star), findsNWidgets(3));
+
+      // Afişteki onay düğmesi tek dokunuşla işaretler (F5).
+      await tester.tap(find.byKey(const Key('watchlist.check.1')));
+      await tester.pumpAndSettle();
+      verify(() => backend.tracking.markEpisode(episodeId: 100, showId: 1))
+          .called(1);
+    },
+  );
+
+  testWidgets('Afiş görünümünde boş satırlar gösterilmez (F6k)', (
+    tester,
+  ) async {
+    await _open(tester, preferences: {'watchlist.layout': 'poster'});
+    expect(find.byType(PosterHome), findsOneWidget);
+    expect(find.byKey(const Key('home.chip.friends')), findsNothing);
+    expect(find.text('Arkadaşların ne izliyor'), findsNothing);
+    expect(find.text('İzleyecek yeni bölüm yok'), findsOneWidget);
   });
 }

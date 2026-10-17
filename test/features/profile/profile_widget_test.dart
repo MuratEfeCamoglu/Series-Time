@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -266,6 +267,8 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('watchlist.layout')));
       await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('layout.grid')));
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('watchlist.check.1')));
       await tester.pumpAndSettle();
       await tester.tap(_navLabel('Profil'));
@@ -452,4 +455,48 @@ void main() {
       expect(find.byType(ProgressBar), findsOneWidget);
     },
   );
+
+  testWidgets('Son etkinlik bölümün sahne görselini gösterir (F8k)', (
+    tester,
+  ) async {
+    await _openProfile(
+      tester,
+      myShows: [_entry(1)],
+      recent: [
+        RecentEpisode(
+          episodeId: 300,
+          showId: 1,
+          showName: 'Dizi 1',
+          posterPath: '/afis.jpg',
+          backdropPath: '/arka.jpg',
+          stillPath: '/sahne300.jpg',
+          seasonNumber: 1,
+          episodeNumber: 4,
+          watchedAt: DateTime.utc(2026, 10, 17),
+        ),
+        RecentEpisode(
+          episodeId: 301,
+          showId: 1,
+          showName: 'Dizi 1',
+          posterPath: '/afis.jpg',
+          backdropPath: '/arka.jpg',
+          seasonNumber: 1,
+          episodeNumber: 3,
+          watchedAt: DateTime.utc(2026, 10, 16),
+        ),
+      ],
+    );
+    String imageOf(int id) => tester
+        .widget<CachedNetworkImage>(
+          find.descendant(
+            of: find.byKey(Key('profile.recent.$id')),
+            matching: find.byType(CachedNetworkImage),
+          ),
+        )
+        .imageUrl;
+    expect(imageOf(300), contains('/sahne300.jpg'));
+    // Sahne görseli yoksa dizinin arka planı.
+    expect(imageOf(301), contains('/arka.jpg'));
+    expect(find.text('S01 | B04'), findsOneWidget);
+  });
 }

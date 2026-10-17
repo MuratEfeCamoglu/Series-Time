@@ -34,6 +34,17 @@ abstract final class AppSpacing {
   /// Profil kapağı (F8a); avatar kapağın alt kenarına taşar.
   /// Profil başlığı (F8a, F8c): üst çubuk + avatar satırı; arkasında soluk kapak.
   static const double profileHeaderHeight = 190;
+
+  /// Afiş görünümü (F6k): üst görsel ve yatay satır afiş genişliği.
+  static const double homeHeroHeight = 240;
+  static const double homePosterWidth = 120;
+  static const double friendStarSize = 14;
+
+  /// Afiş görünümünde çiplerle uzak bölüme kaydırabilmek için önceden çizilen ekran sayısı.
+  static const double homeCacheViewports = 6;
+
+  /// Son etkinlik kartı (F8k): 16:9 sahne görseli.
+  static const double recentStillWidth = 200;
   static const double profileNameMaxTextScale = 1.3;
   static const double avatarRing = 3;
   static const double badgeMinSize = 16;

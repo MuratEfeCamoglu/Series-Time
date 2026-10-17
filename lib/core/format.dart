@@ -15,3 +15,7 @@ String formatLongDate(DateTime date) =>
 /// Yaklaşan başlığı: "17 Ekim Cuma" (F7).
 String formatDayMonthWeekday(DateTime date) =>
     DateFormat('d MMMM EEEE', 'tr').format(date);
+
+/// Afiş görünümü Yaklaşan satırı: "20 Eki Sal" (F6k).
+String formatShortDayMonthWeekday(DateTime date) =>
+    DateFormat('d MMM EEE', 'tr').format(date);

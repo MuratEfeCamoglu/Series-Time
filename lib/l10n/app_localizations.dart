@@ -622,18 +622,6 @@ abstract class AppLocalizations {
   /// **'İzleyecek yeni bölüm yok'**
   String get watchlistAllCaughtUp;
 
-  /// No description provided for @watchlistShowGrid.
-  ///
-  /// In tr, this message translates to:
-  /// **'Izgara görünümü'**
-  String get watchlistShowGrid;
-
-  /// No description provided for @watchlistShowList.
-  ///
-  /// In tr, this message translates to:
-  /// **'Liste görünümü'**
-  String get watchlistShowList;
-
   /// No description provided for @markNextEpisode.
   ///
   /// In tr, this message translates to:
@@ -1725,6 +1713,54 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'En fazla 4 favori seçebilirsin.'**
   String get favoritesLimit;
+
+  /// No description provided for @layoutMenu.
+  ///
+  /// In tr, this message translates to:
+  /// **'Görünüm'**
+  String get layoutMenu;
+
+  /// No description provided for @layoutList.
+  ///
+  /// In tr, this message translates to:
+  /// **'Liste'**
+  String get layoutList;
+
+  /// No description provided for @layoutGrid.
+  ///
+  /// In tr, this message translates to:
+  /// **'Izgara'**
+  String get layoutGrid;
+
+  /// No description provided for @layoutPoster.
+  ///
+  /// In tr, this message translates to:
+  /// **'Afiş'**
+  String get layoutPoster;
+
+  /// No description provided for @friendsActivityTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Arkadaşların ne izliyor'**
+  String get friendsActivityTitle;
+
+  /// No description provided for @friendRating.
+  ///
+  /// In tr, this message translates to:
+  /// **'{rating} yıldız'**
+  String friendRating(String rating);
+
+  /// No description provided for @profileSaveFailedHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Profil kaydedilemedi: {reason}'**
+  String profileSaveFailedHint(String reason);
+
+  /// No description provided for @validationFixFields.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kırmızı işaretli alanları düzelt.'**
+  String get validationFixFields;
 }
 
 class _AppLocalizationsDelegate

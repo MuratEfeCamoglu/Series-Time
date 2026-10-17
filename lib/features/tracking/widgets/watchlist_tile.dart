@@ -38,7 +38,7 @@ class WatchlistTile extends ConsumerWidget {
       watchedCount: item.watchedCount,
       airedCount: item.airedCount,
     );
-    final check = _CheckButton(item: item, code: code);
+    final check = NextEpisodeCheck(item: item, code: code);
     final poster = PosterCard(
       title: item.name,
       posterPath: item.posterPath,
@@ -84,8 +84,9 @@ class WatchlistTile extends ConsumerWidget {
   }
 }
 
-class _CheckButton extends ConsumerWidget {
-  const _CheckButton({required this.item, required this.code});
+/// Sıradaki bölümü tek dokunuşla işaretleyen yuvarlak düğme (F6d); afiş görünümünde de kullanılır.
+class NextEpisodeCheck extends ConsumerWidget {
+  const NextEpisodeCheck({super.key, required this.item, required this.code});
 
   final WatchlistItem item;
   final String code;

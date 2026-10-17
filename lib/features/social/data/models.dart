@@ -42,3 +42,51 @@ class FollowListEntry {
   final String? avatarPath;
   final DateTime followedAt;
 }
+
+/// `get_friends_activity()` satırı: takip edilen kişinin son izlediği bölüm (F6k).
+class FriendActivity {
+  const FriendActivity({
+    required this.userId,
+    required this.username,
+    required this.episodeId,
+    required this.showId,
+    required this.showName,
+    required this.seasonNumber,
+    required this.episodeNumber,
+    required this.watchedAt,
+    this.avatarPath,
+    this.posterPath,
+    this.stillPath,
+    this.rating,
+  });
+
+  factory FriendActivity.fromJson(Map<String, dynamic> json) => FriendActivity(
+    userId: json['user_id'] as String,
+    username: json['username'] as String,
+    avatarPath: json['avatar_path'] as String?,
+    episodeId: json['episode_id'] as int,
+    showId: json['show_id'] as int,
+    showName: json['show_name'] as String,
+    posterPath: json['poster_path'] as String?,
+    stillPath: json['still_path'] as String?,
+    seasonNumber: json['season_number'] as int,
+    episodeNumber: json['episode_number'] as int,
+    rating: (json['rating'] as num?)?.toDouble(),
+    watchedAt: DateTime.parse(json['watched_at'] as String),
+  );
+
+  final String userId;
+  final String username;
+  final String? avatarPath;
+  final int episodeId;
+  final int showId;
+  final String showName;
+  final String? posterPath;
+  final String? stillPath;
+  final int seasonNumber;
+  final int episodeNumber;
+
+  /// O bölüme verdiği puan (F20); vermediyse null.
+  final double? rating;
+  final DateTime watchedAt;
+}

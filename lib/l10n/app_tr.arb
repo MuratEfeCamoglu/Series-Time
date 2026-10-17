@@ -128,8 +128,6 @@
   "watchlistUpNext": "İzlemeye devam et",
   "watchlistNotRecently": "Bir süredir izlemediklerin",
   "watchlistAllCaughtUp": "İzleyecek yeni bölüm yok",
-  "watchlistShowGrid": "Izgara görünümü",
-  "watchlistShowList": "Liste görünümü",
   "markNextEpisode": "{code} bölümünü izledim",
   "@markNextEpisode": {
     "placeholders": {
@@ -497,5 +495,27 @@
   },
   "favoriteAdd": "Favorilere ekle",
   "favoriteRemove": "Favorilerden çıkar",
-  "favoritesLimit": "En fazla 4 favori seçebilirsin."
+  "favoritesLimit": "En fazla 4 favori seçebilirsin.",
+  "layoutMenu": "Görünüm",
+  "layoutList": "Liste",
+  "layoutGrid": "Izgara",
+  "layoutPoster": "Afiş",
+  "friendsActivityTitle": "Arkadaşların ne izliyor",
+  "friendRating": "{rating} yıldız",
+  "@friendRating": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
+  "profileSaveFailedHint": "Profil kaydedilemedi: {reason}",
+  "@profileSaveFailedHint": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "validationFixFields": "Kırmızı işaretli alanları düzelt."
 }

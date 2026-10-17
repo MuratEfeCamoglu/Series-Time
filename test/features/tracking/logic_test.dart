@@ -363,4 +363,17 @@ void main() {
       expect(currentlyWatching(shows).map((s) => s.showId), [1]);
     });
   });
+
+  test('Afiş görünümü Yaklaşan: dizi başına en yakın bölüm (F6k)', () {
+    UpcomingEpisode e(int id, int show, int day) => UpcomingEpisode(
+      episodeId: id,
+      showId: show,
+      showName: 'D$show',
+      seasonNumber: 1,
+      episodeNumber: id,
+      airDate: DateTime.utc(2026, 10, day),
+    );
+    final result = nextUpcomingPerShow([e(1, 1, 18), e(2, 2, 19), e(3, 1, 20)]);
+    expect(result.map((x) => x.episodeId), [1, 2]);
+  });
 }

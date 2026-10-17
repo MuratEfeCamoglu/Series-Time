@@ -211,6 +211,8 @@ class RecentEpisode {
     required this.episodeNumber,
     required this.watchedAt,
     this.posterPath,
+    this.backdropPath,
+    this.stillPath,
     this.episodeName,
   });
 
@@ -219,6 +221,8 @@ class RecentEpisode {
     showId: json['show_id'] as int,
     showName: json['show_name'] as String,
     posterPath: json['poster_path'] as String?,
+    backdropPath: json['backdrop_path'] as String?,
+    stillPath: json['still_path'] as String?,
     seasonNumber: json['season_number'] as int,
     episodeNumber: json['episode_number'] as int,
     episodeName: json['episode_name'] as String?,
@@ -229,6 +233,10 @@ class RecentEpisode {
   final int showId;
   final String showName;
   final String? posterPath;
+  final String? backdropPath;
+
+  /// Bölümün sahne görseli (F8k); yoksa arka plan, o da yoksa afiş kullanılır.
+  final String? stillPath;
   final int seasonNumber;
   final int episodeNumber;
   final String? episodeName;

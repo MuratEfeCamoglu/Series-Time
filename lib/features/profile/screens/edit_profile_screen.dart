@@ -182,7 +182,13 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
   }
 
   Future<void> _save() async {
-    if (!_formKey.currentState!.validate()) return;
+    final messenger = ScaffoldMessenger.of(context);
+    final l10n = AppLocalizations.of(context);
+    // Hatalı alan ekranın dışında kalabilir; kayıt sessizce durmasın.
+    if (!_formKey.currentState!.validate()) {
+      messenger.showSnackBar(SnackBar(content: Text(l10n.validationFixFields)));
+      return;
+    }
     setState(() {
       _saving = true;
       _error = null;
@@ -204,11 +210,17 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
             ),
           );
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context).profileSaved)),
-      );
+      messenger.showSnackBar(SnackBar(content: Text(l10n.profileSaved)));
       context.pop();
-    } catch (error) {
+    } catch (error, stackTrace) {
+      debugPrint('Profil kaydedilemedi: $error $stackTrace');
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(
+            l10n.profileSaveFailedHint(failureMessage(l10n, error)),
+          ),
+        ),
+      );
       if (mounted) setState(() => _error = error);
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -247,6 +259,10 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
           padding: const EdgeInsets.all(AppSpacing.lg),
           children: [
             if (_saving) const LinearProgressIndicator(),
+            if (_error != null) ...[
+              const SizedBox(height: AppSpacing.md),
+              Text(failureMessage(l10n, _error!), style: AppTextStyles.error),
+            ],
             Center(
               child: ProfileAvatar(
                 bytes: _avatarBytes,
@@ -349,10 +365,6 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
                     : l10n.validationInstagram;
               },
             ),
-            if (_error != null) ...[
-              const SizedBox(height: AppSpacing.md),
-              Text(failureMessage(l10n, _error!), style: AppTextStyles.error),
-            ],
           ],
         ),
       ),

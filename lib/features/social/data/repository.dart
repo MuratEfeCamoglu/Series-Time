@@ -35,6 +35,15 @@ class SocialRepository {
     }
   }
 
+  /// F6(k): takip edilenlerin son izlediği bölümler; engellenenler sorguda çıkarılır.
+  Future<List<FriendActivity>> fetchFriendsActivity() => _guard(() async {
+    final rows = await _client.rpc('get_friends_activity') as List;
+    return [
+      for (final row in rows)
+        FriendActivity.fromJson(row as Map<String, dynamic>),
+    ];
+  });
+
   Future<ProfileCounts> fetchCounts(String userId) => _guard(() async {
     final rows = await _client.rpc(
       'get_profile_counts',

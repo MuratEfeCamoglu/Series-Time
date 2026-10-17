@@ -136,6 +136,7 @@ class TestBackend {
       (_) async => const ProfileCounts(followers: 0, following: 0, badges: 0),
     );
     when(() => social.isFollowing(any())).thenAnswer((_) async => false);
+    when(() => social.fetchFriendsActivity()).thenAnswer((_) async => const []);
     when(() => notifications.fetchUnreadCount()).thenAnswer((_) async => 0);
     when(() => notifications.fetchNotifications())
         .thenAnswer((_) async => const []);

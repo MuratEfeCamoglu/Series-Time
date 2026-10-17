@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:sezonluk/core/failures.dart';
 import 'package:sezonluk/features/profile/data/models.dart';
 import 'package:sezonluk/features/profile/screens/edit_profile_screen.dart';
 import 'package:sezonluk/features/profile/screens/profile_screen.dart';
@@ -136,4 +137,45 @@ void main() {
       expect(find.text('Belirtilmemiş'), findsOneWidget);
     },
   );
+
+  testWidgets('kayıt hatası SnackBar ve formun üstünde görünür (F2)', (
+    tester,
+  ) async {
+    final backend = await openEdit(tester);
+    when(() => backend.profiles.saveProfile(any(), any()))
+        .thenThrow(const AppFailure(AppFailureType.network));
+
+    await tester.enterText(
+      find.byKey(const Key('editProfile.displayName')),
+      'Yeni Ad',
+    );
+    await tester.tap(find.byKey(const Key('editProfile.save')));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(EditProfileScreen), findsOneWidget);
+    expect(find.textContaining('Profil kaydedilemedi'), findsOneWidget);
+    // Hata metni formun başında, avatarın üstünde.
+    final error = find.descendant(
+      of: find.byType(ListView),
+      matching: find.byType(Text),
+    );
+    expect(
+      tester.getTopLeft(error.first).dy,
+      lessThan(
+        tester.getTopLeft(find.byKey(const Key('editProfile.avatar'))).dy,
+      ),
+    );
+  });
+
+  testWidgets('hatalı alan varsa kayıt sessizce durmaz (F2)', (tester) async {
+    final backend = await openEdit(tester);
+    await tester.enterText(
+      find.byKey(const Key('editProfile.displayName')),
+      '',
+    );
+    await tester.tap(find.byKey(const Key('editProfile.save')));
+    await tester.pumpAndSettle();
+    expect(find.text('Kırmızı işaretli alanları düzelt.'), findsOneWidget);
+    verifyNever(() => backend.profiles.saveProfile(any(), any()));
+  });
 }

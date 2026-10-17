@@ -403,7 +403,7 @@ class _Favorites extends StatelessWidget {
   }
 }
 
-/// F8(k): son izlenen bölümler; dokununca Bölüm Sonrası ekranı.
+/// F8(k): son izlenen bölümler, bölümün sahne görseliyle; dokununca Bölüm Sonrası ekranı.
 class _RecentActivity extends StatelessWidget {
   const _RecentActivity({required this.episodes});
 
@@ -411,8 +411,10 @@ class _RecentActivity extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const imageHeight =
+        AppSpacing.recentStillWidth / AppSpacing.stillAspectRatio;
     return SizedBox(
-      height: AppSpacing.posterRowHeight + AppSpacing.lg,
+      height: imageHeight + AppSpacing.xs + AppSpacing.xl + AppSpacing.md,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
@@ -420,32 +422,49 @@ class _RecentActivity extends StatelessWidget {
         separatorBuilder: (_, _) => const SizedBox(width: AppSpacing.sm),
         itemBuilder: (context, index) {
           final episode = episodes[index];
-          final code = episodeLabel(
-            episode.seasonNumber,
-            episode.episodeNumber,
-          );
+          final still = episode.stillPath ?? episode.backdropPath;
+          final url = still == null
+              ? tmdbImageUrl(episode.posterPath, TmdbImageSize.w342)
+              : tmdbImageUrl(still, TmdbImageSize.w300);
           return SizedBox(
             key: Key('profile.recent.${episode.episodeId}'),
-            width: AppSpacing.posterRowHeight * AppSpacing.posterAspectRatio,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Expanded(
-                  child: PosterCard(
-                    title: episode.showName,
-                    posterPath: episode.posterPath,
-                    onTap: () =>
-                        context.push(AppRoutes.episode(episode.episodeId)),
+            width: AppSpacing.recentStillWidth,
+            child: InkWell(
+              onTap: () => context.push(AppRoutes.episode(episode.episodeId)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(
+                      AppSpacing.posterRadius,
+                    ),
+                    child: SizedBox(
+                      height: imageHeight,
+                      width: AppSpacing.recentStillWidth,
+                      child: url == null
+                          ? const ColoredBox(color: AppColors.surfaceAlt)
+                          : CachedNetworkImage(
+                              imageUrl: url,
+                              fit: BoxFit.cover,
+                              errorWidget: (_, _, _) =>
+                                  const ColoredBox(color: AppColors.surfaceAlt),
+                            ),
+                    ),
                   ),
-                ),
-                const SizedBox(height: AppSpacing.xs),
-                Text(
-                  code,
-                  style: AppTextStyles.caption,
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                ),
-              ],
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(
+                    episodeLabel(episode.seasonNumber, episode.episodeNumber),
+                    style: AppTextStyles.body,
+                    maxLines: 1,
+                  ),
+                  Text(
+                    episode.showName,
+                    style: AppTextStyles.caption,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
             ),
           );
         },

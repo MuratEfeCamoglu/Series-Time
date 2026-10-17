@@ -49,4 +49,21 @@ void main() {
     expect(earned.code, 'first_episode');
     expect(earned.earnedAt, DateTime.utc(2026, 10, 17, 10));
   });
+
+  test('15 rozet; bölüm eşikleri artan sırada (F14)', () {
+    expect(badgeOrder.length, 15);
+    expect(badgeOrder.toSet().length, 15);
+    final shelf = badgeShelf([
+      _badge('episodes_5000'),
+      _badge('episodes_10'),
+      _badge('finished_5'),
+      _badge('first_finished'),
+    ], const []);
+    expect(shelf.map((e) => e.badge.code), [
+      'episodes_10',
+      'episodes_5000',
+      'first_finished',
+      'finished_5',
+    ]);
+  });
 }

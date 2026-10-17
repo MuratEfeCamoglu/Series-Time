@@ -12,11 +12,14 @@ import '../../auth/providers.dart';
 import '../../shows/providers.dart';
 import '../logic.dart';
 import '../providers.dart';
+import '../../social/providers.dart';
+import '../widgets/poster_home.dart';
 import '../widgets/show_progress_grid.dart';
 import '../widgets/upcoming_section.dart';
 import '../widgets/watchlist_section.dart';
 
-/// Diziler sekmesi tek sayfa (F6): Son izlenen diziler, Sıradaki ve Yaklaşan (F7).
+/// Diziler sekmesi tek sayfa (F6): Liste/Izgara'da Son izlenen diziler, Sıradaki ve Yaklaşan (F7);
+/// Afiş görünümünde [PosterHome] (F6k).
 class ShowsScreen extends ConsumerWidget {
   const ShowsScreen({super.key});
 
@@ -35,18 +38,30 @@ class ShowsScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(l10n.tabShows),
         actions: [
-          IconButton(
+          // F6(c): Liste, Izgara ve Afiş görünümleri.
+          PopupMenuButton<WatchlistLayout>(
             key: const Key('watchlist.layout'),
-            tooltip: layout == WatchlistLayout.grid
-                ? l10n.watchlistShowList
-                : l10n.watchlistShowGrid,
-            icon: Icon(
-              layout == WatchlistLayout.grid
-                  ? Icons.view_list
-                  : Icons.grid_view,
-            ),
-            onPressed: () =>
-                ref.read(watchlistLayoutProvider.notifier).toggle(),
+            tooltip: l10n.layoutMenu,
+            icon: Icon(switch (layout) {
+              WatchlistLayout.list => Icons.view_list,
+              WatchlistLayout.grid => Icons.grid_view,
+              WatchlistLayout.poster => Icons.view_carousel_outlined,
+            }),
+            onSelected: (choice) =>
+                ref.read(watchlistLayoutProvider.notifier).select(choice),
+            itemBuilder: (context) => [
+              for (final (choice, label) in [
+                (WatchlistLayout.list, l10n.layoutList),
+                (WatchlistLayout.grid, l10n.layoutGrid),
+                (WatchlistLayout.poster, l10n.layoutPoster),
+              ])
+                CheckedPopupMenuItem(
+                  key: Key('layout.${choice.name}'),
+                  value: choice,
+                  checked: layout == choice,
+                  child: Text(label),
+                ),
+            ],
           ),
         ],
       ),
@@ -61,19 +76,22 @@ class ShowsScreen extends ConsumerWidget {
               onRefresh: () {
                 ref
                   ..invalidate(myShowProgressProvider)
-                  ..invalidate(upcomingProvider);
+                  ..invalidate(upcomingProvider)
+                  ..invalidate(friendsActivityProvider);
                 return ref.refresh(watchlistProvider.future);
               },
-              child: const CustomScrollView(
-                slivers: [
-                  _RecentShows(),
-                  WatchlistSection(),
-                  UpcomingSection(),
-                  SliverPadding(
-                    padding: EdgeInsets.only(bottom: AppSpacing.lg),
-                  ),
-                ],
-              ),
+              child: layout == WatchlistLayout.poster
+                  ? const PosterHome()
+                  : const CustomScrollView(
+                      slivers: [
+                        _RecentShows(),
+                        WatchlistSection(),
+                        UpcomingSection(),
+                        SliverPadding(
+                          padding: EdgeInsets.only(bottom: AppSpacing.lg),
+                        ),
+                      ],
+                    ),
             ),
     );
   }

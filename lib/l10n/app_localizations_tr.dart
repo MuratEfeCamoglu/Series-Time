@@ -290,12 +290,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get watchlistAllCaughtUp => 'İzleyecek yeni bölüm yok';
 
   @override
-  String get watchlistShowGrid => 'Izgara görünümü';
-
-  @override
-  String get watchlistShowList => 'Liste görünümü';
-
-  @override
   String markNextEpisode(String code) {
     return '$code bölümünü izledim';
   }
@@ -898,4 +892,32 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get favoritesLimit => 'En fazla 4 favori seçebilirsin.';
+
+  @override
+  String get layoutMenu => 'Görünüm';
+
+  @override
+  String get layoutList => 'Liste';
+
+  @override
+  String get layoutGrid => 'Izgara';
+
+  @override
+  String get layoutPoster => 'Afiş';
+
+  @override
+  String get friendsActivityTitle => 'Arkadaşların ne izliyor';
+
+  @override
+  String friendRating(String rating) {
+    return '$rating yıldız';
+  }
+
+  @override
+  String profileSaveFailedHint(String reason) {
+    return 'Profil kaydedilemedi: $reason';
+  }
+
+  @override
+  String get validationFixFields => 'Kırmızı işaretli alanları düzelt.';
 }

@@ -133,3 +133,9 @@ final followListProvider = AsyncNotifierProvider.autoDispose
       FollowListState,
       ({String userId, FollowList list})
     >(FollowListNotifier.new);
+
+/// F6(k): "Arkadaşların ne izliyor".
+final friendsActivityProvider =
+    FutureProvider.autoDispose<List<FriendActivity>>(
+      (ref) => ref.watch(socialRepositoryProvider).fetchFriendsActivity(),
+    );

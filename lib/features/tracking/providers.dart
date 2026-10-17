@@ -49,6 +49,7 @@ class WatchlistNotifier extends AsyncNotifier<List<WatchlistItem>> {
       ..invalidate(myShowProgressProvider)
       ..invalidate(showProgressProvider)
       ..invalidate(recentActivityProvider)
+      ..invalidate(friendsActivityProvider)
       ..invalidate(userStatsProvider)
       ..invalidate(profileCountsProvider)
       ..invalidate(unreadCountProvider);
@@ -131,6 +132,7 @@ class WatchedEpisodesNotifier extends AsyncNotifier<Set<int>> {
       ..invalidate(myShowProgressProvider)
       ..invalidate(showProgressProvider)
       ..invalidate(recentActivityProvider)
+      ..invalidate(friendsActivityProvider)
       ..invalidate(userStatsProvider)
       ..invalidate(profileCountsProvider)
       ..invalidate(unreadCountProvider);
@@ -216,7 +218,7 @@ final myShowProgressProvider =
 
 const _layoutKey = 'watchlist.layout';
 
-/// F6(c): ızgara/liste tercihi cihazda saklanır.
+/// F6(c): liste/ızgara/afiş tercihi cihazda saklanır.
 class WatchlistLayoutNotifier extends Notifier<WatchlistLayout> {
   @override
   WatchlistLayout build() {
@@ -224,11 +226,11 @@ class WatchlistLayoutNotifier extends Notifier<WatchlistLayout> {
     return WatchlistLayout.values.asNameMap()[stored] ?? WatchlistLayout.list;
   }
 
-  Future<void> toggle() async {
-    state = state == WatchlistLayout.grid
-        ? WatchlistLayout.list
-        : WatchlistLayout.grid;
-    await ref.read(sharedPreferencesProvider).setString(_layoutKey, state.name);
+  Future<void> select(WatchlistLayout layout) async {
+    state = layout;
+    await ref
+        .read(sharedPreferencesProvider)
+        .setString(_layoutKey, layout.name);
   }
 }
 
