@@ -10,6 +10,8 @@ class Profile {
     this.avatarPath,
     this.coverShowId,
     this.coverPath,
+    this.letterboxdUsername,
+    this.instagramUsername,
   });
 
   factory Profile.fromJson(Map<String, dynamic> json) => Profile(
@@ -22,6 +24,8 @@ class Profile {
     avatarPath: json['avatar_path'] as String?,
     coverShowId: json['cover_show_id'] as int?,
     coverPath: json['cover_path'] as String?,
+    letterboxdUsername: json['letterboxd_username'] as String?,
+    instagramUsername: json['instagram_username'] as String?,
     createdAt: DateTime.parse(json['created_at'] as String),
   );
 
@@ -35,6 +39,10 @@ class Profile {
 
   /// Seçilen TMDB arka plan görseli; null ise dizinin ana arka planı (V9).
   final String? coverPath;
+
+  /// F8(i): yalnızca kullanıcı adları saklanır; adres istemcide kurulur.
+  final String? letterboxdUsername;
+  final String? instagramUsername;
   final DateTime createdAt;
 
   Map<String, Object?> toJson() => {
@@ -46,6 +54,8 @@ class Profile {
     'avatar_path': avatarPath,
     'cover_show_id': coverShowId,
     'cover_path': coverPath,
+    'letterboxd_username': letterboxdUsername,
+    'instagram_username': instagramUsername,
     'created_at': createdAt.toIso8601String(),
   };
 }
@@ -59,8 +69,9 @@ class ProfileEdit {
     required this.countryCode,
     required this.coverShowId,
     this.coverPath,
+    this.letterboxdUsername,
+    this.instagramUsername,
     this.avatarBytes,
-    this.avatarTmdbPath,
   });
 
   final String username;
@@ -72,11 +83,12 @@ class ProfileEdit {
   final int? coverShowId;
   final String? coverPath;
 
-  /// Yüklenecek galeri görseli; [avatarTmdbPath] ile birlikte verilmez.
-  final List<int>? avatarBytes;
+  /// null: bağlantı yok.
+  final String? letterboxdUsername;
+  final String? instagramUsername;
 
-  /// Seçilen oyuncu/karakter fotoğrafının TMDB yolu.
-  final String? avatarTmdbPath;
+  /// Kare kırpılmış PNG avatar (galeriden veya dizi görselinden).
+  final List<int>? avatarBytes;
 }
 
 /// `get_user_stats()` satırı (F8d).

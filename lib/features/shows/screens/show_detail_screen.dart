@@ -18,6 +18,7 @@ import '../../auth/providers.dart';
 import '../../profile/widgets/profile_avatar.dart';
 import '../../tracking/logic.dart';
 import '../../tracking/providers.dart';
+import '../../tracking/widgets/status_sheet.dart';
 import '../data/models.dart';
 import '../logic.dart';
 import '../providers.dart';
@@ -184,7 +185,15 @@ class _Header extends StatelessWidget {
                 style: AppTextStyles.bodySecondary,
               ),
               const SizedBox(height: AppSpacing.md),
-              _MyShowsButton(show: show, seasonNumbers: seasonNumbers),
+              Wrap(
+                spacing: AppSpacing.sm,
+                runSpacing: AppSpacing.sm,
+                children: [
+                  _MyShowsButton(show: show, seasonNumbers: seasonNumbers),
+                  // F4(b): listedeki dizinin grubu buradan değiştirilir (F6j).
+                  ShowStatusButton(showId: show.id),
+                ],
+              ),
             ],
           ),
         ),

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:sezonluk/core/failures.dart';
@@ -8,6 +9,9 @@ import 'package:sezonluk/features/discover/screens/discover_screen.dart';
 import 'package:sezonluk/features/episode_feedback/screens/episode_screen.dart';
 import 'package:sezonluk/features/shows/data/models.dart';
 import 'package:sezonluk/features/tracking/data/models.dart';
+import 'package:sezonluk/features/tracking/logic.dart';
+import 'package:sezonluk/features/tracking/providers.dart';
+import 'package:sezonluk/theme/app_colors.dart';
 import 'package:sezonluk/shared/widgets/progress_bar.dart';
 
 import '../../helpers.dart';
@@ -72,7 +76,9 @@ void main() {
         ],
       );
 
+      // Sekme "Sıradaki", ilk bölüm "İzlemeye devam et" (F6a).
       expect(find.text('Sıradaki'), findsOneWidget);
+      expect(find.text('İzlemeye devam et'), findsOneWidget);
       expect(find.text('S01 | B05'), findsWidgets);
       await tester.scrollUntilVisible(
         find.text('Bir süredir izlemediklerin'),
@@ -207,5 +213,133 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Yaklaşan bölüm yok'), findsOneWidget);
+  });
+
+  ShowProgress progress(
+    int id, {
+    required int watched,
+    int aired = 10,
+    String status = 'Returning Series',
+    ManualShowStatus? manual,
+  }) => ShowProgress(
+    showId: id,
+    name: 'Dizi $id',
+    addedAt: DateTime.utc(2026, 1, id),
+    airedCount: aired,
+    watchedCount: watched,
+    showStatus: status,
+    manualStatus: manual,
+  );
+
+  Future<void> openMyShows(WidgetTester tester) async {
+    await tester.tap(find.text('Dizilerim'));
+    await tester.pumpAndSettle();
+  }
+
+  testWidgets('Dizilerim: renkli çubuklar ve gruplara göre filtre (F6j)', (
+    tester,
+  ) async {
+    tester.view
+      ..physicalSize = const Size(800, 1600)
+      ..devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final backend = await _open(tester);
+    when(() => backend.tracking.fetchShowProgress(testUserId)).thenAnswer(
+      (_) async => [
+        progress(1, watched: 10, status: 'Ended'),
+        progress(2, watched: 4),
+        progress(3, watched: 0),
+        progress(4, watched: 2, manual: ManualShowStatus.dropped),
+      ],
+    );
+    await openMyShows(tester);
+
+    ProgressBar bar(int id) => tester.widget<ProgressBar>(
+      find.descendant(
+        of: find.byKey(Key('statusBar.$id')),
+        matching: find.byType(ProgressBar),
+      ),
+    );
+    expect(bar(1).color, AppColors.statusFinished);
+    expect(bar(1).value, 1);
+    expect(bar(2).color, AppColors.statusWatching);
+    expect(bar(2).value, 0.4);
+    expect(bar(3).outlined, isTrue);
+    expect(bar(3).color, AppColors.statusWatchlist);
+    expect(bar(4).color, AppColors.statusDropped);
+    // Renk tek başına bilgi taşımaz: ekran okuyucu etiketi grup adını içerir.
+    expect(bar(1).semanticsLabel, contains('Bitti'));
+
+    // Çipler yatay kayar; sağdakiler önce görünür yapılır.
+    await tester.ensureVisible(find.byKey(const Key('statusFilter.dropped')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('statusFilter.dropped')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('statusBar.4')), findsOneWidget);
+    expect(find.byKey(const Key('statusBar.1')), findsNothing);
+
+    // Çipler yatay kayar; sağdakiler önce görünür yapılır.
+    await tester.ensureVisible(find.byKey(const Key('statusFilter.paused')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('statusFilter.paused')));
+    await tester.pumpAndSettle();
+    expect(find.text('Bu grupta dizi yok.'), findsOneWidget);
+  });
+
+  testWidgets(
+    'Sıradaki kartına uzun basınca grup menüsü; Durduruldu kaydedilir (F6j)',
+    (tester) async {
+      final backend = await _open(tester, watchlist: [_item(1)]);
+      when(() => backend.tracking.fetchShowProgress(testUserId))
+          .thenAnswer((_) async => [progress(1, watched: 4)]);
+      when(() => backend.tracking.setManualStatus(1, ManualShowStatus.paused))
+          .thenAnswer((_) async {});
+
+      await tester.longPress(find.byKey(const Key('watchlist.tile.1')));
+      await tester.pumpAndSettle();
+      expect(find.text('Otomatik (Devam ediyor)'), findsOneWidget);
+      // Durduruldu diziler Sıradaki'den çıkar (get_watchlist süzer).
+      when(() => backend.tracking.fetchWatchlist())
+          .thenAnswer((_) async => const []);
+      await tester.tap(find.byKey(const Key('status.option.paused')));
+      await tester.pumpAndSettle();
+
+      verify(() => backend.tracking.setManualStatus(1, ManualShowStatus.paused))
+          .called(1);
+      expect(find.byKey(const Key('watchlist.tile.1')), findsNothing);
+    },
+  );
+
+  testWidgets('grup kaydı başarısızsa geri alınır ve hata gösterilir (F6j)', (
+    tester,
+  ) async {
+    final backend = await _open(tester);
+    when(() => backend.tracking.fetchShowProgress(testUserId))
+        .thenAnswer((_) async => [progress(1, watched: 4)]);
+    when(() => backend.tracking.setManualStatus(1, ManualShowStatus.dropped))
+        .thenThrow(const AppFailure(AppFailureType.network));
+    await openMyShows(tester);
+
+    final container = ProviderScope.containerOf(
+      tester.element(find.byKey(const Key('statusBar.1'))),
+    );
+    await expectLater(
+      container
+          .read(myShowProgressProvider.notifier)
+          .setStatus(1, ShowStatus.dropped),
+      throwsA(isA<AppFailure>()),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      tester
+          .widget<ProgressBar>(
+            find.descendant(
+              of: find.byKey(const Key('statusBar.1')),
+              matching: find.byType(ProgressBar),
+            ),
+          )
+          .color,
+      AppColors.statusWatching,
+    );
   });
 }

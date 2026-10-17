@@ -80,4 +80,20 @@ void main() {
     expect(profile.coverPath, '/arka.jpg');
     expect(profile.avatarPath, 'tmdb:/kisi.jpg');
   });
+
+  test('Profile.fromJson sosyal kullanıcı adlarını ayrıştırır (F2, F8i)', () {
+    final profile = Profile.fromJson({
+      'id': 'u',
+      'username': 'ayse_1',
+      'display_name': 'Ayşe',
+      'bio': '',
+      'created_at': '2026-10-01T00:00:00Z',
+      'letterboxd_username': 'ayse_lb',
+      'instagram_username': 'ayse.dizi',
+    });
+    expect(profile.letterboxdUsername, 'ayse_lb');
+    expect(profile.instagramUsername, 'ayse.dizi');
+    expect(profile.toJson()['letterboxd_username'], 'ayse_lb');
+    expect(profile.toJson()['instagram_username'], 'ayse.dizi');
+  });
 }

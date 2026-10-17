@@ -12,13 +12,14 @@ import '../../../shared/widgets/poster_card.dart';
 import '../../../theme/app_spacing.dart';
 import '../logic.dart';
 import '../providers.dart';
+import '../widgets/on_the_air_row.dart';
 import '../widgets/show_result_tile.dart';
 import '../widgets/suggest_card.dart';
 import '../widgets/user_result_tile.dart';
 
 enum DiscoverMode { shows, users }
 
-/// Keşfet sekmesi (F3): dizi/kullanıcı araması ve boş aramada trend diziler.
+/// Keşfet sekmesi (F3): dizi/kullanıcı araması; boş aramada "Şu an yayında" ve en ünlü diziler.
 class DiscoverScreen extends ConsumerStatefulWidget {
   const DiscoverScreen({super.key});
 
@@ -104,6 +105,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
 
   Widget _results(AppLocalizations l10n) {
     if (_query.isEmpty) {
+      // F3(g): "Şu an yayında" öneri kartının altında, en ünlü dizilerin üstünde.
       return _mode == DiscoverMode.shows
           ? const _PopularGrid()
           : const SizedBox.shrink();
@@ -127,48 +129,62 @@ class _PopularGrid extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    return ref
-        .watch(popularShowsProvider)
-        .when(
-          data: (shows) => CustomScrollView(
-            slivers: [
-              SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                sliver: SliverToBoxAdapter(
-                  child: Text(
-                    l10n.discoverPopularTitle,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
+    final popular = ref.watch(popularShowsProvider);
+    return CustomScrollView(
+      slivers: [
+        const SliverToBoxAdapter(child: OnTheAirRow()),
+        ...popular.when(
+          data: (shows) => [
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+              sliver: SliverToBoxAdapter(
+                child: Text(
+                  l10n.discoverPopularTitle,
+                  style: Theme.of(context).textTheme.titleMedium,
                 ),
               ),
-              SliverPadding(
-                padding: const EdgeInsets.all(AppSpacing.md),
-                sliver: SliverGrid.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: AppSpacing.posterGridColumns,
-                    mainAxisSpacing: AppSpacing.sm,
-                    crossAxisSpacing: AppSpacing.sm,
-                    childAspectRatio: AppSpacing.posterAspectRatio,
-                  ),
-                  itemCount: shows.length,
-                  itemBuilder: (context, index) {
-                    final show = shows[index];
-                    return PosterCard(
-                      title: show.name,
-                      posterPath: show.posterPath,
-                      onTap: () => context.push(AppRoutes.showDetail(show.id)),
-                    );
-                  },
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.all(AppSpacing.md),
+              sliver: SliverGrid.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: AppSpacing.posterGridColumns,
+                  mainAxisSpacing: AppSpacing.sm,
+                  crossAxisSpacing: AppSpacing.sm,
+                  childAspectRatio: AppSpacing.posterAspectRatio,
                 ),
+                itemCount: shows.length,
+                itemBuilder: (context, index) {
+                  final show = shows[index];
+                  return PosterCard(
+                    title: show.name,
+                    posterPath: show.posterPath,
+                    onTap: () => context.push(AppRoutes.showDetail(show.id)),
+                  );
+                },
               ),
-            ],
-          ),
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (error, _) => ErrorView(
-            error: error,
-            onRetry: () => ref.invalidate(popularShowsProvider),
-          ),
-        );
+            ),
+          ],
+          loading: () => [
+            const SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.all(AppSpacing.lg),
+                child: Center(child: CircularProgressIndicator()),
+              ),
+            ),
+          ],
+          error: (error, _) => [
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: ErrorView(
+                error: error,
+                onRetry: () => ref.invalidate(popularShowsProvider),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
   }
 }
 

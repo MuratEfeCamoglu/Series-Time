@@ -193,3 +193,20 @@ class UserShow {
   final DateTime addedAt;
   final DateTime? lastWatchedAt;
 }
+
+/// `tmdb-proxy` `show_images` yanıtı (F2). Eski sürüm `posters` döndürmeyebilir.
+class ShowImages {
+  const ShowImages({this.backdrops = const [], this.posters = const []});
+
+  factory ShowImages.fromJson(Map<String, dynamic> json) => ShowImages(
+    backdrops: [
+      for (final path in json['backdrops'] as List? ?? const []) path as String,
+    ],
+    posters: [
+      for (final path in json['posters'] as List? ?? const []) path as String,
+    ],
+  );
+
+  final List<String> backdrops;
+  final List<String> posters;
+}

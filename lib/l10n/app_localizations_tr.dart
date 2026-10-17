@@ -275,13 +275,13 @@ class AppLocalizationsTr extends AppLocalizations {
   String get showsGoToDiscover => 'Keşfet\'e git';
 
   @override
-  String get tabWatchlist => 'İzleme Listesi';
+  String get tabWatchlist => 'Sıradaki';
 
   @override
   String get tabUpcoming => 'Yaklaşan';
 
   @override
-  String get watchlistUpNext => 'Sıradaki';
+  String get watchlistUpNext => 'İzlemeye devam et';
 
   @override
   String get watchlistNotRecently => 'Bir süredir izlemediklerin';
@@ -787,8 +787,79 @@ class AppLocalizationsTr extends AppLocalizations {
   String get avatarFromGallery => 'Galeriden seç';
 
   @override
-  String get avatarFromCharacter => 'Dizi karakterinden seç';
+  String get tabMyShows => 'Dizilerim';
 
   @override
-  String get characterPickerTitle => 'Karakter seç';
+  String get statusFinished => 'Bitti';
+
+  @override
+  String get statusUpToDate => 'Güncel';
+
+  @override
+  String get statusWatching => 'Devam ediyor';
+
+  @override
+  String get statusPaused => 'Durduruldu';
+
+  @override
+  String get statusDropped => 'Dönülmez';
+
+  @override
+  String get statusWatchlist => 'İzleme Listesi';
+
+  @override
+  String statusAuto(String status) {
+    return 'Otomatik ($status)';
+  }
+
+  @override
+  String get statusMenuTitle => 'Dizi durumu';
+
+  @override
+  String get statusFilterAll => 'Tümü';
+
+  @override
+  String get statusFilterEmpty => 'Bu grupta dizi yok.';
+
+  @override
+  String statusProgressLabel(String status, int watched, int aired) {
+    return '$status, $watched/$aired bölüm izlendi';
+  }
+
+  @override
+  String get avatarFromShow => 'Dizi görsellerinden seç';
+
+  @override
+  String get avatarPickerTitle => 'Görsel seç';
+
+  @override
+  String get avatarNoImages => 'Bu dizinin görseli yok.';
+
+  @override
+  String get cropTitle => 'Kırp';
+
+  @override
+  String get cropHint => 'Sürükleyip yakınlaştırarak kareyi ayarla.';
+
+  @override
+  String get cropDone => 'Kullan';
+
+  @override
+  String get fieldLetterboxd => 'Letterboxd kullanıcı adı';
+
+  @override
+  String get fieldInstagram => 'Instagram kullanıcı adı';
+
+  @override
+  String get validationLetterboxd => '2–15 karakter: harf, rakam ve _';
+
+  @override
+  String get validationInstagram =>
+      'En fazla 30 karakter: harf, rakam, nokta ve _ (nokta başta/sonda ya da art arda olamaz)';
+
+  @override
+  String get linkLetterboxd => 'Letterboxd';
+
+  @override
+  String get linkInstagram => 'Instagram';
 }

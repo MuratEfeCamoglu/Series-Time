@@ -14,7 +14,7 @@ final showsRepositoryProvider = Provider<ShowsRepository>(
   (ref) => ShowsRepository(ref.watch(supabaseClientProvider)),
 );
 
-/// Diziler sekmesinin üstündeki "Şu an yayında" satırı (F6i).
+/// Keşfet'teki "Şu an yayında" satırı (F3g).
 final onTheAirProvider = FutureProvider.autoDispose<List<Show>>(
   (ref) => ref.watch(showsRepositoryProvider).onTheAirShows(),
 );
@@ -24,11 +24,10 @@ final showCastProvider = FutureProvider.autoDispose
       (ref, showId) => ref.watch(showsRepositoryProvider).fetchShowCast(showId),
     );
 
-final showBackdropsProvider = FutureProvider.autoDispose
-    .family<List<String>, int>(
-      (ref, showId) =>
-          ref.watch(showsRepositoryProvider).fetchShowBackdrops(showId),
-    );
+/// F2: kapak (arka planlar) ve avatar (arka planlar + afişler) seçimi.
+final showImagesProvider = FutureProvider.autoDispose.family<ShowImages, int>(
+  (ref, showId) => ref.watch(showsRepositoryProvider).fetchShowImages(showId),
+);
 
 final showDetailProvider = FutureProvider.autoDispose.family<ShowDetail, int>(
   (ref, showId) => ref.watch(showsRepositoryProvider).fetchShow(showId),
@@ -86,6 +85,7 @@ class MyShowsNotifier extends AsyncNotifier<List<UserShow>> {
     }
     ref
       ..invalidate(watchlistProvider)
+      ..invalidate(myShowProgressProvider)
       ..invalidate(showEpisodesProvider(show.id));
   }
 
@@ -100,6 +100,7 @@ class MyShowsNotifier extends AsyncNotifier<List<UserShow>> {
     // İzleme kayıtları veritabanında silindi (F4c).
     ref
       ..invalidate(watchlistProvider)
+      ..invalidate(myShowProgressProvider)
       ..invalidate(watchedEpisodesProvider(showId))
       ..invalidate(userStatsProvider);
   }

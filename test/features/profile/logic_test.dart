@@ -156,4 +156,39 @@ void main() {
       expect(profileCoverPath(profile(), const []), isNull);
     });
   });
+
+  group('sosyal bağlantılar (F2, F8i)', () {
+    test('kullanıcı adı ayıklanır', () {
+      expect(normalizeSocialUsername('  @Ayse_1 '), 'ayse_1');
+      expect(
+        normalizeSocialUsername('https://letterboxd.com/ayse_1/'),
+        'ayse_1',
+      );
+      expect(
+        normalizeSocialUsername('instagram.com/ayse.dizi?igsh=x'),
+        'ayse.dizi',
+      );
+      expect(normalizeSocialUsername('   '), isNull);
+    });
+
+    test('Letterboxd biçimi', () {
+      expect(isValidLetterboxdUsername('ayse_1'), isTrue);
+      expect(isValidLetterboxdUsername('a'), isFalse);
+      expect(isValidLetterboxdUsername('ayse.1'), isFalse);
+      expect(isValidLetterboxdUsername('a' * 16), isFalse);
+    });
+
+    test('Instagram biçimi', () {
+      expect(isValidInstagramUsername('ayse.dizi_1'), isTrue);
+      expect(isValidInstagramUsername('.ayse'), isFalse);
+      expect(isValidInstagramUsername('ayse.'), isFalse);
+      expect(isValidInstagramUsername('ay..se'), isFalse);
+      expect(isValidInstagramUsername('a' * 31), isFalse);
+    });
+
+    test('adresler', () {
+      expect(letterboxdUrl('ayse_1'), 'https://letterboxd.com/ayse_1/');
+      expect(instagramUrl('ayse'), 'https://www.instagram.com/ayse/');
+    });
+  });
 }

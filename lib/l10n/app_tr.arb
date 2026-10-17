@@ -123,9 +123,9 @@
   "seasonNoEpisodes": "Bu sezonun bölüm bilgisi henüz yok.",
   "showsEmpty": "Henüz dizi eklemedin",
   "showsGoToDiscover": "Keşfet'e git",
-  "tabWatchlist": "İzleme Listesi",
+  "tabWatchlist": "Sıradaki",
   "tabUpcoming": "Yaklaşan",
-  "watchlistUpNext": "Sıradaki",
+  "watchlistUpNext": "İzlemeye devam et",
   "watchlistNotRecently": "Bir süredir izlemediklerin",
   "watchlistAllCaughtUp": "İzleyecek yeni bölüm yok",
   "watchlistShowGrid": "Izgara görünümü",
@@ -436,6 +436,48 @@
   "pickerSearchResults": "Arama sonuçları",
   "pickerSearchHint": "Bir dizi ara.",
   "avatarFromGallery": "Galeriden seç",
-  "avatarFromCharacter": "Dizi karakterinden seç",
-  "characterPickerTitle": "Karakter seç"
+  "tabMyShows": "Dizilerim",
+  "statusFinished": "Bitti",
+  "statusUpToDate": "Güncel",
+  "statusWatching": "Devam ediyor",
+  "statusPaused": "Durduruldu",
+  "statusDropped": "Dönülmez",
+  "statusWatchlist": "İzleme Listesi",
+  "statusAuto": "Otomatik ({status})",
+  "@statusAuto": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "statusMenuTitle": "Dizi durumu",
+  "statusFilterAll": "Tümü",
+  "statusFilterEmpty": "Bu grupta dizi yok.",
+  "statusProgressLabel": "{status}, {watched}/{aired} bölüm izlendi",
+  "@statusProgressLabel": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      },
+      "watched": {
+        "type": "int"
+      },
+      "aired": {
+        "type": "int"
+      }
+    }
+  },
+  "avatarFromShow": "Dizi görsellerinden seç",
+  "avatarPickerTitle": "Görsel seç",
+  "avatarNoImages": "Bu dizinin görseli yok.",
+  "cropTitle": "Kırp",
+  "cropHint": "Sürükleyip yakınlaştırarak kareyi ayarla.",
+  "cropDone": "Kullan",
+  "fieldLetterboxd": "Letterboxd kullanıcı adı",
+  "fieldInstagram": "Instagram kullanıcı adı",
+  "validationLetterboxd": "2–15 karakter: harf, rakam ve _",
+  "validationInstagram": "En fazla 30 karakter: harf, rakam, nokta ve _ (nokta başta/sonda ya da art arda olamaz)",
+  "linkLetterboxd": "Letterboxd",
+  "linkInstagram": "Instagram"
 }

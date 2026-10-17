@@ -139,4 +139,15 @@ void main() {
     expect(member.character, 'Tyrion Lannister');
     expect(member.profilePath, '/p.jpg');
   });
+
+  test('ShowImages.fromJson arka planları ve afişleri ayrıştırır (F2)', () {
+    final images = ShowImages.fromJson({
+      'backdrops': ['/b.jpg'],
+      'posters': ['/p.jpg'],
+    });
+    expect(images.backdrops, ['/b.jpg']);
+    expect(images.posters, ['/p.jpg']);
+    // Eski proxy yalnızca arka plan döndürür.
+    expect(ShowImages.fromJson({'backdrops': []}).posters, isEmpty);
+  });
 }

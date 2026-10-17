@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -15,12 +16,13 @@ import '../../shows/providers.dart';
 import '../data/models.dart';
 import '../logic.dart';
 import '../providers.dart';
-import '../widgets/character_picker_sheet.dart';
+import '../widgets/avatar_crop_view.dart';
+import '../widgets/avatar_image_picker_sheet.dart';
 import '../widgets/country_picker_sheet.dart';
 import '../widgets/cover_picker_sheet.dart';
 import '../widgets/profile_avatar.dart';
 
-/// F2: görünen ad, kullanıcı adı, ülke, biyografi, avatar ve kapak.
+/// F2: görünen ad, kullanıcı adı, ülke, biyografi, avatar, kapak ve sosyal bağlantılar.
 class EditProfileScreen extends ConsumerWidget {
   const EditProfileScreen({super.key});
 
@@ -61,12 +63,17 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
   );
   late final _username = TextEditingController(text: widget.profile.username);
   late final _bio = TextEditingController(text: widget.profile.bio);
+  late final _letterboxd = TextEditingController(
+    text: widget.profile.letterboxdUsername,
+  );
+  late final _instagram = TextEditingController(
+    text: widget.profile.instagramUsername,
+  );
   late String? _countryCode = widget.profile.countryCode;
   late int? _coverShowId = widget.profile.coverShowId;
   late String? _coverPath = widget.profile.coverPath;
   String? _coverLabel;
   Uint8List? _avatarBytes;
-  String? _avatarTmdbPath;
   bool _saving = false;
   Object? _error;
 
@@ -75,10 +82,12 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
     _displayName.dispose();
     _username.dispose();
     _bio.dispose();
+    _letterboxd.dispose();
+    _instagram.dispose();
     super.dispose();
   }
 
-  /// F2: avatar galeriden veya bir dizinin karakter fotoğraflarından.
+  /// F2: avatar galeriden veya bir dizinin arka plan/afiş görsellerinden; ikisi de kare kırpılır.
   Future<void> _chooseAvatarSource() async {
     final l10n = AppLocalizations.of(context);
     final source = await showModalBottomSheet<_AvatarSource>(
@@ -94,10 +103,10 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
               onTap: () => Navigator.pop(sheetContext, _AvatarSource.gallery),
             ),
             ListTile(
-              key: const Key('avatar.character'),
-              leading: const Icon(Icons.theater_comedy_outlined),
-              title: Text(l10n.avatarFromCharacter),
-              onTap: () => Navigator.pop(sheetContext, _AvatarSource.character),
+              key: const Key('avatar.show'),
+              leading: const Icon(Icons.movie_outlined),
+              title: Text(l10n.avatarFromShow),
+              onTap: () => Navigator.pop(sheetContext, _AvatarSource.show),
             ),
           ],
         ),
@@ -107,45 +116,46 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
     switch (source) {
       case _AvatarSource.gallery:
         await _pickAvatar();
-      case _AvatarSource.character:
+      case _AvatarSource.show:
         final path = await showModalBottomSheet<String>(
           context: context,
           isScrollControlled: true,
-          builder: (_) => const CharacterPickerSheet(),
+          builder: (_) => const AvatarImagePickerSheet(),
         );
-        if (path != null && mounted) {
-          setState(() {
-            _avatarTmdbPath = path;
-            _avatarBytes = null;
-          });
+        final url = tmdbImageUrl(path, TmdbImageSize.w780);
+        if (url != null && mounted) {
+          await _crop(CachedNetworkImageProvider(url));
         }
     }
   }
 
-  Future<void> _pickAvatar() async {
-    // F2: en fazla 512×512, JPEG kalite 85.
-    final file = await ref
-        .read(imagePickerProvider)
-        .pickImage(
-          source: ImageSource.gallery,
-          maxWidth: 512,
-          maxHeight: 512,
-          imageQuality: 85,
-          requestFullMetadata: false,
-        );
-    if (file == null) return;
-    final bytes = await file.readAsBytes();
-    if (!mounted) return;
+  Future<void> _crop(ImageProvider image) async {
+    final bytes = await showAvatarCrop(context, image);
+    if (bytes == null || !mounted) return;
     if (!isValidAvatarSize(bytes.length)) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppLocalizations.of(context).errorFileTooLarge)),
       );
       return;
     }
-    setState(() {
-      _avatarBytes = bytes;
-      _avatarTmdbPath = null;
-    });
+    setState(() => _avatarBytes = bytes);
+  }
+
+  Future<void> _pickAvatar() async {
+    // Kırpmada yakınlaştırma payı kalsın diye 512'den büyük okunur; çıktı yine 512×512.
+    final file = await ref
+        .read(imagePickerProvider)
+        .pickImage(
+          source: ImageSource.gallery,
+          maxWidth: avatarOutputSize * 2,
+          maxHeight: avatarOutputSize * 2,
+          imageQuality: 85,
+          requestFullMetadata: false,
+        );
+    if (file == null) return;
+    final bytes = await file.readAsBytes();
+    if (!mounted) return;
+    await _crop(MemoryImage(bytes));
   }
 
   Future<void> _pickCountry() async {
@@ -188,8 +198,9 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
               countryCode: _countryCode,
               coverShowId: _coverShowId,
               coverPath: _coverPath,
+              letterboxdUsername: normalizeSocialUsername(_letterboxd.text),
+              instagramUsername: normalizeSocialUsername(_instagram.text),
               avatarBytes: _avatarBytes,
-              avatarTmdbPath: _avatarTmdbPath,
             ),
           );
       if (!mounted) return;
@@ -239,9 +250,7 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
             Center(
               child: ProfileAvatar(
                 bytes: _avatarBytes,
-                url: _avatarTmdbPath != null
-                    ? tmdbImageUrl(_avatarTmdbPath, TmdbImageSize.w185)
-                    : avatarPath == null
+                url: avatarPath == null
                     ? null
                     : ref.read(profileRepositoryProvider).avatarUrl(avatarPath),
               ),
@@ -308,6 +317,38 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
               ),
               onTap: _saving ? null : _pickCover,
             ),
+            const SizedBox(height: AppSpacing.md),
+            TextFormField(
+              key: const Key('editProfile.letterboxd'),
+              controller: _letterboxd,
+              decoration: InputDecoration(
+                labelText: l10n.fieldLetterboxd,
+                prefixText: '@',
+              ),
+              autocorrect: false,
+              validator: (value) {
+                final username = normalizeSocialUsername(value ?? '');
+                return username == null || isValidLetterboxdUsername(username)
+                    ? null
+                    : l10n.validationLetterboxd;
+              },
+            ),
+            TextFormField(
+              key: const Key('editProfile.instagram'),
+              controller: _instagram,
+              decoration: InputDecoration(
+                labelText: l10n.fieldInstagram,
+                prefixText: '@',
+                errorMaxLines: 2,
+              ),
+              autocorrect: false,
+              validator: (value) {
+                final username = normalizeSocialUsername(value ?? '');
+                return username == null || isValidInstagramUsername(username)
+                    ? null
+                    : l10n.validationInstagram;
+              },
+            ),
             if (_error != null) ...[
               const SizedBox(height: AppSpacing.md),
               Text(failureMessage(l10n, _error!), style: AppTextStyles.error),
@@ -319,4 +360,4 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
   }
 }
 
-enum _AvatarSource { gallery, character }
+enum _AvatarSource { gallery, show }

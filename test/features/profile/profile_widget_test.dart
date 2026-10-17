@@ -3,10 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:sezonluk/features/profile/data/models.dart';
+import 'package:sezonluk/features/profile/logic.dart';
 import 'package:sezonluk/features/profile/screens/user_shows_screen.dart';
+import 'package:sezonluk/features/profile/widgets/avatar_crop_view.dart';
 import 'package:sezonluk/features/shows/data/models.dart';
 import 'package:sezonluk/features/tracking/data/models.dart';
 import 'package:sezonluk/shared/widgets/poster_card.dart';
+import 'package:sezonluk/shared/widgets/progress_bar.dart';
 
 import '../../helpers.dart';
 
@@ -21,9 +24,21 @@ UserShow _entry(int id, {DateTime? watched, String? backdrop}) => UserShow(
   lastWatchedAt: watched,
 );
 
+ShowProgress _progressOf(UserShow entry, {int watched = 0}) => ShowProgress(
+  showId: entry.show.id,
+  name: entry.show.name,
+  addedAt: entry.addedAt,
+  lastWatchedAt: entry.lastWatchedAt,
+  airedCount: 10,
+  watchedCount: watched,
+  showStatus: 'Ended',
+);
+
 Future<TestBackend> _openProfile(
   WidgetTester tester, {
+  Profile? profile,
   List<UserShow> myShows = const [],
+  List<ShowProgress>? progress,
   UserStats stats = const UserStats(watchedEpisodes: 0, watchMinutes: 0),
   List<WatchlistItem> watchlist = const [],
 }) async {
@@ -34,6 +49,16 @@ Future<TestBackend> _openProfile(
   addTearDown(tester.view.reset);
   final backend = TestBackend();
   when(() => backend.shows.fetchMyShows()).thenAnswer((_) async => myShows);
+  if (profile != null) {
+    when(() => backend.profiles.fetchProfile(testUserId))
+        .thenAnswer((_) async => profile);
+  }
+  // get_user_show_progress son izlenene göre sıralı döner.
+  when(() => backend.tracking.fetchShowProgress(testUserId)).thenAnswer(
+    (_) async =>
+        progress ??
+        [for (final e in sortByLastWatched(myShows)) _progressOf(e)],
+  );
   when(() => backend.profiles.fetchStats(testUserId))
       .thenAnswer((_) async => stats);
   when(() => backend.tracking.fetchWatchlist())
@@ -51,12 +76,21 @@ void main() {
   });
 
   testWidgets(
-    'kapak 220 yüksekliğinde, zil ve sayılar görünür (F8a, F8b, F8f)',
+    'kapak 300 yüksekliğinde, avatar solda kapağa taşar; zil ve sayılar (F8a, F8b, F8c, F8f)',
     (tester) async {
       await _openProfile(tester);
 
       final appBar = tester.widget<SliverAppBar>(find.byType(SliverAppBar));
-      expect(appBar.expandedHeight, 220);
+      // Kapak 300 + altında avatarın taştığı ad şeridi.
+      expect(appBar.expandedHeight, 300 + 64);
+      final avatar = tester.getRect(find.byKey(const Key('profile.avatar')));
+      expect(avatar.left, lessThan(800 / 4));
+      expect(avatar.top, lessThan(300));
+      expect(avatar.bottom, greaterThan(300));
+      expect(
+        tester.getTopLeft(find.text('Ayşe')).dx,
+        greaterThan(avatar.right),
+      );
       expect(appBar.flexibleSpace, isA<FlexibleSpaceBar>());
       expect(
         (appBar.flexibleSpace! as FlexibleSpaceBar).collapseMode,
@@ -214,8 +248,12 @@ void main() {
       expect(find.text('Otomatik'), findsOneWidget);
       await tester.tap(find.byKey(const Key('editProfile.cover')));
       await tester.pumpAndSettle();
-      when(() => backend.shows.fetchShowBackdrops(2))
-          .thenAnswer((_) async => ['/arka1.jpg', '/arka2.jpg']);
+      when(() => backend.shows.fetchShowImages(2)).thenAnswer(
+        (_) async => const ShowImages(
+          backdrops: ['/arka1.jpg', '/arka2.jpg'],
+          posters: ['/afis.jpg'],
+        ),
+      );
       await tester.tap(find.byKey(const Key('showChooser.2')));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('cover.image.1')));
@@ -236,43 +274,128 @@ void main() {
     },
   );
 
-  testWidgets('avatar bir dizinin karakter fotoğraflarından seçilir (F2)', (
+  testWidgets(
+    'avatar bir dizinin arka plan ve afişlerinden seçilip kırpmaya gider (F2)',
+    (tester) async {
+      final backend = await _openProfile(tester, myShows: [_entry(1)]);
+      when(() => backend.shows.fetchShowImages(1)).thenAnswer(
+        (_) async =>
+            const ShowImages(backdrops: ['/arka.jpg'], posters: ['/afis.jpg']),
+      );
+
+      await tester.tap(find.text('Düzenle'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('editProfile.avatar')));
+      await tester.pumpAndSettle();
+      // Oyuncu fotoğrafı seçeneği kalktı.
+      expect(find.text('Dizi görsellerinden seç'), findsOneWidget);
+      await tester.tap(find.byKey(const Key('avatar.show')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('showChooser.1')));
+      await tester.pumpAndSettle();
+      // Arka plan ve afiş birlikte listelenir.
+      expect(find.byKey(const Key('avatarImage.0')), findsOneWidget);
+      expect(find.byKey(const Key('avatarImage.1')), findsOneWidget);
+      await tester.tap(find.byKey(const Key('avatarImage.1')));
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.byType(AvatarCropView), findsOneWidget);
+      expect(find.text('Kırp'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'Letterboxd ve Instagram doğrulanır, yalnızca kullanıcı adı kaydedilir (F2)',
+    (tester) async {
+      final backend = await _openProfile(tester);
+      when(() => backend.profiles.saveProfile(any(), any()))
+          .thenAnswer((_) async => testProfile);
+
+      await tester.tap(find.text('Düzenle'));
+      await tester.pumpAndSettle();
+      final letterboxd = find.byKey(const Key('editProfile.letterboxd'));
+      final instagram = find.byKey(const Key('editProfile.instagram'));
+      await tester.ensureVisible(instagram);
+      await tester.enterText(letterboxd, 'a');
+      await tester.enterText(instagram, 'ay..se');
+      await tester.tap(find.byKey(const Key('editProfile.save')));
+      await tester.pumpAndSettle();
+      expect(find.text('2–15 karakter: harf, rakam ve _'), findsOneWidget);
+      expect(find.textContaining('En fazla 30 karakter'), findsOneWidget);
+      verifyNever(() => backend.profiles.saveProfile(any(), any()));
+
+      await tester.enterText(letterboxd, 'https://letterboxd.com/Ayse_LB/');
+      await tester.enterText(instagram, '@ayse.dizi');
+      await tester.tap(find.byKey(const Key('editProfile.save')));
+      await tester.pumpAndSettle();
+
+      final edit =
+          verify(() => backend.profiles.saveProfile(any(), captureAny()))
+                  .captured
+                  .single
+              as ProfileEdit;
+      expect(edit.letterboxdUsername, 'ayse_lb');
+      expect(edit.instagramUsername, 'ayse.dizi');
+    },
+  );
+
+  testWidgets('dolu bağlantılar profilde düğme olarak görünür (F8i)', (
     tester,
   ) async {
-    final backend = await _openProfile(tester, myShows: [_entry(1)]);
-    when(() => backend.shows.fetchShowCast(1)).thenAnswer(
-      (_) async => const [
-        ShowCastMember(
-          personId: 7,
-          name: 'Oyuncu',
-          character: 'Karakter',
-          profilePath: '/kisi.jpg',
-        ),
-      ],
+    await _openProfile(
+      tester,
+      profile: Profile(
+        id: testUserId,
+        username: 'ayse_1',
+        displayName: 'Ayşe',
+        bio: '',
+        letterboxdUsername: 'ayse_lb',
+        createdAt: testProfile.createdAt,
+      ),
     );
-    when(() => backend.profiles.saveProfile(any(), any()))
-        .thenAnswer((_) async => testProfile);
 
-    await tester.tap(find.text('Düzenle'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const Key('editProfile.avatar')));
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const Key('avatar.character')));
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const Key('showChooser.1')));
-    await tester.pumpAndSettle();
-    expect(find.text('Karakter'), findsOneWidget);
-    await tester.tap(find.byKey(const Key('character.7')));
-    await tester.pumpAndSettle();
-
-    await tester.tap(find.byKey(const Key('editProfile.save')));
-    await tester.pumpAndSettle();
-    final edit =
-        verify(() => backend.profiles.saveProfile(any(), captureAny()))
-                .captured
-                .single
-            as ProfileEdit;
-    expect(edit.avatarTmdbPath, '/kisi.jpg');
-    expect(edit.avatarBytes, isNull);
+    final button = find.byKey(const Key('profile.letterboxd'));
+    expect(button, findsOneWidget);
+    expect(
+      find.descendant(of: button, matching: find.byIcon(Icons.link)),
+      findsOneWidget,
+    );
+    expect(find.text('Letterboxd'), findsOneWidget);
+    expect(find.byKey(const Key('profile.instagram')), findsNothing);
   });
+
+  testWidgets(
+    'profil "Dizilerim" grup renginde çubuk; "Tümü" gruplara göre süzülür (F6j, F8e)',
+    (tester) async {
+      final shows = [_entry(1), _entry(2)];
+      final backend = await _openProfile(
+        tester,
+        myShows: shows,
+        progress: [
+          _progressOf(shows[0], watched: 10),
+          _progressOf(shows[1], watched: 3),
+        ],
+      );
+      when(() => backend.profiles.fetchProfileByUsername('ayse_1'))
+          .thenAnswer((_) async => testProfile);
+      await tester.scrollUntilVisible(
+        find.byKey(const Key('profile.seeAll')),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+      expect(find.byType(ProgressBar), findsNWidgets(2));
+
+      await tester.tap(find.byKey(const Key('profile.seeAll')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('statusFilter.finished')));
+      await tester.pumpAndSettle();
+      expect(
+        tester
+            .widgetList<PosterCard>(find.byType(PosterCard))
+            .map((c) => c.title),
+        ['Dizi 1'],
+      );
+    },
+  );
 }

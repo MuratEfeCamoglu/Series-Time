@@ -193,4 +193,122 @@ void main() {
       expect(episodeIdsUntil([special], special, _now), {special.id});
     });
   });
+
+  group('durum grupları (F6j)', () {
+    ShowStatus auto(String? tmdb, int aired, int watched) => autoShowStatus(
+      tmdbStatus: tmdb,
+      airedCount: aired,
+      watchedCount: watched,
+    );
+
+    test('hiç izlenmemiş → İzleme Listesi', () {
+      expect(auto('Ended', 10, 0), ShowStatus.watchlist);
+    });
+
+    test(
+      'yayınlanmış bölümü yok (gelecek/sezon 0 sayılmaz) → İzleme Listesi',
+      () {
+        expect(auto('Returning Series', 0, 0), ShowStatus.watchlist);
+      },
+    );
+
+    test('kısmen izlenmiş → Devam ediyor', () {
+      expect(auto('Ended', 10, 4), ShowStatus.watching);
+      expect(auto('Returning Series', 10, 9), ShowStatus.watching);
+    });
+
+    test('bitmiş dizinin hepsi izlendi → Bitti', () {
+      expect(auto('Ended', 10, 10), ShowStatus.finished);
+      expect(auto('Canceled', 3, 3), ShowStatus.finished);
+    });
+
+    test('yayını süren dizinin yayınlananların hepsi izlendi → Güncel', () {
+      expect(auto('Returning Series', 10, 10), ShowStatus.upToDate);
+      expect(auto('In Production', 1, 1), ShowStatus.upToDate);
+    });
+
+    test('TMDB durumu boş ve hepsi izlendi → Güncel', () {
+      expect(auto(null, 5, 5), ShowStatus.upToDate);
+    });
+
+    test('elle seçim otomatiğin önüne geçer', () {
+      expect(
+        effectiveShowStatus(
+          manual: ManualShowStatus.paused,
+          auto: ShowStatus.watching,
+        ),
+        ShowStatus.paused,
+      );
+      expect(
+        effectiveShowStatus(
+          manual: ManualShowStatus.dropped,
+          auto: ShowStatus.finished,
+        ),
+        ShowStatus.dropped,
+      );
+      expect(
+        effectiveShowStatus(
+          manual: ManualShowStatus.planned,
+          auto: ShowStatus.watching,
+        ),
+        ShowStatus.watchlist,
+      );
+      expect(
+        effectiveShowStatus(manual: null, auto: ShowStatus.upToDate),
+        ShowStatus.upToDate,
+      );
+    });
+
+    test('çubuk doluluğu gruba göre', () {
+      expect(statusProgress(ShowStatus.watchlist, 3, 10), 0);
+      expect(statusProgress(ShowStatus.finished, 10, 10), 1);
+      expect(statusProgress(ShowStatus.upToDate, 4, 4), 1);
+      expect(statusProgress(ShowStatus.watching, 4, 8), 0.5);
+      expect(statusProgress(ShowStatus.paused, 2, 8), 0.25);
+      expect(statusProgress(ShowStatus.dropped, 1, 4), 0.25);
+    });
+
+    test('menü seçimi → kaydedilecek elle grup', () {
+      expect(manualFor(ShowStatus.paused), ManualShowStatus.paused);
+      expect(manualFor(ShowStatus.dropped), ManualShowStatus.dropped);
+      expect(manualFor(ShowStatus.watchlist), ManualShowStatus.planned);
+      expect(manualFor(null), isNull);
+    });
+
+    test('gruba göre filtre', () {
+      ShowProgress show(
+        int id,
+        int aired,
+        int watched, {
+        ManualShowStatus? manual,
+      }) => ShowProgress(
+        showId: id,
+        name: 'D$id',
+        addedAt: DateTime.utc(2026),
+        airedCount: aired,
+        watchedCount: watched,
+        showStatus: 'Ended',
+        manualStatus: manual,
+      );
+      final shows = [
+        show(1, 10, 10),
+        show(2, 10, 3),
+        show(3, 10, 3, manual: ManualShowStatus.dropped),
+        show(4, 10, 0),
+      ];
+      expect(filterByStatus(shows, null).length, 4);
+      expect(filterByStatus(shows, ShowStatus.finished).map((s) => s.showId), [
+        1,
+      ]);
+      expect(filterByStatus(shows, ShowStatus.watching).map((s) => s.showId), [
+        2,
+      ]);
+      expect(filterByStatus(shows, ShowStatus.dropped).map((s) => s.showId), [
+        3,
+      ]);
+      expect(filterByStatus(shows, ShowStatus.watchlist).map((s) => s.showId), [
+        4,
+      ]);
+    });
+  });
 }

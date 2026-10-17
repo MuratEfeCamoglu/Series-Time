@@ -157,3 +157,90 @@ Set<int> episodeIdsUntil(
       if (e.episodeNumber <= target.episodeNumber && isReleased(e, now)) e.id,
   };
 }
+
+/// F6(j) durum grupları. [paused] ve [dropped] yalnızca elle seçilir (V27).
+enum ShowStatus { finished, upToDate, watching, paused, dropped, watchlist }
+
+/// Filtre çiplerindeki ve menüdeki sıra.
+const showStatusOrder = [
+  ShowStatus.watching,
+  ShowStatus.upToDate,
+  ShowStatus.finished,
+  ShowStatus.paused,
+  ShowStatus.dropped,
+  ShowStatus.watchlist,
+];
+
+/// Otomatik grup: hiç izlenmemiş veya yayınlanmış bölümü yoksa İzleme Listesi; yayınlanmış her şey
+/// izlendiyse dizi bittiyse Bitti, değilse (veya TMDB durumu bilinmiyorsa) Güncel; aksi halde
+/// Devam ediyor. Sayılar sezon 0 ve gelecek bölümleri içermez (RPC'den gelir).
+ShowStatus autoShowStatus({
+  required String? tmdbStatus,
+  required int airedCount,
+  required int watchedCount,
+}) {
+  if (airedCount <= 0 || watchedCount <= 0) return ShowStatus.watchlist;
+  if (watchedCount < airedCount) return ShowStatus.watching;
+  return showRunStatus(tmdbStatus) == ShowRunStatus.ended
+      ? ShowStatus.finished
+      : ShowStatus.upToDate;
+}
+
+/// Elle seçilen grup otomatiğin önüne geçer.
+ShowStatus effectiveShowStatus({
+  required ManualShowStatus? manual,
+  required ShowStatus auto,
+}) => switch (manual) {
+  ManualShowStatus.paused => ShowStatus.paused,
+  ManualShowStatus.dropped => ShowStatus.dropped,
+  ManualShowStatus.planned => ShowStatus.watchlist,
+  null => auto,
+};
+
+ShowStatus showStatusOf({
+  required String? tmdbStatus,
+  required int airedCount,
+  required int watchedCount,
+  required ManualShowStatus? manual,
+}) => effectiveShowStatus(
+  manual: manual,
+  auto: autoShowStatus(
+    tmdbStatus: tmdbStatus,
+    airedCount: airedCount,
+    watchedCount: watchedCount,
+  ),
+);
+
+/// Çubuğun doluluğu: İzleme Listesi boş, Bitti ve Güncel dolu; diğerleri kalınan yere kadar.
+double statusProgress(ShowStatus status, int watchedCount, int airedCount) =>
+    switch (status) {
+      ShowStatus.watchlist => 0,
+      ShowStatus.finished || ShowStatus.upToDate => 1,
+      _ => watchProgress(watchedCount, airedCount),
+    };
+
+/// Grup çipi seçili değilse (null) hepsi.
+List<ShowProgress> filterByStatus(
+  List<ShowProgress> shows,
+  ShowStatus? status,
+) => status == null
+    ? shows
+    : [
+        for (final s in shows)
+          if (showStatusOf(
+                tmdbStatus: s.showStatus,
+                airedCount: s.airedCount,
+                watchedCount: s.watchedCount,
+                manual: s.manualStatus,
+              ) ==
+              status)
+            s,
+      ];
+
+/// Menüde seçilen grup → kaydedilecek elle seçim; null "Otomatik".
+ManualShowStatus? manualFor(ShowStatus? choice) => switch (choice) {
+  ShowStatus.paused => ManualShowStatus.paused,
+  ShowStatus.dropped => ManualShowStatus.dropped,
+  ShowStatus.watchlist => ManualShowStatus.planned,
+  _ => null,
+};

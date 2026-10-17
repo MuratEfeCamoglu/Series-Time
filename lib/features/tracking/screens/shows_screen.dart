@@ -6,11 +6,11 @@ import '../../../shared/widgets/guest_gate.dart';
 import '../../auth/providers.dart';
 import '../logic.dart';
 import '../providers.dart';
-import '../widgets/on_the_air_row.dart';
+import '../widgets/my_shows_tab.dart';
 import '../widgets/upcoming_tab.dart';
 import '../widgets/watchlist_tab.dart';
 
-/// Diziler sekmesi: Şu an yayında (F6i), İzleme Listesi (F6) ve Yaklaşan (F7).
+/// Diziler sekmesi: Sıradaki (F6), Dizilerim (F6j) ve Yaklaşan (F7).
 class ShowsScreen extends ConsumerWidget {
   const ShowsScreen({super.key});
 
@@ -20,17 +20,12 @@ class ShowsScreen extends ConsumerWidget {
     if (ref.watch(isGuestProvider)) {
       return Scaffold(
         appBar: AppBar(title: Text(l10n.tabShows)),
-        body: const Column(
-          children: [
-            OnTheAirRow(),
-            Expanded(child: GuestGate()),
-          ],
-        ),
+        body: const GuestGate(),
       );
     }
     final layout = ref.watch(watchlistLayoutProvider);
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         appBar: AppBar(
           title: Text(l10n.tabShows),
@@ -49,21 +44,16 @@ class ShowsScreen extends ConsumerWidget {
                   ref.read(watchlistLayoutProvider.notifier).toggle(),
             ),
           ],
+          bottom: TabBar(
+            tabs: [
+              Tab(text: l10n.tabWatchlist),
+              Tab(text: l10n.tabMyShows),
+              Tab(text: l10n.tabUpcoming),
+            ],
+          ),
         ),
-        // F6(i): "Şu an yayında" sekmelerin üstünde, uygulama açılınca ilk görünen yer.
-        body: Column(
-          children: [
-            const OnTheAirRow(),
-            TabBar(
-              tabs: [
-                Tab(text: l10n.tabWatchlist),
-                Tab(text: l10n.tabUpcoming),
-              ],
-            ),
-            const Expanded(
-              child: TabBarView(children: [WatchlistTab(), UpcomingTab()]),
-            ),
-          ],
+        body: const TabBarView(
+          children: [WatchlistTab(), MyShowsTab(), UpcomingTab()],
         ),
       ),
     );

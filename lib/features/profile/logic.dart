@@ -84,7 +84,10 @@ Show? coverShow(int? coverShowId, List<UserShow> shows) {
 
 const _tmdbAvatarPrefix = 'tmdb:';
 
-/// F2: `avatar_path` TMDB oyuncu/karakter fotoğrafıysa "tmdb:" öneklidir.
+/// Kırpılan avatarın kenar uzunluğu (F2).
+const avatarOutputSize = 512;
+
+/// Eski sürümde seçilen TMDB oyuncu fotoğrafı avatarları "tmdb:" öneklidir; hâlâ gösterilir.
 bool isTmdbAvatar(String path) => path.startsWith(_tmdbAvatarPrefix);
 
 String toTmdbAvatarPath(String tmdbPath) => '$_tmdbAvatarPrefix$tmdbPath';
@@ -120,3 +123,34 @@ const isoCountryCodes = [
   'TZ', 'UA', 'UG', 'UM', 'US', 'UY', 'UZ', 'VA', 'VC', 'VE', 'VG', 'VI', //
   'VN', 'VU', 'WF', 'WS', 'YE', 'YT', 'ZA', 'ZM', 'ZW',
 ];
+
+final _letterboxdPattern = RegExp(r'^[a-z0-9_]{2,15}$');
+final _instagramPattern = RegExp(r'^[a-z0-9._]{1,30}$');
+
+/// F2: "@ad", "letterboxd.com/ad/" veya "instagram.com/ad" yapıştırılsa da yalnızca kullanıcı adı
+/// alınır; boşsa null (alan isteğe bağlı).
+String? normalizeSocialUsername(String input) {
+  var value = input.trim();
+  final fromUrl = RegExp(
+    r'(?:letterboxd\.com|instagram\.com)/([^/?#\s]+)',
+    caseSensitive: false,
+  ).firstMatch(value);
+  if (fromUrl != null) value = fromUrl.group(1)!;
+  if (value.startsWith('@')) value = value.substring(1);
+  value = value.toLowerCase();
+  return value.isEmpty ? null : value;
+}
+
+bool isValidLetterboxdUsername(String username) =>
+    _letterboxdPattern.hasMatch(username);
+
+/// Instagram: harf, rakam, nokta, alt çizgi; nokta ile başlayıp bitmez, art arda nokta yok.
+bool isValidInstagramUsername(String username) =>
+    _instagramPattern.hasMatch(username) &&
+    !username.startsWith('.') &&
+    !username.endsWith('.') &&
+    !username.contains('..');
+
+String letterboxdUrl(String username) => 'https://letterboxd.com/$username/';
+
+String instagramUrl(String username) => 'https://www.instagram.com/$username/';

@@ -1,5 +1,11 @@
 import '../../../core/format.dart';
 
+/// F6(j): kullanıcının elle seçtiği grup; adlar `manual_show_status` enum değerleriyle aynıdır.
+enum ManualShowStatus { paused, dropped, planned }
+
+ManualShowStatus? manualShowStatusFromName(Object? name) =>
+    name is String ? ManualShowStatus.values.asNameMap()[name] : null;
+
 /// `get_watchlist()` satırı: sıradaki bölümü olan dizi ve ilerleme sayıları (F6).
 class WatchlistItem {
   const WatchlistItem({
@@ -16,6 +22,8 @@ class WatchlistItem {
     this.nextEpisodeName,
     this.nextStillPath,
     this.backdropPath,
+    this.showStatus,
+    this.manualStatus,
     this.pending = false,
   });
 
@@ -36,6 +44,8 @@ class WatchlistItem {
     backdropPath: json['backdrop_path'] as String?,
     airedCount: json['aired_count'] as int,
     watchedCount: json['watched_count'] as int,
+    showStatus: json['show_status'] as String?,
+    manualStatus: manualShowStatusFromName(json['manual_status']),
   );
 
   final int showId;
@@ -54,6 +64,10 @@ class WatchlistItem {
   final int airedCount;
   final int watchedCount;
 
+  /// TMDB durumu ("Ended", "Returning Series"…) ve elle seçilen grup: kart rengi (F6j).
+  final String? showStatus;
+  final ManualShowStatus? manualStatus;
+
   /// Sıradaki bölüm işaretlendi, sunucu yanıtı bekleniyor (iyimser güncelleme, F5e).
   final bool pending;
 
@@ -71,6 +85,11 @@ class WatchlistItem {
     backdropPath: backdropPath,
     airedCount: airedCount,
     watchedCount: watchedCount + 1,
+    showStatus: showStatus,
+    // Durduruldu/İzleme Listesi işaretleyince otomatiğe döner (veritabanı tetikleyicisi).
+    manualStatus: manualStatus == ManualShowStatus.dropped
+        ? manualStatus
+        : null,
     pending: true,
   );
 }
@@ -108,4 +127,60 @@ class UpcomingEpisode {
   final int episodeNumber;
   final String? episodeName;
   final DateTime airDate;
+}
+
+/// `get_user_show_progress()` satırı: listedeki dizi, ilerleme sayıları ve grup bilgisi (F6j).
+class ShowProgress {
+  const ShowProgress({
+    required this.showId,
+    required this.name,
+    required this.addedAt,
+    required this.airedCount,
+    required this.watchedCount,
+    this.posterPath,
+    this.backdropPath,
+    this.showStatus,
+    this.lastWatchedAt,
+    this.manualStatus,
+  });
+
+  factory ShowProgress.fromJson(Map<String, dynamic> json) => ShowProgress(
+    showId: json['show_id'] as int,
+    name: json['name'] as String,
+    posterPath: json['poster_path'] as String?,
+    backdropPath: json['backdrop_path'] as String?,
+    showStatus: json['show_status'] as String?,
+    addedAt: DateTime.parse(json['added_at'] as String),
+    lastWatchedAt: switch (json['last_watched_at']) {
+      final String value => DateTime.parse(value),
+      _ => null,
+    },
+    manualStatus: manualShowStatusFromName(json['manual_status']),
+    airedCount: json['aired_count'] as int,
+    watchedCount: json['watched_count'] as int,
+  );
+
+  final int showId;
+  final String name;
+  final String? posterPath;
+  final String? backdropPath;
+  final String? showStatus;
+  final DateTime addedAt;
+  final DateTime? lastWatchedAt;
+  final ManualShowStatus? manualStatus;
+  final int airedCount;
+  final int watchedCount;
+
+  ShowProgress withManualStatus(ManualShowStatus? status) => ShowProgress(
+    showId: showId,
+    name: name,
+    posterPath: posterPath,
+    backdropPath: backdropPath,
+    showStatus: showStatus,
+    addedAt: addedAt,
+    lastWatchedAt: lastWatchedAt,
+    manualStatus: status,
+    airedCount: airedCount,
+    watchedCount: watchedCount,
+  );
 }

@@ -3,20 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../app/router.dart';
 import '../../../core/tmdb_image.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../../shared/widgets/poster_card.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_text_styles.dart';
-import '../../shows/data/models.dart';
 import '../../notifications/logic.dart';
 import '../../notifications/providers.dart';
 import '../../shows/providers.dart';
 import '../../social/providers.dart';
 import '../../social/widgets/follow_button.dart';
+import '../../tracking/data/models.dart';
+import '../../tracking/providers.dart';
+import '../../tracking/widgets/show_progress_grid.dart';
 import '../data/models.dart';
 import '../logic.dart';
 import '../providers.dart';
@@ -43,11 +45,15 @@ class ProfileView extends ConsumerWidget {
       TmdbImageSize.w780,
     );
 
+    final avatarPath = profile.avatarPath;
+
     return CustomScrollView(
       slivers: [
         SliverAppBar(
           pinned: true,
-          expandedHeight: AppSpacing.profileCoverHeight,
+          // Avatarın yarısı kapağın altına taşar (F8c).
+          expandedHeight:
+              AppSpacing.profileCoverHeight + AppSpacing.profileNameStrip,
           actions: [
             if (isMe) ...[
               const _NotificationBell(),
@@ -61,15 +67,13 @@ class ProfileView extends ConsumerWidget {
           ],
           flexibleSpace: FlexibleSpaceBar(
             collapseMode: CollapseMode.parallax,
-            background: cover == null
-                ? const ColoredBox(color: AppColors.surface)
-                : CachedNetworkImage(
-                    key: const Key('profile.cover'),
-                    imageUrl: cover,
-                    fit: BoxFit.cover,
-                    errorWidget: (_, _, _) =>
-                        const ColoredBox(color: AppColors.surface),
-                  ),
+            background: _CoverHeader(
+              profile: profile,
+              coverUrl: cover,
+              avatarUrl: avatarPath == null
+                  ? null
+                  : ref.read(profileRepositoryProvider).avatarUrl(avatarPath),
+            ),
           ),
         ),
         SliverPadding(
@@ -105,9 +109,123 @@ class ProfileView extends ConsumerWidget {
             ),
           ),
         ),
-        SliverToBoxAdapter(child: _ShowsRow(shows: sortedShows)),
+        SliverToBoxAdapter(
+          child: _ShowsRow(
+            shows:
+                (isMe
+                        ? ref.watch(myShowProgressProvider)
+                        : ref.watch(showProgressProvider(profile.id)))
+                    .value ??
+                const [],
+          ),
+        ),
         const SliverPadding(padding: EdgeInsets.only(bottom: AppSpacing.xl)),
       ],
+    );
+  }
+}
+
+/// F8(a, c): kapak; solda alt kenarına taşan avatar, sağında ad, bayrak ve kullanıcı adı.
+class _CoverHeader extends StatelessWidget {
+  const _CoverHeader({
+    required this.profile,
+    required this.coverUrl,
+    required this.avatarUrl,
+  });
+
+  final Profile profile;
+  final String? coverUrl;
+  final String? avatarUrl;
+
+  @override
+  Widget build(BuildContext context) {
+    final url = coverUrl;
+    final country = profile.countryCode;
+    // Avatarın merkezi kapağın alt kenarında durur.
+    const avatarBottom =
+        AppSpacing.profileNameStrip -
+        AppSpacing.avatarLarge / 2 -
+        AppSpacing.avatarRing;
+    return ColoredBox(
+      color: AppColors.background,
+      child: Stack(
+        children: [
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            height: AppSpacing.profileCoverHeight,
+            child: url == null
+                ? const ColoredBox(color: AppColors.surface)
+                : CachedNetworkImage(
+                    key: const Key('profile.cover'),
+                    imageUrl: url,
+                    fit: BoxFit.cover,
+                    errorWidget: (_, _, _) =>
+                        const ColoredBox(color: AppColors.surface),
+                  ),
+          ),
+          Positioned(
+            left: AppSpacing.md,
+            bottom: avatarBottom,
+            child: DecoratedBox(
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.background,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(AppSpacing.avatarRing),
+                child: ProfileAvatar(
+                  key: const Key('profile.avatar'),
+                  url: avatarUrl,
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            left:
+                AppSpacing.md +
+                AppSpacing.avatarLarge +
+                AppSpacing.avatarRing * 2 +
+                AppSpacing.sm,
+            right: AppSpacing.md,
+            bottom: 0,
+            height: AppSpacing.profileNameStrip,
+            // Şerit sabit yükseklikte; çok büyük sistem yazı boyutunda taşmasın.
+            child: MediaQuery.withClampedTextScaling(
+              maxScaleFactor: AppSpacing.profileNameMaxTextScale,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    children: [
+                      Flexible(
+                        child: Text(
+                          profile.displayName,
+                          style: AppTextStyles.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      if (country != null) ...[
+                        const SizedBox(width: AppSpacing.xs),
+                        Text(countryFlag(country), style: AppTextStyles.title),
+                      ],
+                    ],
+                  ),
+                  Text(
+                    '@${profile.username}',
+                    style: AppTextStyles.bodySecondary,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -132,69 +250,104 @@ class _NotificationBell extends ConsumerWidget {
   }
 }
 
-class _Header extends ConsumerWidget {
+class _Header extends StatelessWidget {
   const _Header({required this.profile, required this.isMe});
 
   final Profile profile;
   final bool isMe;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final avatarPath = profile.avatarPath;
-    final country = profile.countryCode;
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ProfileAvatar(
-          url: avatarPath == null
-              ? null
-              : ref.read(profileRepositoryProvider).avatarUrl(avatarPath),
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        if (country != null)
-          Text(countryFlag(country), style: AppTextStyles.title),
-        Text(
-          profile.displayName,
-          style: AppTextStyles.title,
-          textAlign: TextAlign.center,
-        ),
         Row(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('@${profile.username}', style: AppTextStyles.bodySecondary),
             IconButton(
               key: const Key('profile.share'),
               tooltip: l10n.profileShare,
               icon: const Icon(Icons.ios_share),
               onPressed: () => SharePlus.instance.share(
                 ShareParams(
-                  // F8(g): derin bağlantı; uygulamada açılması Aşama 6'da (F12) bağlanır.
+                  // F8(g): derin bağlantı; uygulamada açılması app_links onayını bekliyor.
                   text: l10n.profileShareText(
                     'sezonluk://user/${profile.username}',
                   ),
                 ),
               ),
             ),
+            const SizedBox(width: AppSpacing.sm),
+            if (isMe)
+              OutlinedButton(
+                onPressed: () => context.push(AppRoutes.editProfile),
+                child: Text(l10n.profileEdit),
+              )
+            else
+              FollowButton(userId: profile.id),
           ],
         ),
         if (profile.bio.isNotEmpty) ...[
-          Text(
-            profile.bio,
-            style: AppTextStyles.body,
-            textAlign: TextAlign.center,
-          ),
           const SizedBox(height: AppSpacing.sm),
+          Text(profile.bio, style: AppTextStyles.body),
         ],
-        if (isMe)
-          OutlinedButton(
-            onPressed: () => context.push(AppRoutes.editProfile),
-            child: Text(l10n.profileEdit),
-          )
-        else
-          FollowButton(userId: profile.id),
+        _Links(profile: profile),
         const SizedBox(height: AppSpacing.md),
         _Counts(profile: profile, isMe: isMe),
       ],
+    );
+  }
+}
+
+/// F8(i): genel bağlantı simgesi ve servis adı; marka logosu kullanılmaz.
+class _Links extends StatelessWidget {
+  const _Links({required this.profile});
+
+  final Profile profile;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final letterboxd = profile.letterboxdUsername;
+    final instagram = profile.instagramUsername;
+    if (letterboxd == null && instagram == null) return const SizedBox.shrink();
+
+    Widget link(Key key, String label, String url) => OutlinedButton.icon(
+      key: key,
+      icon: const Icon(Icons.link),
+      label: Text(label),
+      onPressed: () async {
+        final messenger = ScaffoldMessenger.of(context);
+        final opened = await launchUrl(
+          Uri.parse(url),
+          mode: LaunchMode.externalApplication,
+        );
+        if (!opened) {
+          messenger.showSnackBar(SnackBar(content: Text(l10n.errorLinkOpen)));
+        }
+      },
+    );
+
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.sm),
+      child: Wrap(
+        spacing: AppSpacing.sm,
+        runSpacing: AppSpacing.sm,
+        children: [
+          if (letterboxd != null)
+            link(
+              const Key('profile.letterboxd'),
+              l10n.linkLetterboxd,
+              letterboxdUrl(letterboxd),
+            ),
+          if (instagram != null)
+            link(
+              const Key('profile.instagram'),
+              l10n.linkInstagram,
+              instagramUrl(instagram),
+            ),
+        ],
+      ),
     );
   }
 }
@@ -341,7 +494,8 @@ class _StatCard extends StatelessWidget {
 class _ShowsRow extends StatelessWidget {
   const _ShowsRow({required this.shows});
 
-  final List<UserShow> shows;
+  /// RPC sırası: son izlenen önce (F8e).
+  final List<ShowProgress> shows;
 
   @override
   Widget build(BuildContext context) {
@@ -361,14 +515,13 @@ class _ShowsRow extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
         itemCount: shows.length,
         separatorBuilder: (_, _) => const SizedBox(width: AppSpacing.sm),
-        itemBuilder: (context, index) {
-          final show = shows[index].show;
-          return PosterCard(
-            title: show.name,
-            posterPath: show.posterPath,
-            onTap: () => context.push(AppRoutes.showDetail(show.id)),
-          );
-        },
+        itemBuilder: (context, index) => SizedBox(
+          width: AppSpacing.posterRowHeight * AppSpacing.posterAspectRatio,
+          child: ShowProgressPoster(
+            key: ValueKey(shows[index].showId),
+            show: shows[index],
+          ),
+        ),
       ),
     );
   }

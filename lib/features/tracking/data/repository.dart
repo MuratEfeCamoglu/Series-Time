@@ -27,6 +27,29 @@ class TrackingRepository {
     ];
   });
 
+  /// F6(j): kullanıcının tüm dizileri, ilerleme sayıları ve grup bilgisiyle.
+  Future<List<ShowProgress>> fetchShowProgress(String userId) =>
+      _guard(() async {
+        final rows = await _client.rpc(
+          'get_user_show_progress',
+          params: {'user_id': userId},
+        ) as List;
+        return [
+          for (final row in rows)
+            ShowProgress.fromJson(row as Map<String, dynamic>),
+        ];
+      });
+
+  /// null: otomatik gruba dön.
+  Future<void> setManualStatus(int showId, ManualShowStatus? status) =>
+      _guard(() async {
+        await _client
+            .from('user_shows')
+            .update({'manual_status': status?.name})
+            .eq('user_id', _userId)
+            .eq('show_id', showId);
+      });
+
   /// Oturum sahibinin bu dizide izlediği bölüm kimlikleri.
   Future<Set<int>> fetchWatchedEpisodeIds(int showId) => _guard(() async {
     final rows = await _client

@@ -49,17 +49,14 @@ class ProfileRepository {
   ) => _guard(() async {
     String? newAvatarPath;
     final bytes = edit.avatarBytes;
-    final tmdbAvatar = edit.avatarTmdbPath;
-    if (tmdbAvatar != null) {
-      newAvatarPath = toTmdbAvatarPath(tmdbAvatar);
-    } else if (bytes != null) {
+    if (bytes != null) {
       // Her yüklemede yeni ad: aynı adres önbellekteki eski görseli gösterirdi.
       newAvatarPath =
-          '${current.id}/${DateTime.now().millisecondsSinceEpoch}.jpg';
+          '${current.id}/${DateTime.now().millisecondsSinceEpoch}.png';
       await _avatars.uploadBinary(
         newAvatarPath,
         Uint8List.fromList(bytes),
-        fileOptions: const FileOptions(contentType: 'image/jpeg'),
+        fileOptions: const FileOptions(contentType: 'image/png'),
       );
     }
 
@@ -72,6 +69,8 @@ class ProfileRepository {
           'country_code': edit.countryCode,
           'cover_show_id': edit.coverShowId,
           'cover_path': edit.coverPath,
+          'letterboxd_username': edit.letterboxdUsername,
+          'instagram_username': edit.instagramUsername,
           'avatar_path': ?newAvatarPath,
         })
         .eq('id', current.id)
@@ -79,7 +78,7 @@ class ProfileRepository {
         .single();
 
     final oldPath = current.avatarPath;
-    // TMDB avatarı Storage'da dosya değildir; yalnızca yüklenmiş eski dosya silinir.
+    // Eski sürümün TMDB avatarı Storage'da dosya değildir; yalnızca yüklenmiş dosya silinir.
     if (newAvatarPath != null && oldPath != null && !isTmdbAvatar(oldPath)) {
       await _removeOldAvatar(oldPath);
     }

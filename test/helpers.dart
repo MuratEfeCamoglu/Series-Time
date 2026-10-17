@@ -119,8 +119,8 @@ class TestBackend {
       (_) async =>
           const RatingSummary(ratingCount: 0, likeCount: 0, liked: false),
     );
-    when(() => shows.fetchShowBackdrops(any()))
-        .thenAnswer((_) async => const []);
+    when(() => shows.fetchShowImages(any()))
+        .thenAnswer((_) async => const ShowImages());
     when(() => feedback.fetchReactionCounts(any()))
         .thenAnswer((_) async => const {});
     when(() => feedback.fetchCredits(any())).thenAnswer((_) async => const []);
@@ -144,6 +144,8 @@ class TestBackend {
     when(() => badges.fetchEarned(any())).thenAnswer((_) async => const []);
     when(() => suggest.topGenres()).thenAnswer((_) async => const []);
     when(() => tracking.fetchWatchlist()).thenAnswer((_) async => const []);
+    when(() => tracking.fetchShowProgress(any()))
+        .thenAnswer((_) async => const []);
     when(() => tracking.fetchUpcoming(any())).thenAnswer((_) async => const []);
     when(() => tracking.fetchWatchedEpisodeIds(any()))
         .thenAnswer((_) async => <int>{});

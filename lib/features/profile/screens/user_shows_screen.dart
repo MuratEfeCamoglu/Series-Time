@@ -1,30 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
-import '../../../app/router.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_view.dart';
-import '../../../shared/widgets/poster_card.dart';
-import '../../../theme/app_spacing.dart';
-import '../../shows/data/models.dart';
-import '../logic.dart';
+import '../../tracking/data/models.dart';
+import '../../tracking/logic.dart';
+import '../../tracking/providers.dart';
+import '../../tracking/widgets/show_progress_grid.dart';
 import '../providers.dart';
 
-/// "Tümü" (F8e): kullanıcının tüm dizileri, 3'lü ızgarada, son izlenene göre.
-class UserShowsScreen extends ConsumerWidget {
+/// "Tümü" (F8e, F6j): kullanıcının tüm dizileri, son izlenene göre, grup renginde çubuklu
+/// 3'lü ızgarada; gruplara göre filtrelenir.
+class UserShowsScreen extends ConsumerStatefulWidget {
   const UserShowsScreen({super.key, required this.username});
 
   final String username;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<UserShowsScreen> createState() => _UserShowsScreenState();
+}
+
+class _UserShowsScreenState extends ConsumerState<UserShowsScreen> {
+  ShowStatus? _filter;
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final AsyncValue<List<UserShow>> shows = switch (ref.watch(
+    final username = widget.username;
+    final AsyncValue<List<ShowProgress>> shows = switch (ref.watch(
       profileByUsernameProvider(username),
     )) {
-      AsyncData(:final value) => ref.watch(userShowsProvider(value.id)),
+      AsyncData(:final value) => ref.watch(showProgressProvider(value.id)),
       AsyncError(:final error, :final stackTrace) => AsyncError(
         error,
         stackTrace,
@@ -42,24 +49,22 @@ class UserShowsScreen extends ConsumerWidget {
               icon: Icons.live_tv_outlined,
             );
           }
-          final sorted = sortByLastWatched(entries);
-          return GridView.builder(
-            padding: const EdgeInsets.all(AppSpacing.md),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: AppSpacing.posterGridColumns,
-              mainAxisSpacing: AppSpacing.sm,
-              crossAxisSpacing: AppSpacing.sm,
-              childAspectRatio: AppSpacing.posterAspectRatio,
-            ),
-            itemCount: sorted.length,
-            itemBuilder: (context, index) {
-              final show = sorted[index].show;
-              return PosterCard(
-                title: show.name,
-                posterPath: show.posterPath,
-                onTap: () => context.push(AppRoutes.showDetail(show.id)),
-              );
-            },
+          final filtered = filterByStatus(entries, _filter);
+          return Column(
+            children: [
+              StatusFilterChips(
+                selected: _filter,
+                onSelected: (status) => setState(() => _filter = status),
+              ),
+              Expanded(
+                child: filtered.isEmpty
+                    ? EmptyState(
+                        message: l10n.statusFilterEmpty,
+                        icon: Icons.filter_list_off,
+                      )
+                    : ShowProgressGrid(shows: filtered),
+              ),
+            ],
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),

@@ -10,8 +10,8 @@ import '../../../theme/app_spacing.dart';
 import '../../../theme/app_text_styles.dart';
 import '../../shows/providers.dart';
 
-/// F6(i): Diziler sekmesinin en üstünde, TMDB'de yeni bölümü yayında olan diziler —
-/// kullanıcının listesinde olmasalar da.
+/// F3(g): Keşfet'te, TMDB'de yeni bölümü yayında olan diziler — kullanıcının listesinde
+/// olsalar da.
 class OnTheAirRow extends ConsumerWidget {
   const OnTheAirRow({super.key});
 

@@ -77,4 +77,53 @@ void main() {
     expect(episode.episodeName, 'Yeni');
     expect(episode.airDate, DateTime.utc(2026, 10, 18));
   });
+
+  test(
+    'ShowProgress.fromJson get_user_show_progress kolonlarını ayrıştırır',
+    () {
+      final p = ShowProgress.fromJson({
+        'show_id': 1399,
+        'name': 'Taht Oyunları',
+        'poster_path': '/p.jpg',
+        'backdrop_path': '/b.jpg',
+        'show_status': 'Ended',
+        'added_at': '2026-10-01T10:00:00Z',
+        'last_watched_at': null,
+        'manual_status': 'paused',
+        'aired_count': 73,
+        'watched_count': 10,
+      });
+      expect(p.showId, 1399);
+      expect(p.name, 'Taht Oyunları');
+      expect(p.posterPath, '/p.jpg');
+      expect(p.backdropPath, '/b.jpg');
+      expect(p.showStatus, 'Ended');
+      expect(p.addedAt, DateTime.utc(2026, 10, 1, 10));
+      expect(p.lastWatchedAt, isNull);
+      expect(p.manualStatus, ManualShowStatus.paused);
+      expect(p.airedCount, 73);
+      expect(p.watchedCount, 10);
+      expect(p.withManualStatus(null).manualStatus, isNull);
+    },
+  );
+
+  test('WatchlistItem show_status ve manual_status', () {
+    final item = WatchlistItem.fromJson({
+      'show_id': 1,
+      'name': 'D',
+      'added_at': '2026-10-01T10:00:00Z',
+      'next_episode_id': 1,
+      'next_season_number': 1,
+      'next_episode_number': 1,
+      'aired_count': 2,
+      'watched_count': 0,
+      'show_status': 'Returning Series',
+      'manual_status': 'planned',
+    });
+    expect(item.showStatus, 'Returning Series');
+    expect(item.manualStatus, ManualShowStatus.planned);
+    // İşaretleyince İzleme Listesi seçimi otomatiğe döner.
+    expect(item.markedPending(DateTime.utc(2026)).manualStatus, isNull);
+    expect(manualShowStatusFromName('bilinmeyen'), isNull);
+  });
 }

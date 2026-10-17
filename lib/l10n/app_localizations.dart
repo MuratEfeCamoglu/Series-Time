@@ -595,7 +595,7 @@ abstract class AppLocalizations {
   /// No description provided for @tabWatchlist.
   ///
   /// In tr, this message translates to:
-  /// **'İzleme Listesi'**
+  /// **'Sıradaki'**
   String get tabWatchlist;
 
   /// No description provided for @tabUpcoming.
@@ -607,7 +607,7 @@ abstract class AppLocalizations {
   /// No description provided for @watchlistUpNext.
   ///
   /// In tr, this message translates to:
-  /// **'Sıradaki'**
+  /// **'İzlemeye devam et'**
   String get watchlistUpNext;
 
   /// No description provided for @watchlistNotRecently.
@@ -1516,17 +1516,149 @@ abstract class AppLocalizations {
   /// **'Galeriden seç'**
   String get avatarFromGallery;
 
-  /// No description provided for @avatarFromCharacter.
+  /// No description provided for @tabMyShows.
   ///
   /// In tr, this message translates to:
-  /// **'Dizi karakterinden seç'**
-  String get avatarFromCharacter;
+  /// **'Dizilerim'**
+  String get tabMyShows;
 
-  /// No description provided for @characterPickerTitle.
+  /// No description provided for @statusFinished.
   ///
   /// In tr, this message translates to:
-  /// **'Karakter seç'**
-  String get characterPickerTitle;
+  /// **'Bitti'**
+  String get statusFinished;
+
+  /// No description provided for @statusUpToDate.
+  ///
+  /// In tr, this message translates to:
+  /// **'Güncel'**
+  String get statusUpToDate;
+
+  /// No description provided for @statusWatching.
+  ///
+  /// In tr, this message translates to:
+  /// **'Devam ediyor'**
+  String get statusWatching;
+
+  /// No description provided for @statusPaused.
+  ///
+  /// In tr, this message translates to:
+  /// **'Durduruldu'**
+  String get statusPaused;
+
+  /// No description provided for @statusDropped.
+  ///
+  /// In tr, this message translates to:
+  /// **'Dönülmez'**
+  String get statusDropped;
+
+  /// No description provided for @statusWatchlist.
+  ///
+  /// In tr, this message translates to:
+  /// **'İzleme Listesi'**
+  String get statusWatchlist;
+
+  /// No description provided for @statusAuto.
+  ///
+  /// In tr, this message translates to:
+  /// **'Otomatik ({status})'**
+  String statusAuto(String status);
+
+  /// No description provided for @statusMenuTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Dizi durumu'**
+  String get statusMenuTitle;
+
+  /// No description provided for @statusFilterAll.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tümü'**
+  String get statusFilterAll;
+
+  /// No description provided for @statusFilterEmpty.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu grupta dizi yok.'**
+  String get statusFilterEmpty;
+
+  /// No description provided for @statusProgressLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'{status}, {watched}/{aired} bölüm izlendi'**
+  String statusProgressLabel(String status, int watched, int aired);
+
+  /// No description provided for @avatarFromShow.
+  ///
+  /// In tr, this message translates to:
+  /// **'Dizi görsellerinden seç'**
+  String get avatarFromShow;
+
+  /// No description provided for @avatarPickerTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Görsel seç'**
+  String get avatarPickerTitle;
+
+  /// No description provided for @avatarNoImages.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu dizinin görseli yok.'**
+  String get avatarNoImages;
+
+  /// No description provided for @cropTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kırp'**
+  String get cropTitle;
+
+  /// No description provided for @cropHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sürükleyip yakınlaştırarak kareyi ayarla.'**
+  String get cropHint;
+
+  /// No description provided for @cropDone.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kullan'**
+  String get cropDone;
+
+  /// No description provided for @fieldLetterboxd.
+  ///
+  /// In tr, this message translates to:
+  /// **'Letterboxd kullanıcı adı'**
+  String get fieldLetterboxd;
+
+  /// No description provided for @fieldInstagram.
+  ///
+  /// In tr, this message translates to:
+  /// **'Instagram kullanıcı adı'**
+  String get fieldInstagram;
+
+  /// No description provided for @validationLetterboxd.
+  ///
+  /// In tr, this message translates to:
+  /// **'2–15 karakter: harf, rakam ve _'**
+  String get validationLetterboxd;
+
+  /// No description provided for @validationInstagram.
+  ///
+  /// In tr, this message translates to:
+  /// **'En fazla 30 karakter: harf, rakam, nokta ve _ (nokta başta/sonda ya da art arda olamaz)'**
+  String get validationInstagram;
+
+  /// No description provided for @linkLetterboxd.
+  ///
+  /// In tr, this message translates to:
+  /// **'Letterboxd'**
+  String get linkLetterboxd;
+
+  /// No description provided for @linkInstagram.
+  ///
+  /// In tr, this message translates to:
+  /// **'Instagram'**
+  String get linkInstagram;
 }
 
 class _AppLocalizationsDelegate

@@ -253,8 +253,68 @@ void main() {
     expect(find.text('17 Nisan 2011'), findsOneWidget);
     expect(find.text('Yayın tarihi belli değil'), findsOneWidget);
 
+    // Sezon başlığı sabitlenen sekme çubuğunun altında kalmasın.
+    await tester.drag(find.byType(NestedScrollView), const Offset(0, 600));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('1. Sezon'));
     await tester.pumpAndSettle();
     expect(find.byKey(const Key('episode.banner.63056')), findsNothing);
+  });
+
+  testWidgets('listedeki dizinin grubu detaydan değiştirilir (F4b, F6j)', (
+    tester,
+  ) async {
+    final backend = TestBackend();
+    when(() => backend.shows.fetchMyShows()).thenAnswer(
+      (_) async => [
+        UserShow(show: testShow, addedAt: DateTime.utc(2026, 10, 1)),
+      ],
+    );
+    when(() => backend.shows.fetchShow(1399)).thenAnswer((_) async => _detail);
+    when(() => backend.tracking.fetchShowProgress(testUserId)).thenAnswer(
+      (_) async => [
+        ShowProgress(
+          showId: 1399,
+          name: 'Taht Oyunları',
+          addedAt: DateTime.utc(2026, 10, 1),
+          airedCount: 73,
+          watchedCount: 73,
+          showStatus: 'Ended',
+          manualStatus: ManualShowStatus.planned,
+        ),
+      ],
+    );
+    when(() => backend.tracking.setManualStatus(1399, null))
+        .thenAnswer((_) async {});
+    await backend.pumpApp(tester);
+    GoRouter.of(tester.element(find.byType(ShowsScreen))).push('/show/1399');
+    await tester.pumpAndSettle();
+
+    // Elle seçilen İzleme Listesi, otomatik "Bitti"nin önüne geçer.
+    expect(
+      find.descendant(
+        of: find.byKey(const Key('showDetail.status')),
+        matching: find.text('İzleme Listesi'),
+      ),
+      findsOneWidget,
+    );
+    await tester.tap(find.byKey(const Key('showDetail.status')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('status.option.auto')));
+    await tester.pumpAndSettle();
+
+    verify(() => backend.tracking.setManualStatus(1399, null)).called(1);
+    expect(
+      find.descendant(
+        of: find.byKey(const Key('showDetail.status')),
+        matching: find.text('Bitti'),
+      ),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('listede olmayan dizide grup düğmesi yok (F6j)', (tester) async {
+    await _openDetail(tester);
+    expect(find.byKey(const Key('showDetail.status')), findsNothing);
   });
 }

@@ -46,6 +46,8 @@ class WatchlistNotifier extends AsyncNotifier<List<WatchlistItem>> {
     // Rozet (F14) ve rozet bildirimi (F13) işaretlemeyle gelebilir.
     ref
       ..invalidate(watchedEpisodesProvider(item.showId))
+      ..invalidate(myShowProgressProvider)
+      ..invalidate(showProgressProvider)
       ..invalidate(userStatsProvider)
       ..invalidate(profileCountsProvider)
       ..invalidate(unreadCountProvider);
@@ -125,6 +127,8 @@ class WatchedEpisodesNotifier extends AsyncNotifier<Set<int>> {
     ref
       ..invalidate(watchlistProvider)
       ..invalidate(myShowsProvider)
+      ..invalidate(myShowProgressProvider)
+      ..invalidate(showProgressProvider)
       ..invalidate(userStatsProvider)
       ..invalidate(profileCountsProvider)
       ..invalidate(unreadCountProvider);
@@ -134,6 +138,53 @@ class WatchedEpisodesNotifier extends AsyncNotifier<Set<int>> {
 final watchedEpisodesProvider =
     AsyncNotifierProvider.family<WatchedEpisodesNotifier, Set<int>, int>(
       WatchedEpisodesNotifier.new,
+    );
+
+/// Herhangi bir kullanıcının dizileri ve grupları (profil "Dizilerim" ve "Tümü", F6j).
+final showProgressProvider = FutureProvider.autoDispose
+    .family<List<ShowProgress>, String>(
+      (ref, userId) =>
+          ref.watch(trackingRepositoryProvider).fetchShowProgress(userId),
+    );
+
+/// Oturum sahibinin dizileri ve grupları (Dizilerim sekmesi, dizi detayındaki durum menüsü).
+/// Elle grup seçimi iyimser güncellenir; hata olursa önceki liste geri gelir.
+class MyShowProgressNotifier extends AsyncNotifier<List<ShowProgress>> {
+  @override
+  Future<List<ShowProgress>> build() async {
+    final userId = ref.read(authRepositoryProvider).currentUserId;
+    if (!isRegistered(ref.watch(authStatusProvider)) || userId == null) {
+      return const [];
+    }
+    return ref.read(trackingRepositoryProvider).fetchShowProgress(userId);
+  }
+
+  /// [choice] null ise "Otomatik".
+  Future<void> setStatus(int showId, ShowStatus? choice) async {
+    final previous = await future;
+    final manual = manualFor(choice);
+    state = AsyncData([
+      for (final entry in previous)
+        entry.showId == showId ? entry.withManualStatus(manual) : entry,
+    ]);
+    try {
+      await ref
+          .read(trackingRepositoryProvider)
+          .setManualStatus(showId, manual);
+    } catch (_) {
+      state = AsyncData(previous);
+      rethrow;
+    }
+    // Durduruldu/Dönülmez diziler Sıradaki'den çıkar, geri dönenler girer.
+    ref
+      ..invalidate(watchlistProvider)
+      ..invalidate(showProgressProvider);
+  }
+}
+
+final myShowProgressProvider =
+    AsyncNotifierProvider<MyShowProgressNotifier, List<ShowProgress>>(
+      MyShowProgressNotifier.new,
     );
 
 const _layoutKey = 'watchlist.layout';

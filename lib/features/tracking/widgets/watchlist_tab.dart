@@ -14,7 +14,7 @@ import '../logic.dart';
 import '../providers.dart';
 import 'watchlist_tile.dart';
 
-/// Diziler › İzleme Listesi (F6).
+/// Diziler › Sıradaki (F6).
 class WatchlistTab extends ConsumerWidget {
   const WatchlistTab({super.key});
 

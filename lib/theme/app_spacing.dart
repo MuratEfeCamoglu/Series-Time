@@ -9,6 +9,8 @@ abstract final class AppSpacing {
   static const double posterRadius = 6;
   static const double posterAspectRatio = 2 / 3;
   static const double progressBarHeight = 3;
+  static const double progressBarOutline = 1;
+  static const double statusDotSize = 10;
   static const double minTapTarget = 44;
   static const double buttonHeight = 48;
   static const double progressIndicatorSize = 20;
@@ -26,8 +28,16 @@ abstract final class AppSpacing {
   /// İzleme Listesi ızgara hücresi: 2:3 afiş + ilerleme çubuğu + bölüm kodu satırı.
   static const double watchlistGridAspectRatio = 0.58;
 
+  /// Dizilerim/Tümü ızgara hücresi: 2:3 afiş + renkli ilerleme çubuğu.
+  static const double progressGridAspectRatio = 0.62;
+
   /// Profil kapağı (F8a); avatar kapağın alt kenarına taşar.
-  static const double profileCoverHeight = 220;
+  static const double profileCoverHeight = 300;
+  static const double avatarRing = 3;
+
+  /// Kapağın altında avatarın yanındaki ad/kullanıcı adı şeridi.
+  static const double profileNameStrip = 64;
+  static const double profileNameMaxTextScale = 1.3;
   static const double badgeMinSize = 16;
   static const double posterRowHeight = 150;
   static const double coverThumbAspectRatio = 16 / 9;

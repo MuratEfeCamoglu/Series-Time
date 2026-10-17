@@ -91,7 +91,8 @@ class _Backdrops extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     return ref
-        .watch(showBackdropsProvider(show.id))
+        .watch(showImagesProvider(show.id))
+        .whenData((images) => images.backdrops)
         .when(
           data: (paths) => paths.isEmpty
               ? Center(
@@ -160,7 +161,7 @@ class _Backdrops extends ConsumerWidget {
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (error, _) => ErrorView(
             error: error,
-            onRetry: () => ref.invalidate(showBackdropsProvider(show.id)),
+            onRetry: () => ref.invalidate(showImagesProvider(show.id)),
           ),
         );
   }

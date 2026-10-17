@@ -7,7 +7,6 @@ import '../../../app/router.dart';
 import '../../../core/tmdb_image.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/poster_card.dart';
-import '../../../shared/widgets/progress_bar.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_text_styles.dart';
@@ -15,8 +14,11 @@ import '../../shows/logic.dart';
 import '../data/models.dart';
 import '../logic.dart';
 import '../providers.dart';
+import 'status_sheet.dart';
+import 'status_style.dart';
 
-/// İzleme Listesi öğesi (F6b, F6d): afiş, sıradaki bölüm kodu, ilerleme çubuğu ve onay düğmesi.
+/// Sıradaki öğesi (F6b, F6d): afiş, sıradaki bölüm kodu, grup renginde ilerleme çubuğu ve
+/// onay düğmesi. Uzun basınca durum menüsü açılır (F6j).
 class WatchlistTile extends ConsumerWidget {
   const WatchlistTile({super.key, required this.item, required this.layout});
 
@@ -26,8 +28,15 @@ class WatchlistTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final code = episodeCode(item.nextSeasonNumber, item.nextEpisodeNumber);
-    final progress = ProgressBar(
-      value: watchProgress(item.watchedCount, item.airedCount),
+    final auto = autoShowStatus(
+      tmdbStatus: item.showStatus,
+      airedCount: item.airedCount,
+      watchedCount: item.watchedCount,
+    );
+    final progress = StatusProgressBar(
+      status: effectiveShowStatus(manual: item.manualStatus, auto: auto),
+      watchedCount: item.watchedCount,
+      airedCount: item.airedCount,
     );
     final check = _CheckButton(item: item, code: code);
     final poster = PosterCard(
@@ -36,27 +45,41 @@ class WatchlistTile extends ConsumerWidget {
       onTap: () => context.push(AppRoutes.showDetail(item.showId)),
     );
 
+    Widget withMenu(Widget child) => GestureDetector(
+      key: Key('watchlist.tile.${item.showId}'),
+      onLongPress: () => showStatusSheet(
+        context,
+        ref,
+        showId: item.showId,
+        manual: item.manualStatus,
+        auto: auto,
+      ),
+      child: child,
+    );
+
     if (layout == WatchlistLayout.list) {
-      return _ListCard(item: item, progress: progress, check: check);
+      return withMenu(_ListCard(item: item, progress: progress, check: check));
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Expanded(
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              poster,
-              Positioned(right: 0, bottom: 0, child: check),
-            ],
+    return withMenu(
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                poster,
+                Positioned(right: 0, bottom: 0, child: check),
+              ],
+            ),
           ),
-        ),
-        const SizedBox(height: AppSpacing.xs),
-        progress,
-        const SizedBox(height: AppSpacing.xs),
-        Text(code, style: AppTextStyles.caption, textAlign: TextAlign.center),
-      ],
+          const SizedBox(height: AppSpacing.xs),
+          progress,
+          const SizedBox(height: AppSpacing.xs),
+          Text(code, style: AppTextStyles.caption, textAlign: TextAlign.center),
+        ],
+      ),
     );
   }
 }
