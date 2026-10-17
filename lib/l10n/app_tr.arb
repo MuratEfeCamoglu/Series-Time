@@ -436,7 +436,6 @@
   "pickerSearchResults": "Arama sonuçları",
   "pickerSearchHint": "Bir dizi ara.",
   "avatarFromGallery": "Galeriden seç",
-  "tabMyShows": "Dizilerim",
   "statusFinished": "Bitti",
   "statusUpToDate": "Güncel",
   "statusWatching": "Devam ediyor",
@@ -479,5 +478,24 @@
   "validationLetterboxd": "2–15 karakter: harf, rakam ve _",
   "validationInstagram": "En fazla 30 karakter: harf, rakam, nokta ve _ (nokta başta/sonda ya da art arda olamaz)",
   "linkLetterboxd": "Letterboxd",
-  "linkInstagram": "Instagram"
+  "linkInstagram": "Instagram",
+  "recentShowsTitle": "Son izlenen diziler",
+  "upcomingShowAll": "Tümünü göster",
+  "upcomingShowLess": "Daha az göster",
+  "profileFavorites": "Favori diziler",
+  "profileFavoritesHint": "Dizi detayındaki kalp düğmesiyle en fazla 4 favori seçebilirsin.",
+  "profileWatching": "Şu an izlediklerim",
+  "profileWatchingEmpty": "Şu an izlediğin dizi yok.",
+  "profileRecentActivity": "Son etkinlik",
+  "profileSince": "{date} tarihinden beri",
+  "@profileSince": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "favoriteAdd": "Favorilere ekle",
+  "favoriteRemove": "Favorilerden çıkar",
+  "favoritesLimit": "En fazla 4 favori seçebilirsin."
 }

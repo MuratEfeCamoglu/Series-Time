@@ -1,36 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
-import '../../../app/router.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_view.dart';
+import '../../../shared/widgets/section_header.dart';
 import '../../../shared/widgets/section_pill.dart';
 import '../../../theme/app_spacing.dart';
-import '../../shows/providers.dart';
+import '../../../theme/app_text_styles.dart';
 import '../data/models.dart';
 import '../logic.dart';
 import '../providers.dart';
 import 'watchlist_tile.dart';
 
-/// Diziler › Sıradaki (F6).
-class WatchlistTab extends ConsumerWidget {
-  const WatchlistTab({super.key});
+/// Diziler sayfasının Sıradaki bölümü (F6a–g); sliver olarak döner.
+class WatchlistSection extends ConsumerWidget {
+  const WatchlistSection({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final hasShows = ref.watch(myShowsProvider).value?.isNotEmpty;
-    if (hasShows == false) {
-      return EmptyState(
-        message: l10n.showsEmpty,
-        icon: Icons.live_tv_outlined,
-        actionLabel: l10n.showsGoToDiscover,
-        onAction: () => context.go(AppRoutes.discover),
-      );
-    }
     final layout = ref.watch(watchlistLayoutProvider);
+    final header = SliverToBoxAdapter(
+      child: SectionHeader(title: l10n.tabWatchlist),
+    );
     return ref
         .watch(watchlistProvider)
         .when(
@@ -38,41 +30,62 @@ class WatchlistTab extends ConsumerWidget {
           skipLoadingOnRefresh: true,
           data: (items) {
             if (items.isEmpty) {
-              return EmptyState(
-                message: l10n.watchlistAllCaughtUp,
-                icon: Icons.check_circle_outline,
+              return SliverMainAxisGroup(
+                slivers: [
+                  header,
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.md,
+                    ),
+                    sliver: SliverToBoxAdapter(
+                      child: Text(
+                        l10n.watchlistAllCaughtUp,
+                        style: AppTextStyles.bodySecondary,
+                      ),
+                    ),
+                  ),
+                ],
               );
             }
             final split = splitWatchlist(items, DateTime.now());
-            return RefreshIndicator(
-              onRefresh: () => ref.refresh(watchlistProvider.future),
-              child: CustomScrollView(
-                slivers: [
-                  if (split.upNext.isNotEmpty)
-                    ..._section(l10n.watchlistUpNext, split.upNext, layout),
-                  if (split.notStarted.isNotEmpty)
-                    ..._section(
-                      l10n.watchlistNotStarted,
-                      split.notStarted,
-                      layout,
-                    ),
-                  if (split.notRecently.isNotEmpty)
-                    ..._section(
-                      l10n.watchlistNotRecently,
-                      split.notRecently,
-                      layout,
-                    ),
-                  const SliverPadding(
-                    padding: EdgeInsets.only(bottom: AppSpacing.lg),
+            return SliverMainAxisGroup(
+              slivers: [
+                header,
+                if (split.upNext.isNotEmpty)
+                  ..._section(l10n.watchlistUpNext, split.upNext, layout),
+                if (split.notStarted.isNotEmpty)
+                  ..._section(
+                    l10n.watchlistNotStarted,
+                    split.notStarted,
+                    layout,
                   ),
-                ],
-              ),
+                if (split.notRecently.isNotEmpty)
+                  ..._section(
+                    l10n.watchlistNotRecently,
+                    split.notRecently,
+                    layout,
+                  ),
+              ],
             );
           },
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (error, _) => ErrorView(
-            error: error,
-            onRetry: () => ref.invalidate(watchlistProvider),
+          loading: () => SliverMainAxisGroup(
+            slivers: [
+              header,
+              const SliverToBoxAdapter(
+                child: Center(child: CircularProgressIndicator()),
+              ),
+            ],
+          ),
+          error: (error, _) => SliverMainAxisGroup(
+            slivers: [
+              header,
+              SliverToBoxAdapter(
+                child: ErrorView(
+                  error: error,
+                  onRetry: () => ref.invalidate(watchlistProvider),
+                ),
+              ),
+            ],
           ),
         );
   }
@@ -85,7 +98,7 @@ class WatchlistTab extends ConsumerWidget {
     SliverPadding(
       padding: const EdgeInsets.fromLTRB(
         AppSpacing.md,
-        AppSpacing.md,
+        AppSpacing.sm,
         AppSpacing.md,
         AppSpacing.sm,
       ),

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
@@ -8,6 +9,7 @@ import 'package:sezonluk/core/failures.dart';
 import 'package:sezonluk/features/shows/data/models.dart';
 import 'package:sezonluk/features/shows/screens/season_screen.dart';
 import 'package:sezonluk/features/tracking/data/models.dart';
+import 'package:sezonluk/features/tracking/providers.dart';
 import 'package:sezonluk/features/tracking/screens/shows_screen.dart';
 
 import '../../helpers.dart';
@@ -316,5 +318,91 @@ void main() {
   testWidgets('listede olmayan dizide grup düğmesi yok (F6j)', (tester) async {
     await _openDetail(tester);
     expect(find.byKey(const Key('showDetail.status')), findsNothing);
+  });
+
+  testWidgets('kalp favoriye ekler; 5. favori reddedilir (F8j)', (
+    tester,
+  ) async {
+    final backend = TestBackend();
+    when(() => backend.shows.fetchMyShows()).thenAnswer(
+      (_) async => [
+        UserShow(show: testShow, addedAt: DateTime.utc(2026, 10, 1)),
+      ],
+    );
+    when(() => backend.shows.fetchShow(1399)).thenAnswer((_) async => _detail);
+    ShowProgress entry(int id, {bool favorite = false}) => ShowProgress(
+      showId: id,
+      name: 'D$id',
+      addedAt: DateTime.utc(2026),
+      airedCount: 1,
+      watchedCount: 0,
+      isFavorite: favorite,
+    );
+    when(() => backend.tracking.fetchShowProgress(testUserId)).thenAnswer(
+      (_) async => [
+        entry(1399),
+        for (var i = 1; i <= 3; i++) entry(i, favorite: true),
+      ],
+    );
+    when(() => backend.tracking.setFavorite(1399, true))
+        .thenAnswer((_) async {});
+    await backend.pumpApp(tester);
+    GoRouter.of(tester.element(find.byType(ShowsScreen))).push('/show/1399');
+    await tester.pumpAndSettle();
+
+    final heart = find.byKey(const Key('showDetail.favorite'));
+    expect(tester.widget<IconButton>(heart).isSelected, isFalse);
+    await tester.tap(heart);
+    await tester.pumpAndSettle();
+    verify(() => backend.tracking.setFavorite(1399, true)).called(1);
+    expect(tester.widget<IconButton>(heart).isSelected, isTrue);
+
+    // Artık 4 favori var: çıkarıp yeniden eklemek dışında yenisi eklenemez.
+    final container = ProviderScope.containerOf(tester.element(heart));
+    expect(
+      await container
+          .read(myShowProgressProvider.notifier)
+          .setFavorite(99, true),
+      isFalse,
+    );
+    verifyNever(() => backend.tracking.setFavorite(99, any()));
+  });
+
+  testWidgets('5. favoride uyarı gösterilir (F8j)', (tester) async {
+    final backend = TestBackend();
+    when(() => backend.shows.fetchMyShows()).thenAnswer(
+      (_) async => [
+        UserShow(show: testShow, addedAt: DateTime.utc(2026, 10, 1)),
+      ],
+    );
+    when(() => backend.shows.fetchShow(1399)).thenAnswer((_) async => _detail);
+    when(() => backend.tracking.fetchShowProgress(testUserId)).thenAnswer(
+      (_) async => [
+        ShowProgress(
+          showId: 1399,
+          name: 'Taht Oyunları',
+          addedAt: DateTime.utc(2026),
+          airedCount: 1,
+          watchedCount: 0,
+        ),
+        for (var i = 1; i <= 4; i++)
+          ShowProgress(
+            showId: i,
+            name: 'D$i',
+            addedAt: DateTime.utc(2026),
+            airedCount: 1,
+            watchedCount: 0,
+            isFavorite: true,
+          ),
+      ],
+    );
+    await backend.pumpApp(tester);
+    GoRouter.of(tester.element(find.byType(ShowsScreen))).push('/show/1399');
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const Key('showDetail.favorite')));
+    await tester.pumpAndSettle();
+    expect(find.text('En fazla 4 favori seçebilirsin.'), findsOneWidget);
+    verifyNever(() => backend.tracking.setFavorite(any(), any()));
   });
 }

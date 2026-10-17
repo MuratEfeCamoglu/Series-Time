@@ -215,114 +215,91 @@ void main() {
     expect(find.text('Yaklaşan bölüm yok'), findsOneWidget);
   });
 
-  ShowProgress progress(
-    int id, {
-    required int watched,
-    int aired = 10,
-    String status = 'Returning Series',
-    ManualShowStatus? manual,
-  }) => ShowProgress(
+  ShowProgress progress(int id, {DateTime? watchedAt}) => ShowProgress(
     showId: id,
     name: 'Dizi $id',
     addedAt: DateTime.utc(2026, 1, id),
-    airedCount: aired,
-    watchedCount: watched,
-    showStatus: status,
-    manualStatus: manual,
+    lastWatchedAt: watchedAt,
+    airedCount: 10,
+    watchedCount: watchedAt == null ? 0 : 4,
+    showStatus: 'Returning Series',
   );
 
-  Future<void> openMyShows(WidgetTester tester) async {
-    await tester.tap(find.text('Dizilerim'));
-    await tester.pumpAndSettle();
-  }
-
-  testWidgets('Dizilerim: renkli çubuklar ve gruplara göre filtre (F6j)', (
-    tester,
-  ) async {
-    tester.view
-      ..physicalSize = const Size(800, 1600)
-      ..devicePixelRatio = 1;
-    addTearDown(tester.view.reset);
-    final backend = await _open(tester);
-    when(() => backend.tracking.fetchShowProgress(testUserId)).thenAnswer(
-      (_) async => [
-        progress(1, watched: 10, status: 'Ended'),
-        progress(2, watched: 4),
-        progress(3, watched: 0),
-        progress(4, watched: 2, manual: ManualShowStatus.dropped),
-      ],
-    );
-    await openMyShows(tester);
-
-    ProgressBar bar(int id) => tester.widget<ProgressBar>(
-      find.descendant(
-        of: find.byKey(Key('statusBar.$id')),
-        matching: find.byType(ProgressBar),
-      ),
-    );
-    expect(bar(1).color, AppColors.statusFinished);
-    expect(bar(1).value, 1);
-    expect(bar(2).color, AppColors.statusWatching);
-    expect(bar(2).value, 0.4);
-    expect(bar(3).outlined, isTrue);
-    expect(bar(3).color, AppColors.statusWatchlist);
-    expect(bar(4).color, AppColors.statusDropped);
-    // Renk tek başına bilgi taşımaz: ekran okuyucu etiketi grup adını içerir.
-    expect(bar(1).semanticsLabel, contains('Bitti'));
-
-    // Çipler yatay kayar; sağdakiler önce görünür yapılır.
-    await tester.ensureVisible(find.byKey(const Key('statusFilter.dropped')));
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const Key('statusFilter.dropped')));
-    await tester.pumpAndSettle();
-    expect(find.byKey(const Key('statusBar.4')), findsOneWidget);
-    expect(find.byKey(const Key('statusBar.1')), findsNothing);
-
-    // Çipler yatay kayar; sağdakiler önce görünür yapılır.
-    await tester.ensureVisible(find.byKey(const Key('statusFilter.paused')));
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const Key('statusFilter.paused')));
-    await tester.pumpAndSettle();
-    expect(find.text('Bu grupta dizi yok.'), findsOneWidget);
-  });
-
   testWidgets(
-    'Sıradaki kartına uzun basınca grup menüsü; Durduruldu kaydedilir (F6j)',
+    'tek sayfa: Son izlenen diziler, Sıradaki, Yaklaşan sırayla; alt sekme yok (F6, F7)',
     (tester) async {
-      final backend = await _open(tester, watchlist: [_item(1)]);
-      when(() => backend.tracking.fetchShowProgress(testUserId))
-          .thenAnswer((_) async => [progress(1, watched: 4)]);
-      when(() => backend.tracking.setManualStatus(1, ManualShowStatus.paused))
-          .thenAnswer((_) async {});
-
-      await tester.longPress(find.byKey(const Key('watchlist.tile.1')));
-      await tester.pumpAndSettle();
-      expect(find.text('Otomatik (Devam ediyor)'), findsOneWidget);
-      // Durduruldu diziler Sıradaki'den çıkar (get_watchlist süzer).
+      tester.view
+        ..physicalSize = const Size(800, 2400)
+        ..devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final today = DateTime.now().toUtc();
+      final backend = TestBackend();
+      when(() => backend.shows.fetchMyShows()).thenAnswer(
+        (_) async => [UserShow(show: testShow, addedAt: DateTime.utc(2026))],
+      );
+      when(() => backend.tracking.fetchShowProgress(testUserId)).thenAnswer(
+        (_) async => [
+          progress(1, watchedAt: DateTime.utc(2026, 10, 1)),
+          progress(2),
+          progress(3, watchedAt: DateTime.utc(2026, 10, 5)),
+        ],
+      );
       when(() => backend.tracking.fetchWatchlist())
-          .thenAnswer((_) async => const []);
-      await tester.tap(find.byKey(const Key('status.option.paused')));
-      await tester.pumpAndSettle();
+          .thenAnswer((_) async => [_item(1)]);
+      when(() => backend.tracking.fetchUpcoming(90)).thenAnswer(
+        (_) async => [
+          for (var i = 0; i < 7; i++)
+            UpcomingEpisode(
+              episodeId: 900 + i,
+              showId: 1399,
+              showName: 'Yakında $i',
+              seasonNumber: 2,
+              episodeNumber: i + 1,
+              airDate: DateTime.utc(today.year, today.month, today.day + i),
+            ),
+        ],
+      );
+      await backend.pumpApp(tester);
 
-      verify(() => backend.tracking.setManualStatus(1, ManualShowStatus.paused))
-          .called(1);
-      expect(find.byKey(const Key('watchlist.tile.1')), findsNothing);
+      expect(find.byType(TabBar), findsNothing);
+      double y(String text) => tester.getTopLeft(find.text(text)).dy;
+      expect(y('Son izlenen diziler'), lessThan(y('Sıradaki')));
+      expect(y('Sıradaki'), lessThan(y('Yaklaşan')));
+      // Son izlenenler: izlenmemiş dizi yok, en son izlenen önce.
+      final recent = find.byKey(const Key('shows.recent'));
+      final bars = tester
+          .widgetList<ProgressBar>(
+            find.descendant(of: recent, matching: find.byType(ProgressBar)),
+          )
+          .length;
+      expect(bars, 2);
+      expect(
+        tester.getTopLeft(find.byKey(const Key('statusBar.3'))).dx,
+        lessThan(tester.getTopLeft(find.byKey(const Key('statusBar.1'))).dx),
+      );
+
+      // Yaklaşan: ilk 5, "Tümünü göster" ile hepsi.
+      expect(find.text('Yakında 4'), findsWidgets);
+      expect(find.text('Yakında 5'), findsNothing);
+      await tester.tap(find.byKey(const Key('upcoming.toggle')));
+      await tester.pumpAndSettle();
+      expect(find.text('Yakında 6'), findsWidgets);
     },
   );
 
-  testWidgets('grup kaydı başarısızsa geri alınır ve hata gösterilir (F6j)', (
-    tester,
-  ) async {
+  testWidgets('grup kaydı başarısızsa geri alınır (F6j)', (tester) async {
     final backend = await _open(tester);
-    when(() => backend.tracking.fetchShowProgress(testUserId))
-        .thenAnswer((_) async => [progress(1, watched: 4)]);
+    when(() => backend.tracking.fetchShowProgress(testUserId)).thenAnswer(
+      (_) async => [progress(1, watchedAt: DateTime.utc(2026, 10, 1))],
+    );
     when(() => backend.tracking.setManualStatus(1, ManualShowStatus.dropped))
         .thenThrow(const AppFailure(AppFailureType.network));
-    await openMyShows(tester);
-
     final container = ProviderScope.containerOf(
-      tester.element(find.byKey(const Key('statusBar.1'))),
+      tester.element(find.byType(Scaffold).first),
     );
+    container.invalidate(myShowProgressProvider);
+    await tester.pumpAndSettle();
+
     await expectLater(
       container
           .read(myShowProgressProvider.notifier)

@@ -311,4 +311,56 @@ void main() {
       ]);
     });
   });
+
+  group('favoriler, son izlenenler (F6, F8j)', () {
+    ShowProgress show(
+      int id, {
+      bool favorite = false,
+      DateTime? watched,
+      int watchedCount = 1,
+    }) => ShowProgress(
+      showId: id,
+      name: 'D$id',
+      addedAt: DateTime.utc(2026),
+      airedCount: 10,
+      watchedCount: watchedCount,
+      isFavorite: favorite,
+      lastWatchedAt: watched,
+    );
+
+    test('en fazla 4 favori', () {
+      final three = [for (var i = 1; i <= 3; i++) show(i, favorite: true)];
+      expect(canAddFavorite(three), isTrue);
+      final four = [...three, show(4, favorite: true), show(5)];
+      expect(canAddFavorite(four), isFalse);
+      expect(favoriteShows(four).map((s) => s.showId), [1, 2, 3, 4]);
+    });
+
+    test(
+      'son izlenenler: izlenmeyenler hariç, yeniden eskiye, en fazla 20',
+      () {
+        final shows = [
+          show(1, watched: DateTime.utc(2026, 10, 1)),
+          show(2),
+          show(3, watched: DateTime.utc(2026, 10, 5)),
+        ];
+        expect(recentlyWatchedShows(shows).map((s) => s.showId), [3, 1]);
+        final many = [
+          for (var i = 1; i <= 25; i++)
+            show(i, watched: DateTime.utc(2026, 1, i)),
+        ];
+        expect(recentlyWatchedShows(many).length, recentShowsLimit);
+        expect(recentlyWatchedShows(many).first.showId, 25);
+      },
+    );
+
+    test('şu an izlediklerim yalnızca Devam ediyor grubu', () {
+      final shows = [
+        show(1, watchedCount: 4),
+        show(2, watchedCount: 10),
+        show(3, watchedCount: 0),
+      ];
+      expect(currentlyWatching(shows).map((s) => s.showId), [1]);
+    });
+  });
 }

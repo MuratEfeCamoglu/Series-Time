@@ -39,6 +39,7 @@ Future<TestBackend> _openProfile(
   Profile? profile,
   List<UserShow> myShows = const [],
   List<ShowProgress>? progress,
+  List<RecentEpisode> recent = const [],
   UserStats stats = const UserStats(watchedEpisodes: 0, watchMinutes: 0),
   List<WatchlistItem> watchlist = const [],
 }) async {
@@ -59,6 +60,8 @@ Future<TestBackend> _openProfile(
         progress ??
         [for (final e in sortByLastWatched(myShows)) _progressOf(e)],
   );
+  when(() => backend.tracking.fetchRecentActivity(testUserId))
+      .thenAnswer((_) async => recent);
   when(() => backend.profiles.fetchStats(testUserId))
       .thenAnswer((_) async => stats);
   when(() => backend.tracking.fetchWatchlist())
@@ -76,30 +79,49 @@ void main() {
   });
 
   testWidgets(
-    'kapak 300 yüksekliğinde, avatar solda kapağa taşar; zil ve sayılar (F8a, F8b, F8c, F8f)',
+    'soluk kapaklı başlık: solda avatar, sağında ad, tarih ve takipçi; zil (F8a, F8b, F8c, F8f)',
     (tester) async {
       await _openProfile(tester);
 
       final appBar = tester.widget<SliverAppBar>(find.byType(SliverAppBar));
-      // Kapak 300 + altında avatarın taştığı ad şeridi.
-      expect(appBar.expandedHeight, 300 + 64);
-      final avatar = tester.getRect(find.byKey(const Key('profile.avatar')));
-      expect(avatar.left, lessThan(800 / 4));
-      expect(avatar.top, lessThan(300));
-      expect(avatar.bottom, greaterThan(300));
-      expect(
-        tester.getTopLeft(find.text('Ayşe')).dx,
-        greaterThan(avatar.right),
-      );
+      expect(appBar.pinned, isTrue);
       expect(appBar.flexibleSpace, isA<FlexibleSpaceBar>());
       expect(
         (appBar.flexibleSpace! as FlexibleSpaceBar).collapseMode,
         CollapseMode.parallax,
       );
+      final avatar = tester.getRect(find.byKey(const Key('profile.avatar')));
+      expect(avatar.left, lessThan(800 / 4));
+      expect(
+        tester.getTopLeft(find.text('Ayşe')).dx,
+        greaterThan(avatar.right),
+      );
+      expect(find.text('@ayse_1'), findsOneWidget);
+      expect(find.text('1 Ekim 2026 tarihinden beri'), findsOneWidget);
+      expect(find.byKey(const Key('profile.headerFollowers')), findsOneWidget);
+      // Paylaş ve Düzenle üst çubukta.
+      expect(
+        find.descendant(
+          of: find.byType(SliverAppBar),
+          matching: find.byKey(const Key('profile.edit')),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byType(SliverAppBar),
+          matching: find.byKey(const Key('profile.share')),
+        ),
+        findsOneWidget,
+      );
       expect(find.byIcon(Icons.notifications), findsOneWidget);
+      await tester.scrollUntilVisible(
+        find.text('Rozet'),
+        300,
+        scrollable: find.byType(Scrollable).first,
+      );
       expect(find.text('Takipçi'), findsOneWidget);
       expect(find.text('Takip'), findsOneWidget);
-      expect(find.text('Rozet'), findsOneWidget);
     },
   );
 
@@ -119,34 +141,71 @@ void main() {
   });
 
   testWidgets(
-    '"Dizilerim" son izlenene göre sıralı; "Tümü" ızgarayı açar (F8e)',
+    'bölüm sırası: Favoriler, Şu an izlediklerim, Son etkinlik, Dizilerim (F8e, F8j, F8k)',
     (tester) async {
       final shows = [
         _entry(1, watched: DateTime.utc(2026, 10, 1)),
-        _entry(2),
-        _entry(3, watched: DateTime.utc(2026, 10, 5)),
+        _entry(2, watched: DateTime.utc(2026, 10, 5)),
+        _entry(3),
       ];
-      final backend = await _openProfile(tester, myShows: shows);
+      final backend = await _openProfile(
+        tester,
+        myShows: shows,
+        progress: [
+          ShowProgress(
+            showId: 2,
+            name: 'Dizi 2',
+            addedAt: DateTime.utc(2026),
+            lastWatchedAt: DateTime.utc(2026, 10, 5),
+            airedCount: 10,
+            watchedCount: 3,
+            showStatus: 'Ended',
+          ),
+          ShowProgress(
+            showId: 1,
+            name: 'Dizi 1',
+            addedAt: DateTime.utc(2026),
+            lastWatchedAt: DateTime.utc(2026, 10, 1),
+            airedCount: 10,
+            watchedCount: 10,
+            showStatus: 'Ended',
+            isFavorite: true,
+          ),
+          _progressOf(shows[2]),
+        ],
+        recent: [
+          RecentEpisode(
+            episodeId: 200,
+            showId: 2,
+            showName: 'Dizi 2',
+            seasonNumber: 1,
+            episodeNumber: 3,
+            watchedAt: DateTime.utc(2026, 10, 5),
+          ),
+        ],
+      );
       when(() => backend.profiles.fetchProfileByUsername('ayse_1'))
           .thenAnswer((_) async => testProfile);
-      when(() => backend.shows.fetchUserShows(testUserId))
-          .thenAnswer((_) async => shows);
 
-      await tester.scrollUntilVisible(
-        find.byKey(const Key('profile.seeAll')),
-        200,
-        scrollable: find.byType(Scrollable).first,
-      );
-      final titles = tester
-          .widgetList<PosterCard>(find.byType(PosterCard))
-          .map((card) => card.title);
-      expect(titles, ['Dizi 3', 'Dizi 1', 'Dizi 2']);
+      double y(String text) => tester.getTopLeft(find.text(text)).dy;
+      expect(y('Favori diziler'), lessThan(y('Şu an izlediklerim')));
+      expect(y('Şu an izlediklerim'), lessThan(y('Son etkinlik')));
+      expect(y('Son etkinlik'), lessThan(y('Dizilerim')));
+      expect(find.byKey(const Key('profile.favorite.1')), findsOneWidget);
+      expect(find.byKey(const Key('profile.favorite.2')), findsNothing);
+      expect(find.byKey(const Key('profile.recent.200')), findsOneWidget);
+      expect(find.text('S01 | B03'), findsOneWidget);
 
+      // "Tümü" ekranı Devam ediyor grubuyla süzülü açılır.
       await tester.tap(find.byKey(const Key('profile.seeAll')));
       await tester.pumpAndSettle();
       expect(find.byType(UserShowsScreen), findsOneWidget);
-      expect(find.byType(GridView), findsOneWidget);
-      expect(find.byType(PosterCard), findsNWidgets(3));
+      expect(
+        tester
+            .widgetList<PosterCard>(find.byType(PosterCard))
+            .map((c) => c.title),
+        ['Dizi 2'],
+      );
     },
   );
 
@@ -366,36 +425,31 @@ void main() {
   });
 
   testWidgets(
-    'profil "Dizilerim" grup renginde çubuk; "Tümü" gruplara göre süzülür (F6j, F8e)',
+    'profildeki Dizilerim ızgarası grup renginde çubuklu ve çiplerle süzülür (F6j, F8e)',
     (tester) async {
       final shows = [_entry(1), _entry(2)];
-      final backend = await _openProfile(
+      await _openProfile(
         tester,
         myShows: shows,
         progress: [
           _progressOf(shows[0], watched: 10),
-          _progressOf(shows[1], watched: 3),
+          _progressOf(shows[1], watched: 0),
         ],
       );
-      when(() => backend.profiles.fetchProfileByUsername('ayse_1'))
-          .thenAnswer((_) async => testProfile);
+      final chip = find.byKey(const Key('statusFilter.finished'));
       await tester.scrollUntilVisible(
-        find.byKey(const Key('profile.seeAll')),
-        200,
+        chip,
+        300,
         scrollable: find.byType(Scrollable).first,
       );
-      expect(find.byType(ProgressBar), findsNWidgets(2));
+      expect(find.byKey(const Key('statusBar.1')), findsOneWidget);
+      expect(find.byKey(const Key('statusBar.2')), findsOneWidget);
 
-      await tester.tap(find.byKey(const Key('profile.seeAll')));
+      await tester.tap(chip);
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('statusFilter.finished')));
-      await tester.pumpAndSettle();
-      expect(
-        tester
-            .widgetList<PosterCard>(find.byType(PosterCard))
-            .map((c) => c.title),
-        ['Dizi 1'],
-      );
+      expect(find.byKey(const Key('statusBar.1')), findsOneWidget);
+      expect(find.byKey(const Key('statusBar.2')), findsNothing);
+      expect(find.byType(ProgressBar), findsOneWidget);
     },
   );
 }

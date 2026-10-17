@@ -48,7 +48,11 @@ abstract final class AppRoutes {
       '/show/$showId/season/$seasonNumber';
   static String episode(int episodeId) => '/episode/$episodeId';
   static String userProfile(String username) => '/user/$username';
-  static String userShows(String username) => '/user/$username/shows';
+
+  /// [status]: "Tümü" ekranı bu grupla süzülü açılır (F8e).
+  static String userShows(String username, {String? status}) => status == null
+      ? '/user/$username/shows'
+      : '/user/$username/shows?status=$status';
   static String followers(String username) => '/user/$username/followers';
   static String following(String username) => '/user/$username/following';
   static const notifications = '/notifications';
@@ -156,8 +160,10 @@ final routerProvider = Provider<GoRouter>((ref) {
         routes: [
           GoRoute(
             path: 'shows',
-            builder: (context, state) =>
-                UserShowsScreen(username: state.pathParameters['username']!),
+            builder: (context, state) => UserShowsScreen(
+              username: state.pathParameters['username']!,
+              initialStatus: state.uri.queryParameters['status'],
+            ),
           ),
           GoRoute(
             path: 'followers',

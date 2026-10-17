@@ -111,3 +111,57 @@ class ShowProgressGrid extends StatelessWidget {
     );
   }
 }
+
+/// Yatay afiş satırı (Son izlenenler, Şu an izlediklerim).
+class ShowProgressRow extends StatelessWidget {
+  const ShowProgressRow({super.key, required this.shows});
+
+  final List<ShowProgress> shows;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: AppSpacing.posterRowHeight,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+        itemCount: shows.length,
+        separatorBuilder: (_, _) => const SizedBox(width: AppSpacing.sm),
+        itemBuilder: (context, index) => SizedBox(
+          width: AppSpacing.posterRowHeight * AppSpacing.posterAspectRatio,
+          child: ShowProgressPoster(
+            key: ValueKey(shows[index].showId),
+            show: shows[index],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Kaydırılan sayfanın içindeki 3'lü tembel ızgara (profil Dizilerim, F6h).
+class SliverShowProgressGrid extends StatelessWidget {
+  const SliverShowProgressGrid({super.key, required this.shows});
+
+  final List<ShowProgress> shows;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverPadding(
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+      sliver: SliverGrid.builder(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: AppSpacing.posterGridColumns,
+          mainAxisSpacing: AppSpacing.md,
+          crossAxisSpacing: AppSpacing.sm,
+          childAspectRatio: AppSpacing.progressGridAspectRatio,
+        ),
+        itemCount: shows.length,
+        itemBuilder: (context, index) => ShowProgressPoster(
+          key: ValueKey(shows[index].showId),
+          show: shows[index],
+        ),
+      ),
+    );
+  }
+}

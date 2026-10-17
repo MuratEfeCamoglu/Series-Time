@@ -142,6 +142,7 @@ class ShowProgress {
     this.showStatus,
     this.lastWatchedAt,
     this.manualStatus,
+    this.isFavorite = false,
   });
 
   factory ShowProgress.fromJson(Map<String, dynamic> json) => ShowProgress(
@@ -156,6 +157,7 @@ class ShowProgress {
       _ => null,
     },
     manualStatus: manualShowStatusFromName(json['manual_status']),
+    isFavorite: json['is_favorite'] as bool? ?? false,
     airedCount: json['aired_count'] as int,
     watchedCount: json['watched_count'] as int,
   );
@@ -168,19 +170,67 @@ class ShowProgress {
   final DateTime addedAt;
   final DateTime? lastWatchedAt;
   final ManualShowStatus? manualStatus;
+
+  /// F8(j): profildeki favori dizilerden biri.
+  final bool isFavorite;
   final int airedCount;
   final int watchedCount;
 
-  ShowProgress withManualStatus(ManualShowStatus? status) => ShowProgress(
-    showId: showId,
-    name: name,
-    posterPath: posterPath,
-    backdropPath: backdropPath,
-    showStatus: showStatus,
-    addedAt: addedAt,
-    lastWatchedAt: lastWatchedAt,
-    manualStatus: status,
-    airedCount: airedCount,
-    watchedCount: watchedCount,
+  ShowProgress withManualStatus(ManualShowStatus? status) =>
+      _copy(manualStatus: status);
+
+  ShowProgress withFavorite(bool favorite) => _copy(isFavorite: favorite);
+
+  ShowProgress _copy({Object? manualStatus = _unchanged, bool? isFavorite}) =>
+      ShowProgress(
+        showId: showId,
+        name: name,
+        posterPath: posterPath,
+        backdropPath: backdropPath,
+        showStatus: showStatus,
+        addedAt: addedAt,
+        lastWatchedAt: lastWatchedAt,
+        manualStatus: identical(manualStatus, _unchanged)
+            ? this.manualStatus
+            : manualStatus as ManualShowStatus?,
+        isFavorite: isFavorite ?? this.isFavorite,
+        airedCount: airedCount,
+        watchedCount: watchedCount,
+      );
+}
+
+const _unchanged = Object();
+
+/// `get_recent_activity()` satırı: profildeki son izlenen bölüm (F8k).
+class RecentEpisode {
+  const RecentEpisode({
+    required this.episodeId,
+    required this.showId,
+    required this.showName,
+    required this.seasonNumber,
+    required this.episodeNumber,
+    required this.watchedAt,
+    this.posterPath,
+    this.episodeName,
+  });
+
+  factory RecentEpisode.fromJson(Map<String, dynamic> json) => RecentEpisode(
+    episodeId: json['episode_id'] as int,
+    showId: json['show_id'] as int,
+    showName: json['show_name'] as String,
+    posterPath: json['poster_path'] as String?,
+    seasonNumber: json['season_number'] as int,
+    episodeNumber: json['episode_number'] as int,
+    episodeName: json['episode_name'] as String?,
+    watchedAt: DateTime.parse(json['watched_at'] as String),
   );
+
+  final int episodeId;
+  final int showId;
+  final String showName;
+  final String? posterPath;
+  final int seasonNumber;
+  final int episodeNumber;
+  final String? episodeName;
+  final DateTime watchedAt;
 }

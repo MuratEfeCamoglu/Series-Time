@@ -18,6 +18,7 @@ import '../../auth/providers.dart';
 import '../../profile/widgets/profile_avatar.dart';
 import '../../tracking/logic.dart';
 import '../../tracking/providers.dart';
+import '../../tracking/widgets/favorite_button.dart';
 import '../../tracking/widgets/status_sheet.dart';
 import '../data/models.dart';
 import '../logic.dart';
@@ -192,6 +193,7 @@ class _Header extends StatelessWidget {
                   _MyShowsButton(show: show, seasonNumbers: seasonNumbers),
                   // F4(b): listedeki dizinin grubu buradan değiştirilir (F6j).
                   ShowStatusButton(showId: show.id),
+                  ShowFavoriteButton(showId: show.id),
                 ],
               ),
             ],

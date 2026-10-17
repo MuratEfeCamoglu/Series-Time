@@ -100,7 +100,13 @@ void main() {
       expect(find.text('Düzenle'), findsNothing);
       expect(find.byKey(const Key('profile.bell')), findsNothing);
       expect(find.byKey(const Key('profile.menu')), findsOneWidget);
-      expect(find.text('4'), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byKey(const Key('profile.followers')),
+          matching: find.text('4'),
+        ),
+        findsOneWidget,
+      );
     },
   );
 
@@ -114,7 +120,13 @@ void main() {
     await tester.pump();
 
     expect(find.text('Takip ediliyor'), findsOneWidget);
-    expect(find.text('5'), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byKey(const Key('profile.followers')),
+        matching: find.text('5'),
+      ),
+      findsOneWidget,
+    );
     request.complete();
     await tester.pumpAndSettle();
     verify(() => backend.social.setFollowing(_otherId, follow: true)).called(1);
@@ -129,7 +141,13 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Takip ediliyor'), findsOneWidget);
-    expect(find.text('4'), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byKey(const Key('profile.followers')),
+        matching: find.text('4'),
+      ),
+      findsOneWidget,
+    );
     expect(find.text('Kaydedilemedi, tekrar dene.'), findsOneWidget);
   });
 

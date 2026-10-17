@@ -1516,12 +1516,6 @@ abstract class AppLocalizations {
   /// **'Galeriden seç'**
   String get avatarFromGallery;
 
-  /// No description provided for @tabMyShows.
-  ///
-  /// In tr, this message translates to:
-  /// **'Dizilerim'**
-  String get tabMyShows;
-
   /// No description provided for @statusFinished.
   ///
   /// In tr, this message translates to:
@@ -1659,6 +1653,78 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Instagram'**
   String get linkInstagram;
+
+  /// No description provided for @recentShowsTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Son izlenen diziler'**
+  String get recentShowsTitle;
+
+  /// No description provided for @upcomingShowAll.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tümünü göster'**
+  String get upcomingShowAll;
+
+  /// No description provided for @upcomingShowLess.
+  ///
+  /// In tr, this message translates to:
+  /// **'Daha az göster'**
+  String get upcomingShowLess;
+
+  /// No description provided for @profileFavorites.
+  ///
+  /// In tr, this message translates to:
+  /// **'Favori diziler'**
+  String get profileFavorites;
+
+  /// No description provided for @profileFavoritesHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Dizi detayındaki kalp düğmesiyle en fazla 4 favori seçebilirsin.'**
+  String get profileFavoritesHint;
+
+  /// No description provided for @profileWatching.
+  ///
+  /// In tr, this message translates to:
+  /// **'Şu an izlediklerim'**
+  String get profileWatching;
+
+  /// No description provided for @profileWatchingEmpty.
+  ///
+  /// In tr, this message translates to:
+  /// **'Şu an izlediğin dizi yok.'**
+  String get profileWatchingEmpty;
+
+  /// No description provided for @profileRecentActivity.
+  ///
+  /// In tr, this message translates to:
+  /// **'Son etkinlik'**
+  String get profileRecentActivity;
+
+  /// No description provided for @profileSince.
+  ///
+  /// In tr, this message translates to:
+  /// **'{date} tarihinden beri'**
+  String profileSince(String date);
+
+  /// No description provided for @favoriteAdd.
+  ///
+  /// In tr, this message translates to:
+  /// **'Favorilere ekle'**
+  String get favoriteAdd;
+
+  /// No description provided for @favoriteRemove.
+  ///
+  /// In tr, this message translates to:
+  /// **'Favorilerden çıkar'**
+  String get favoriteRemove;
+
+  /// No description provided for @favoritesLimit.
+  ///
+  /// In tr, this message translates to:
+  /// **'En fazla 4 favori seçebilirsin.'**
+  String get favoritesLimit;
 }
 
 class _AppLocalizationsDelegate

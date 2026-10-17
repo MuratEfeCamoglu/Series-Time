@@ -146,6 +146,8 @@ class TestBackend {
     when(() => tracking.fetchWatchlist()).thenAnswer((_) async => const []);
     when(() => tracking.fetchShowProgress(any()))
         .thenAnswer((_) async => const []);
+    when(() => tracking.fetchRecentActivity(any()))
+        .thenAnswer((_) async => const []);
     when(() => tracking.fetchUpcoming(any())).thenAnswer((_) async => const []);
     when(() => tracking.fetchWatchedEpisodeIds(any()))
         .thenAnswer((_) async => <int>{});

@@ -244,3 +244,33 @@ ManualShowStatus? manualFor(ShowStatus? choice) => switch (choice) {
   ShowStatus.watchlist => ManualShowStatus.planned,
   _ => null,
 };
+
+/// F8(j): profilde en fazla bu kadar favori dizi.
+const maxFavorites = 4;
+
+/// F7: Diziler sayfasında "Tümünü göster"den önce görünen yaklaşan bölüm sayısı.
+const upcomingPreviewCount = 5;
+
+/// F6: "Son izlenen diziler" satırının uzunluğu.
+const recentShowsLimit = 20;
+
+List<ShowProgress> favoriteShows(List<ShowProgress> shows) => [
+  for (final s in shows)
+    if (s.isFavorite) s,
+];
+
+bool canAddFavorite(List<ShowProgress> shows) =>
+    favoriteShows(shows).length < maxFavorites;
+
+/// En az bir bölümü izlenmiş diziler, son izlenen önce (F6).
+List<ShowProgress> recentlyWatchedShows(List<ShowProgress> shows) {
+  final watched = [
+    for (final s in shows)
+      if (s.lastWatchedAt != null) s,
+  ]..sort((a, b) => b.lastWatchedAt!.compareTo(a.lastWatchedAt!));
+  return watched.take(recentShowsLimit).toList();
+}
+
+/// Profildeki "Şu an izlediklerim": Devam ediyor grubundakiler, sıra korunur (F8e).
+List<ShowProgress> currentlyWatching(List<ShowProgress> shows) =>
+    filterByStatus(shows, ShowStatus.watching);

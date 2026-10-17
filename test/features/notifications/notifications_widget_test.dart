@@ -46,7 +46,8 @@ void main() {
       counts: const ProfileCounts(followers: 12, following: 7, badges: 3),
     );
 
-    expect(find.text('12'), findsOneWidget);
+    // Takipçi sayısı başlıkta da görünür (F8c).
+    expect(find.text('12'), findsNWidgets(2));
     expect(find.text('7'), findsOneWidget);
     expect(find.text('3'), findsOneWidget);
   });

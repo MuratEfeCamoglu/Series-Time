@@ -48,6 +48,7 @@ class WatchlistNotifier extends AsyncNotifier<List<WatchlistItem>> {
       ..invalidate(watchedEpisodesProvider(item.showId))
       ..invalidate(myShowProgressProvider)
       ..invalidate(showProgressProvider)
+      ..invalidate(recentActivityProvider)
       ..invalidate(userStatsProvider)
       ..invalidate(profileCountsProvider)
       ..invalidate(unreadCountProvider);
@@ -129,6 +130,7 @@ class WatchedEpisodesNotifier extends AsyncNotifier<Set<int>> {
       ..invalidate(myShowsProvider)
       ..invalidate(myShowProgressProvider)
       ..invalidate(showProgressProvider)
+      ..invalidate(recentActivityProvider)
       ..invalidate(userStatsProvider)
       ..invalidate(profileCountsProvider)
       ..invalidate(unreadCountProvider);
@@ -147,7 +149,7 @@ final showProgressProvider = FutureProvider.autoDispose
           ref.watch(trackingRepositoryProvider).fetchShowProgress(userId),
     );
 
-/// Oturum sahibinin dizileri ve grupları (Dizilerim sekmesi, dizi detayındaki durum menüsü).
+/// Oturum sahibinin dizileri, grupları ve favorileri (Diziler, profil, dizi detayı).
 /// Elle grup seçimi iyimser güncellenir; hata olursa önceki liste geri gelir.
 class MyShowProgressNotifier extends AsyncNotifier<List<ShowProgress>> {
   @override
@@ -180,7 +182,32 @@ class MyShowProgressNotifier extends AsyncNotifier<List<ShowProgress>> {
       ..invalidate(watchlistProvider)
       ..invalidate(showProgressProvider);
   }
+
+  /// F8(j): iyimser; sınır doluysa sunucuya gitmeden false döner.
+  Future<bool> setFavorite(int showId, bool favorite) async {
+    final previous = await future;
+    if (favorite && !canAddFavorite(previous)) return false;
+    state = AsyncData([
+      for (final entry in previous)
+        entry.showId == showId ? entry.withFavorite(favorite) : entry,
+    ]);
+    try {
+      await ref.read(trackingRepositoryProvider).setFavorite(showId, favorite);
+    } catch (_) {
+      state = AsyncData(previous);
+      rethrow;
+    }
+    ref.invalidate(showProgressProvider);
+    return true;
+  }
 }
+
+/// F8(k): profildeki son etkinlik.
+final recentActivityProvider = FutureProvider.autoDispose
+    .family<List<RecentEpisode>, String>(
+      (ref, userId) =>
+          ref.watch(trackingRepositoryProvider).fetchRecentActivity(userId),
+    );
 
 final myShowProgressProvider =
     AsyncNotifierProvider<MyShowProgressNotifier, List<ShowProgress>>(

@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../app/router.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/guest_gate.dart';
+import '../../../shared/widgets/section_header.dart';
+import '../../../theme/app_spacing.dart';
 import '../../auth/providers.dart';
+import '../../shows/providers.dart';
 import '../logic.dart';
 import '../providers.dart';
-import '../widgets/my_shows_tab.dart';
-import '../widgets/upcoming_tab.dart';
-import '../widgets/watchlist_tab.dart';
+import '../widgets/show_progress_grid.dart';
+import '../widgets/upcoming_section.dart';
+import '../widgets/watchlist_section.dart';
 
-/// Diziler sekmesi: Sıradaki (F6), Dizilerim (F6j) ve Yaklaşan (F7).
+/// Diziler sekmesi tek sayfa (F6): Son izlenen diziler, Sıradaki ve Yaklaşan (F7).
 class ShowsScreen extends ConsumerWidget {
   const ShowsScreen({super.key});
 
@@ -24,37 +30,73 @@ class ShowsScreen extends ConsumerWidget {
       );
     }
     final layout = ref.watch(watchlistLayoutProvider);
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(l10n.tabShows),
-          actions: [
-            IconButton(
-              key: const Key('watchlist.layout'),
-              tooltip: layout == WatchlistLayout.grid
-                  ? l10n.watchlistShowList
-                  : l10n.watchlistShowGrid,
-              icon: Icon(
-                layout == WatchlistLayout.grid
-                    ? Icons.view_list
-                    : Icons.grid_view,
-              ),
-              onPressed: () =>
-                  ref.read(watchlistLayoutProvider.notifier).toggle(),
+    final hasShows = ref.watch(myShowsProvider).value?.isNotEmpty;
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(l10n.tabShows),
+        actions: [
+          IconButton(
+            key: const Key('watchlist.layout'),
+            tooltip: layout == WatchlistLayout.grid
+                ? l10n.watchlistShowList
+                : l10n.watchlistShowGrid,
+            icon: Icon(
+              layout == WatchlistLayout.grid
+                  ? Icons.view_list
+                  : Icons.grid_view,
             ),
-          ],
-          bottom: TabBar(
-            tabs: [
-              Tab(text: l10n.tabWatchlist),
-              Tab(text: l10n.tabMyShows),
-              Tab(text: l10n.tabUpcoming),
-            ],
+            onPressed: () =>
+                ref.read(watchlistLayoutProvider.notifier).toggle(),
           ),
-        ),
-        body: const TabBarView(
-          children: [WatchlistTab(), MyShowsTab(), UpcomingTab()],
-        ),
+        ],
+      ),
+      body: hasShows == false
+          ? EmptyState(
+              message: l10n.showsEmpty,
+              icon: Icons.live_tv_outlined,
+              actionLabel: l10n.showsGoToDiscover,
+              onAction: () => context.go(AppRoutes.discover),
+            )
+          : RefreshIndicator(
+              onRefresh: () {
+                ref
+                  ..invalidate(myShowProgressProvider)
+                  ..invalidate(upcomingProvider);
+                return ref.refresh(watchlistProvider.future);
+              },
+              child: const CustomScrollView(
+                slivers: [
+                  _RecentShows(),
+                  WatchlistSection(),
+                  UpcomingSection(),
+                  SliverPadding(
+                    padding: EdgeInsets.only(bottom: AppSpacing.lg),
+                  ),
+                ],
+              ),
+            ),
+    );
+  }
+}
+
+/// "Son izlenen diziler" satırı; hiç izleme yoksa gösterilmez (F6).
+class _RecentShows extends ConsumerWidget {
+  const _RecentShows();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final shows = recentlyWatchedShows(
+      ref.watch(myShowProgressProvider).value ?? const [],
+    );
+    if (shows.isEmpty) return const SliverToBoxAdapter();
+    return SliverToBoxAdapter(
+      child: Column(
+        key: const Key('shows.recent'),
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SectionHeader(title: AppLocalizations.of(context).recentShowsTitle),
+          ShowProgressRow(shows: shows),
+        ],
       ),
     );
   }

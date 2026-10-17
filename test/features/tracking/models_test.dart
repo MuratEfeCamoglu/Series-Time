@@ -126,4 +126,39 @@ void main() {
     expect(item.markedPending(DateTime.utc(2026)).manualStatus, isNull);
     expect(manualShowStatusFromName('bilinmeyen'), isNull);
   });
+
+  test('ShowProgress is_favorite ve RecentEpisode.fromJson (F8j, F8k)', () {
+    final p = ShowProgress.fromJson({
+      'show_id': 1,
+      'name': 'D',
+      'added_at': '2026-10-01T10:00:00Z',
+      'manual_status': 'paused',
+      'is_favorite': true,
+      'aired_count': 1,
+      'watched_count': 0,
+    });
+    expect(p.isFavorite, isTrue);
+    expect(p.withFavorite(false).isFavorite, isFalse);
+    expect(p.withFavorite(false).manualStatus, ManualShowStatus.paused);
+    expect(p.withManualStatus(null).isFavorite, isTrue);
+
+    final e = RecentEpisode.fromJson({
+      'episode_id': 63056,
+      'show_id': 1399,
+      'show_name': 'Taht Oyunları',
+      'poster_path': '/p.jpg',
+      'season_number': 1,
+      'episode_number': 2,
+      'episode_name': 'Kral Yolu',
+      'watched_at': '2026-10-17T20:00:00Z',
+    });
+    expect(e.episodeId, 63056);
+    expect(e.showId, 1399);
+    expect(e.showName, 'Taht Oyunları');
+    expect(e.posterPath, '/p.jpg');
+    expect(e.seasonNumber, 1);
+    expect(e.episodeNumber, 2);
+    expect(e.episodeName, 'Kral Yolu');
+    expect(e.watchedAt, DateTime.utc(2026, 10, 17, 20));
+  });
 }

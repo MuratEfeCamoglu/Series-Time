@@ -787,9 +787,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get avatarFromGallery => 'Galeriden seç';
 
   @override
-  String get tabMyShows => 'Dizilerim';
-
-  @override
   String get statusFinished => 'Bitti';
 
   @override
@@ -862,4 +859,43 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get linkInstagram => 'Instagram';
+
+  @override
+  String get recentShowsTitle => 'Son izlenen diziler';
+
+  @override
+  String get upcomingShowAll => 'Tümünü göster';
+
+  @override
+  String get upcomingShowLess => 'Daha az göster';
+
+  @override
+  String get profileFavorites => 'Favori diziler';
+
+  @override
+  String get profileFavoritesHint =>
+      'Dizi detayındaki kalp düğmesiyle en fazla 4 favori seçebilirsin.';
+
+  @override
+  String get profileWatching => 'Şu an izlediklerim';
+
+  @override
+  String get profileWatchingEmpty => 'Şu an izlediğin dizi yok.';
+
+  @override
+  String get profileRecentActivity => 'Son etkinlik';
+
+  @override
+  String profileSince(String date) {
+    return '$date tarihinden beri';
+  }
+
+  @override
+  String get favoriteAdd => 'Favorilere ekle';
+
+  @override
+  String get favoriteRemove => 'Favorilerden çıkar';
+
+  @override
+  String get favoritesLimit => 'En fazla 4 favori seçebilirsin.';
 }

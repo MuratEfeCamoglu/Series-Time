@@ -23,4 +23,7 @@ abstract final class AppColors {
   /// Görsel üstündeki başlığın okunması için koyu geçiş (yalnızca üst kısım ve şeffaf).
   static const scrimTop = Color(0x99000000);
   static const scrimClear = Color(0x00000000);
+
+  /// Profil başlığındaki kapağı soluklaştıran üst ton (F8a).
+  static const coverScrim = Color(0xB3000000);
 }

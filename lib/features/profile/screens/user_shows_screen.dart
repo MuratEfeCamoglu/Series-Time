@@ -13,16 +13,24 @@ import '../providers.dart';
 /// "Tümü" (F8e, F6j): kullanıcının tüm dizileri, son izlenene göre, grup renginde çubuklu
 /// 3'lü ızgarada; gruplara göre filtrelenir.
 class UserShowsScreen extends ConsumerStatefulWidget {
-  const UserShowsScreen({super.key, required this.username});
+  const UserShowsScreen({
+    super.key,
+    required this.username,
+    this.initialStatus,
+  });
 
   final String username;
+
+  /// `ShowStatus` adı ("watching"…); bilinmiyorsa filtre yok.
+  final String? initialStatus;
 
   @override
   ConsumerState<UserShowsScreen> createState() => _UserShowsScreenState();
 }
 
 class _UserShowsScreenState extends ConsumerState<UserShowsScreen> {
-  ShowStatus? _filter;
+  late ShowStatus? _filter = ShowStatus.values
+      .asNameMap()[widget.initialStatus];
 
   @override
   Widget build(BuildContext context) {

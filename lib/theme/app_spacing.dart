@@ -32,12 +32,10 @@ abstract final class AppSpacing {
   static const double progressGridAspectRatio = 0.62;
 
   /// Profil kapağı (F8a); avatar kapağın alt kenarına taşar.
-  static const double profileCoverHeight = 300;
-  static const double avatarRing = 3;
-
-  /// Kapağın altında avatarın yanındaki ad/kullanıcı adı şeridi.
-  static const double profileNameStrip = 64;
+  /// Profil başlığı (F8a, F8c): üst çubuk + avatar satırı; arkasında soluk kapak.
+  static const double profileHeaderHeight = 190;
   static const double profileNameMaxTextScale = 1.3;
+  static const double avatarRing = 3;
   static const double badgeMinSize = 16;
   static const double posterRowHeight = 150;
   static const double coverThumbAspectRatio = 16 / 9;

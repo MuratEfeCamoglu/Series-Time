@@ -50,6 +50,27 @@ class TrackingRepository {
             .eq('show_id', showId);
       });
 
+  Future<void> setFavorite(int showId, bool favorite) => _guard(() async {
+    await _client
+        .from('user_shows')
+        .update({'is_favorite': favorite})
+        .eq('user_id', _userId)
+        .eq('show_id', showId);
+  });
+
+  /// F8(k): son izlenen bölümler, yeniden eskiye.
+  Future<List<RecentEpisode>> fetchRecentActivity(String userId) =>
+      _guard(() async {
+        final rows = await _client.rpc(
+          'get_recent_activity',
+          params: {'user_id': userId},
+        ) as List;
+        return [
+          for (final row in rows)
+            RecentEpisode.fromJson(row as Map<String, dynamic>),
+        ];
+      });
+
   /// Oturum sahibinin bu dizide izlediği bölüm kimlikleri.
   Future<Set<int>> fetchWatchedEpisodeIds(int showId) => _guard(() async {
     final rows = await _client
