@@ -107,6 +107,8 @@ class TestBackend {
     when(() => shows.onTheAirShows()).thenAnswer((_) async => const []);
     when(() => shows.fetchCachedEpisodes(any()))
         .thenAnswer((_) async => const []);
+    when(() => profiles.fetchRatingDistribution(any()))
+        .thenAnswer((_) async => const []);
     when(() => profiles.fetchStats(any())).thenAnswer(
       (_) async => const UserStats(watchedEpisodes: 0, watchMinutes: 0),
     );

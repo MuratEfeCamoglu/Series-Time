@@ -96,4 +96,18 @@ void main() {
     expect(profile.toJson()['letterboxd_username'], 'ayse_lb');
     expect(profile.toJson()['instagram_username'], 'ayse.dizi');
   });
+
+  test(
+    'RatingCount.fromJson get_rating_distribution kolonlarını ayrıştırır (F8l)',
+    () {
+      final c = RatingCount.fromJson({'rating': 4.5, 'rating_count': 3});
+      expect(c.rating, 4.5);
+      expect(c.count, 3);
+      // numeric kolon tamsayı gibi de gelebilir.
+      expect(
+        RatingCount.fromJson({'rating': 4, 'rating_count': 1}).rating,
+        4.0,
+      );
+    },
+  );
 }

@@ -383,8 +383,14 @@ void main() {
       await tester.enterText(instagram, 'ay..se');
       await tester.tap(find.byKey(const Key('editProfile.save')));
       await tester.pumpAndSettle();
-      expect(find.text('2–15 karakter: harf, rakam ve _'), findsOneWidget);
-      expect(find.textContaining('En fazla 30 karakter'), findsOneWidget);
+      expect(
+        find.textContaining('Geçerli bir Letterboxd profil bağlantısı'),
+        findsOneWidget,
+      );
+      expect(
+        find.textContaining('Geçerli bir Instagram profil bağlantısı'),
+        findsOneWidget,
+      );
       verifyNever(() => backend.profiles.saveProfile(any(), any()));
 
       await tester.enterText(letterboxd, 'https://letterboxd.com/Ayse_LB/');
@@ -402,7 +408,7 @@ void main() {
     },
   );
 
-  testWidgets('dolu bağlantılar profilde düğme olarak görünür (F8i)', (
+  testWidgets('dolu bağlantılar profilde bağlantı metni olarak görünür (F8i)', (
     tester,
   ) async {
     await _openProfile(
@@ -423,7 +429,8 @@ void main() {
       find.descendant(of: button, matching: find.byIcon(Icons.link)),
       findsOneWidget,
     );
-    expect(find.text('Letterboxd'), findsOneWidget);
+    // Kullanıcı adı değil, bağlantı metni görünür (F8i).
+    expect(find.text('letterboxd.com/ayse_lb'), findsOneWidget);
     expect(find.byKey(const Key('profile.instagram')), findsNothing);
   });
 
@@ -498,5 +505,67 @@ void main() {
     // Sahne görseli yoksa dizinin arka planı.
     expect(imageOf(301), contains('/arka.jpg'));
     expect(find.text('S01 | B04'), findsOneWidget);
+  });
+
+  testWidgets(
+    "istatistikler Favorilerin üstünde, Puanlar Dizilerim'in üstünde (F8e, F8l)",
+    (tester) async {
+      final backend = TestBackend();
+      when(() => backend.profiles.fetchRatingDistribution(testUserId))
+          .thenAnswer(
+            (_) async => const [
+              RatingCount(rating: 2, count: 1),
+              RatingCount(rating: 4.5, count: 4),
+            ],
+          );
+      tester.view
+        ..physicalSize = const Size(800, 2400)
+        ..devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await backend.pumpApp(tester);
+      await tester.tap(_navLabel('Profil'));
+      await tester.pumpAndSettle();
+
+      double y(Finder f) => tester.getTopLeft(f).dy;
+      final stats = find.byKey(const Key('profile.watchTime'));
+      expect(y(stats), greaterThan(y(find.byKey(const Key('profile.avatar')))));
+      expect(y(stats), lessThan(y(find.text('Favori diziler'))));
+      expect(y(find.text('Puanlar')), lessThan(y(find.text('Dizilerim'))));
+      expect(
+        y(find.text('Şu an izlediklerim')),
+        lessThan(y(find.text('Puanlar'))),
+      );
+
+      expect(find.text('5 puan · ortalama 4,0'), findsOneWidget);
+      double height(double rating) =>
+          tester.getSize(find.byKey(Key('profile.ratingBar.$rating'))).height;
+      // En çok verilen puan tam boy, 1 kez verilen dörtte biri.
+      expect(height(4.5), closeTo(4 * height(2.0), 0.01));
+      expect(height(4.5), greaterThan(height(3.0)));
+    },
+  );
+
+  testWidgets('düzenleme ekranında bağlantılar tam adresle görünür (F2)', (
+    tester,
+  ) async {
+    await _openProfile(
+      tester,
+      profile: Profile(
+        id: testUserId,
+        username: 'ayse_1',
+        displayName: 'Ayşe',
+        bio: '',
+        instagramUsername: 'ayse.dizi',
+        createdAt: testProfile.createdAt,
+      ),
+    );
+    await tester.tap(find.text('Düzenle'));
+    await tester.pumpAndSettle();
+    final instagram = find.byKey(const Key('editProfile.instagram'));
+    await tester.ensureVisible(instagram);
+    expect(
+      tester.widget<TextFormField>(instagram).controller!.text,
+      'https://www.instagram.com/ayse.dizi/',
+    );
   });
 }

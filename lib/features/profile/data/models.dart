@@ -103,3 +103,16 @@ class UserStats {
   final int watchedEpisodes;
   final int watchMinutes;
 }
+
+/// `get_rating_distribution()` satırı: bir puan ve o puanı verdiği bölüm sayısı (F8l).
+class RatingCount {
+  const RatingCount({required this.rating, required this.count});
+
+  factory RatingCount.fromJson(Map<String, dynamic> json) => RatingCount(
+    rating: (json['rating'] as num).toDouble(),
+    count: json['rating_count'] as int,
+  );
+
+  final double rating;
+  final int count;
+}

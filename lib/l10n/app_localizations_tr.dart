@@ -836,23 +836,18 @@ class AppLocalizationsTr extends AppLocalizations {
   String get cropDone => 'Kullan';
 
   @override
-  String get fieldLetterboxd => 'Letterboxd kullanıcı adı';
+  String get fieldLetterboxd => 'Letterboxd profil bağlantısı';
 
   @override
-  String get fieldInstagram => 'Instagram kullanıcı adı';
+  String get fieldInstagram => 'Instagram profil bağlantısı';
 
   @override
-  String get validationLetterboxd => '2–15 karakter: harf, rakam ve _';
+  String get validationLetterboxd =>
+      'Geçerli bir Letterboxd profil bağlantısı gir (letterboxd.com/kullaniciadi; kısa boxd.it bağlantıları olmaz).';
 
   @override
   String get validationInstagram =>
-      'En fazla 30 karakter: harf, rakam, nokta ve _ (nokta başta/sonda ya da art arda olamaz)';
-
-  @override
-  String get linkLetterboxd => 'Letterboxd';
-
-  @override
-  String get linkInstagram => 'Instagram';
+      'Geçerli bir Instagram profil bağlantısı gir (instagram.com/kullaniciadi).';
 
   @override
   String get recentShowsTitle => 'Son izlenen diziler';
@@ -920,4 +915,27 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get validationFixFields => 'Kırmızı işaretli alanları düzelt.';
+
+  @override
+  String get hintLetterboxd => 'https://letterboxd.com/kullaniciadi/';
+
+  @override
+  String get hintInstagram => 'https://www.instagram.com/kullaniciadi/';
+
+  @override
+  String get profileRatings => 'Puanlar';
+
+  @override
+  String profileRatingsSummary(int count, String average) {
+    return '$count puan · ortalama $average';
+  }
+
+  @override
+  String get profileRatingsEmpty =>
+      'Bölüm Sonrası ekranında verdiğin puanlar burada grafik olarak görünür.';
+
+  @override
+  String ratingBarLabel(String rating, int count) {
+    return '$rating yıldız: $count bölüm';
+  }
 }

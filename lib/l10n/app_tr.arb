@@ -471,12 +471,10 @@
   "cropTitle": "Kırp",
   "cropHint": "Sürükleyip yakınlaştırarak kareyi ayarla.",
   "cropDone": "Kullan",
-  "fieldLetterboxd": "Letterboxd kullanıcı adı",
-  "fieldInstagram": "Instagram kullanıcı adı",
-  "validationLetterboxd": "2–15 karakter: harf, rakam ve _",
-  "validationInstagram": "En fazla 30 karakter: harf, rakam, nokta ve _ (nokta başta/sonda ya da art arda olamaz)",
-  "linkLetterboxd": "Letterboxd",
-  "linkInstagram": "Instagram",
+  "fieldLetterboxd": "Letterboxd profil bağlantısı",
+  "fieldInstagram": "Instagram profil bağlantısı",
+  "validationLetterboxd": "Geçerli bir Letterboxd profil bağlantısı gir (letterboxd.com/kullaniciadi; kısa boxd.it bağlantıları olmaz).",
+  "validationInstagram": "Geçerli bir Instagram profil bağlantısı gir (instagram.com/kullaniciadi).",
   "recentShowsTitle": "Son izlenen diziler",
   "upcomingShowAll": "Tümünü göster",
   "upcomingShowLess": "Daha az göster",
@@ -517,5 +515,31 @@
       }
     }
   },
-  "validationFixFields": "Kırmızı işaretli alanları düzelt."
+  "validationFixFields": "Kırmızı işaretli alanları düzelt.",
+  "hintLetterboxd": "https://letterboxd.com/kullaniciadi/",
+  "hintInstagram": "https://www.instagram.com/kullaniciadi/",
+  "profileRatings": "Puanlar",
+  "profileRatingsSummary": "{count} puan · ortalama {average}",
+  "@profileRatingsSummary": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "average": {
+        "type": "String"
+      }
+    }
+  },
+  "profileRatingsEmpty": "Bölüm Sonrası ekranında verdiğin puanlar burada grafik olarak görünür.",
+  "ratingBarLabel": "{rating} yıldız: {count} bölüm",
+  "@ratingBarLabel": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

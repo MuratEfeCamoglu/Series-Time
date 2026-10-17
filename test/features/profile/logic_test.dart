@@ -191,4 +191,34 @@ void main() {
       expect(instagramUrl('ayse'), 'https://www.instagram.com/ayse/');
     });
   });
+
+  group('Puanlar grafiği (F8l)', () {
+    const counts = [
+      RatingCount(rating: 2, count: 1),
+      RatingCount(rating: 4.5, count: 3),
+    ];
+
+    test('10 sütun, eksik puanlar 0', () {
+      final histogram = ratingHistogram(counts);
+      expect(histogram.map((b) => b.rating), ratingSteps);
+      expect(histogram.map((b) => b.count), [0, 0, 0, 1, 0, 0, 0, 0, 3, 0]);
+    });
+
+    test('toplam ve ortalama', () {
+      expect(totalRatings(counts), 4);
+      expect(averageRating(counts), closeTo(3.875, 1e-9));
+      expect(averageRating(const []), isNull);
+    });
+
+    test('bağlantı metni', () {
+      expect(
+        socialLinkLabel('https://letterboxd.com/ayse/'),
+        'letterboxd.com/ayse',
+      );
+      expect(
+        socialLinkLabel('https://www.instagram.com/ayse.dizi/'),
+        'instagram.com/ayse.dizi',
+      );
+    });
+  });
 }

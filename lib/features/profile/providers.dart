@@ -61,3 +61,10 @@ final userShowsProvider = FutureProvider.autoDispose
       (ref, userId) =>
           ref.watch(showsRepositoryProvider).fetchUserShows(userId),
     );
+
+/// F8(l): profildeki Puanlar grafiği; bölüm puanı değişince yenilenir.
+final ratingDistributionProvider = FutureProvider.autoDispose
+    .family<List<RatingCount>, String>(
+      (ref, userId) =>
+          ref.watch(profileRepositoryProvider).fetchRatingDistribution(userId),
+    );

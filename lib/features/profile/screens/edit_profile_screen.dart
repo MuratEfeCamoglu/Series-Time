@@ -63,11 +63,18 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
   );
   late final _username = TextEditingController(text: widget.profile.username);
   late final _bio = TextEditingController(text: widget.profile.bio);
+  // F2: alanlar tam bağlantı olarak gösterilir; kayıtta kullanıcı adı ayıklanır.
   late final _letterboxd = TextEditingController(
-    text: widget.profile.letterboxdUsername,
+    text: switch (widget.profile.letterboxdUsername) {
+      final String name => letterboxdUrl(name),
+      null => '',
+    },
   );
   late final _instagram = TextEditingController(
-    text: widget.profile.instagramUsername,
+    text: switch (widget.profile.instagramUsername) {
+      final String name => instagramUrl(name),
+      null => '',
+    },
   );
   late String? _countryCode = widget.profile.countryCode;
   late int? _coverShowId = widget.profile.coverShowId;
@@ -339,9 +346,11 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
               controller: _letterboxd,
               decoration: InputDecoration(
                 labelText: l10n.fieldLetterboxd,
-                prefixText: '@',
+                hintText: l10n.hintLetterboxd,
+                errorMaxLines: 3,
               ),
               autocorrect: false,
+              keyboardType: TextInputType.url,
               validator: (value) {
                 final username = normalizeSocialUsername(value ?? '');
                 return username == null || isValidLetterboxdUsername(username)
@@ -354,10 +363,11 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
               controller: _instagram,
               decoration: InputDecoration(
                 labelText: l10n.fieldInstagram,
-                prefixText: '@',
-                errorMaxLines: 2,
+                hintText: l10n.hintInstagram,
+                errorMaxLines: 3,
               ),
               autocorrect: false,
+              keyboardType: TextInputType.url,
               validator: (value) {
                 final username = normalizeSocialUsername(value ?? '');
                 return username == null || isValidInstagramUsername(username)

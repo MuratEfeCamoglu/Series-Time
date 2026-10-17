@@ -1609,38 +1609,26 @@ abstract class AppLocalizations {
   /// No description provided for @fieldLetterboxd.
   ///
   /// In tr, this message translates to:
-  /// **'Letterboxd kullanıcı adı'**
+  /// **'Letterboxd profil bağlantısı'**
   String get fieldLetterboxd;
 
   /// No description provided for @fieldInstagram.
   ///
   /// In tr, this message translates to:
-  /// **'Instagram kullanıcı adı'**
+  /// **'Instagram profil bağlantısı'**
   String get fieldInstagram;
 
   /// No description provided for @validationLetterboxd.
   ///
   /// In tr, this message translates to:
-  /// **'2–15 karakter: harf, rakam ve _'**
+  /// **'Geçerli bir Letterboxd profil bağlantısı gir (letterboxd.com/kullaniciadi; kısa boxd.it bağlantıları olmaz).'**
   String get validationLetterboxd;
 
   /// No description provided for @validationInstagram.
   ///
   /// In tr, this message translates to:
-  /// **'En fazla 30 karakter: harf, rakam, nokta ve _ (nokta başta/sonda ya da art arda olamaz)'**
+  /// **'Geçerli bir Instagram profil bağlantısı gir (instagram.com/kullaniciadi).'**
   String get validationInstagram;
-
-  /// No description provided for @linkLetterboxd.
-  ///
-  /// In tr, this message translates to:
-  /// **'Letterboxd'**
-  String get linkLetterboxd;
-
-  /// No description provided for @linkInstagram.
-  ///
-  /// In tr, this message translates to:
-  /// **'Instagram'**
-  String get linkInstagram;
 
   /// No description provided for @recentShowsTitle.
   ///
@@ -1761,6 +1749,42 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Kırmızı işaretli alanları düzelt.'**
   String get validationFixFields;
+
+  /// No description provided for @hintLetterboxd.
+  ///
+  /// In tr, this message translates to:
+  /// **'https://letterboxd.com/kullaniciadi/'**
+  String get hintLetterboxd;
+
+  /// No description provided for @hintInstagram.
+  ///
+  /// In tr, this message translates to:
+  /// **'https://www.instagram.com/kullaniciadi/'**
+  String get hintInstagram;
+
+  /// No description provided for @profileRatings.
+  ///
+  /// In tr, this message translates to:
+  /// **'Puanlar'**
+  String get profileRatings;
+
+  /// No description provided for @profileRatingsSummary.
+  ///
+  /// In tr, this message translates to:
+  /// **'{count} puan · ortalama {average}'**
+  String profileRatingsSummary(int count, String average);
+
+  /// No description provided for @profileRatingsEmpty.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bölüm Sonrası ekranında verdiğin puanlar burada grafik olarak görünür.'**
+  String get profileRatingsEmpty;
+
+  /// No description provided for @ratingBarLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'{rating} yıldız: {count} bölüm'**
+  String ratingBarLabel(String rating, int count);
 }
 
 class _AppLocalizationsDelegate

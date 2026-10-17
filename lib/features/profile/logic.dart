@@ -154,3 +154,30 @@ bool isValidInstagramUsername(String username) =>
 String letterboxdUrl(String username) => 'https://letterboxd.com/$username/';
 
 String instagramUrl(String username) => 'https://www.instagram.com/$username/';
+
+/// Profilde gösterilen bağlantı metni: "https://www." ve sondaki "/" atılır (F8i).
+String socialLinkLabel(String url) => url
+    .replaceFirst(RegExp(r'^https?://(www\.)?'), '')
+    .replaceFirst(RegExp(r'/$'), '');
+
+/// F8(l): grafiğin sütunları, 0,5 adımla 0,5–5.
+const ratingSteps = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0];
+
+/// Her puan adımı için verilen puan sayısı; hiç verilmeyen adım 0.
+List<({double rating, int count})> ratingHistogram(List<RatingCount> counts) {
+  final byRating = {for (final c in counts) c.rating: c.count};
+  return [
+    for (final rating in ratingSteps)
+      (rating: rating, count: byRating[rating] ?? 0),
+  ];
+}
+
+int totalRatings(List<RatingCount> counts) =>
+    counts.fold(0, (sum, c) => sum + c.count);
+
+/// Hiç puan yoksa null.
+double? averageRating(List<RatingCount> counts) {
+  final total = totalRatings(counts);
+  if (total == 0) return null;
+  return counts.fold(0.0, (sum, c) => sum + c.rating * c.count) / total;
+}

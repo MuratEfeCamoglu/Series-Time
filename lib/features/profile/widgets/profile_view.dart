@@ -72,6 +72,9 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
         ref.watch(recentActivityProvider(profile.id)).value ??
         const <RecentEpisode>[];
     final filtered = filterByStatus(progress, _filter);
+    final ratings =
+        ref.watch(ratingDistributionProvider(profile.id)).value ??
+        const <RatingCount>[];
 
     return CustomScrollView(
       slivers: [
@@ -113,6 +116,25 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
           sliver: SliverToBoxAdapter(child: _Bio(profile: profile)),
         ),
+        // F8(e): istatistikler avatarın altında, Favorilerin üstünde.
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.md,
+            AppSpacing.md,
+            AppSpacing.md,
+            0,
+          ),
+          sliver: SliverToBoxAdapter(child: _Stats(userId: profile.id)),
+        ),
+        SliverPadding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.sm,
+          ),
+          sliver: SliverToBoxAdapter(
+            child: _Counts(profile: profile, isMe: isMe),
+          ),
+        ),
         if (favorites.isNotEmpty || isMe) ...[
           SliverToBoxAdapter(
             child: SectionHeader(title: l10n.profileFavorites),
@@ -149,6 +171,14 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
           ),
           SliverToBoxAdapter(child: _RecentActivity(episodes: recent)),
         ],
+        if (ratings.isNotEmpty || isMe) ...[
+          SliverToBoxAdapter(child: SectionHeader(title: l10n.profileRatings)),
+          SliverToBoxAdapter(
+            child: ratings.isEmpty
+                ? _Hint(l10n.profileRatingsEmpty)
+                : _RatingsChart(counts: ratings),
+          ),
+        ],
         SliverToBoxAdapter(child: SectionHeader(title: l10n.profileMyShows)),
         if (progress.isEmpty)
           SliverToBoxAdapter(child: _Hint(l10n.profileNoShows))
@@ -164,21 +194,6 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
           else
             SliverShowProgressGrid(shows: filtered),
         ],
-        SliverPadding(
-          padding: const EdgeInsets.fromLTRB(
-            AppSpacing.md,
-            AppSpacing.lg,
-            AppSpacing.md,
-            0,
-          ),
-          sliver: SliverToBoxAdapter(child: _Stats(userId: profile.id)),
-        ),
-        SliverPadding(
-          padding: const EdgeInsets.all(AppSpacing.md),
-          sliver: SliverToBoxAdapter(
-            child: _Counts(profile: profile, isMe: isMe),
-          ),
-        ),
         const SliverPadding(padding: EdgeInsets.only(bottom: AppSpacing.xl)),
       ],
     );
@@ -506,11 +521,9 @@ class _Links extends StatelessWidget {
     final instagram = profile.instagramUsername;
     if (letterboxd == null && instagram == null) return const SizedBox.shrink();
 
-    Widget link(Key key, String label, String url) => OutlinedButton.icon(
+    Widget link(Key key, String url) => InkWell(
       key: key,
-      icon: const Icon(Icons.link),
-      label: Text(label),
-      onPressed: () async {
+      onTap: () async {
         final messenger = ScaffoldMessenger.of(context);
         final opened = await launchUrl(
           Uri.parse(url),
@@ -520,26 +533,124 @@ class _Links extends StatelessWidget {
           messenger.showSnackBar(SnackBar(content: Text(l10n.errorLinkOpen)));
         }
       },
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: AppSpacing.minTapTarget),
+        child: Row(
+          children: [
+            const Icon(Icons.link, size: AppSpacing.md + AppSpacing.xs),
+            const SizedBox(width: AppSpacing.xs),
+            Flexible(
+              child: Text(
+                socialLinkLabel(url),
+                style: AppTextStyles.body.copyWith(color: AppColors.accent),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
 
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (letterboxd != null)
+          link(const Key('profile.letterboxd'), letterboxdUrl(letterboxd)),
+        if (instagram != null)
+          link(const Key('profile.instagram'), instagramUrl(instagram)),
+      ],
+    );
+  }
+}
+
+/// F8(l): verilen puanların 0,5–5 arası 10 sütunlu dağılımı; en yüksek sütun tam boy.
+class _RatingsChart extends StatelessWidget {
+  const _RatingsChart({required this.counts});
+
+  final List<RatingCount> counts;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final histogram = ratingHistogram(counts);
+    final highest = histogram.fold(
+      0,
+      (max, b) => b.count > max ? b.count : max,
+    );
+    final average = averageRating(counts)!;
+    String label(double rating) => rating == rating.roundToDouble()
+        ? '${rating.toInt()}'
+        : '$rating'.replaceAll('.', ',');
     return Padding(
-      padding: const EdgeInsets.only(top: AppSpacing.sm),
-      child: Wrap(
-        spacing: AppSpacing.sm,
-        runSpacing: AppSpacing.sm,
+      key: const Key('profile.ratings'),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (letterboxd != null)
-            link(
-              const Key('profile.letterboxd'),
-              l10n.linkLetterboxd,
-              letterboxdUrl(letterboxd),
+          Text(
+            l10n.profileRatingsSummary(
+              totalRatings(counts),
+              average.toStringAsFixed(1).replaceAll('.', ','),
             ),
-          if (instagram != null)
-            link(
-              const Key('profile.instagram'),
-              l10n.linkInstagram,
-              instagramUrl(instagram),
+            style: AppTextStyles.bodySecondary,
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          SizedBox(
+            height: AppSpacing.ratingChartHeight,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                for (final bar in histogram)
+                  Expanded(
+                    child: Semantics(
+                      label: l10n.ratingBarLabel(label(bar.rating), bar.count),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.ratingBarGap / 2,
+                        ),
+                        child: FractionallySizedBox(
+                          key: Key('profile.ratingBar.${bar.rating}'),
+                          alignment: Alignment.bottomCenter,
+                          // Boş sütun da ince bir çizgi olarak görünsün.
+                          heightFactor: bar.count == 0
+                              ? AppSpacing.ratingBarGap /
+                                    AppSpacing.ratingChartHeight
+                              : bar.count / highest,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: bar.count == 0
+                                  ? AppColors.border
+                                  : AppColors.accent,
+                              borderRadius: const BorderRadius.vertical(
+                                top: Radius.circular(AppSpacing.ratingBarGap),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
             ),
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          ExcludeSemantics(
+            child: Row(
+              children: [
+                for (final bar in histogram)
+                  Expanded(
+                    child: Text(
+                      bar.rating == bar.rating.roundToDouble()
+                          ? label(bar.rating)
+                          : '',
+                      style: AppTextStyles.caption,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+              ],
+            ),
+          ),
         ],
       ),
     );

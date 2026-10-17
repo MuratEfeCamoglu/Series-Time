@@ -42,6 +42,19 @@ class ProfileRepository {
     return UserStats.fromJson(rows.single as Map<String, dynamic>);
   });
 
+  /// F8(l): kullanıcının puan dağılımı.
+  Future<List<RatingCount>> fetchRatingDistribution(String userId) =>
+      _guard(() async {
+        final rows = await _client.rpc(
+          'get_rating_distribution',
+          params: {'user_id': userId},
+        ) as List;
+        return [
+          for (final row in rows)
+            RatingCount.fromJson(row as Map<String, dynamic>),
+        ];
+      });
+
   /// Yeni avatar varsa önce yüklenir, sonra profil satırı güncellenir.
   Future<Profile> saveProfile(
     Profile current,

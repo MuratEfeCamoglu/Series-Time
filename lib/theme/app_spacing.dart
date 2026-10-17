@@ -43,6 +43,10 @@ abstract final class AppSpacing {
   /// Afiş görünümünde çiplerle uzak bölüme kaydırabilmek için önceden çizilen ekran sayısı.
   static const double homeCacheViewports = 6;
 
+  /// Puanlar grafiği (F8l).
+  static const double ratingChartHeight = 96;
+  static const double ratingBarGap = 3;
+
   /// Son etkinlik kartı (F8k): 16:9 sahne görseli.
   static const double recentStillWidth = 200;
   static const double profileNameMaxTextScale = 1.3;

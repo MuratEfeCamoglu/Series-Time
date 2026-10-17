@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/supabase_client.dart';
 import '../notifications/providers.dart';
 import '../social/providers.dart';
+import '../profile/providers.dart';
 import 'data/models.dart';
 import 'data/repository.dart';
 import 'logic.dart';
@@ -261,6 +262,8 @@ class RatingNotifier extends AsyncNotifier<RatingSummary> {
       state = AsyncData(previous);
       rethrow;
     }
+    // Profildeki Puanlar grafiği (F8l) yeni puanla çizilsin.
+    ref.invalidate(ratingDistributionProvider);
     state = AsyncData(await _repository.fetchRatingSummary(episodeId));
   }
 
