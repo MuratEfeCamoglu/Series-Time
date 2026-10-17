@@ -142,13 +142,13 @@ async function showCredits(showId: number) {
   return { cast };
 }
 
-// F2 kapak seçimi: dizinin arka plan görselleri (yazısız ve Türkçe/İngilizce olanlar).
+// F2 kapak ve avatar seçimi: dizinin arka plan ve afiş görselleri (yazısız ve Türkçe/İngilizce olanlar).
 async function showImages(showId: number) {
   const data = await tmdb(`/tv/${showId}/images`, { include_image_language: "null,tr,en" });
-  const backdrops = (data.backdrops ?? [])
-    .slice(0, MAX_BACKDROPS)
-    .map((b: TmdbJson) => b.file_path as string);
-  return { backdrops };
+  const paths = (images: TmdbJson[] | undefined) =>
+    (images ?? []).slice(0, MAX_BACKDROPS).map((i: TmdbJson) => i.file_path as string);
+  // Afişler F2 avatar kırpması için: dikey görselden kare çıkarmak yüz/figür için daha uygun.
+  return { backdrops: paths(data.backdrops), posters: paths(data.posters) };
 }
 
 async function onTheAir(db: SupabaseClient) {
