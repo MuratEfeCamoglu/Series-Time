@@ -7,7 +7,7 @@ Kaynak: ISKELET.md §2.1 ve §3.7.
 
 ```
 Design a high-fidelity mobile app UI (iPhone 15, 393×852 pt, portrait, dark mode only) for "Sezonluk",
-a TV-series-only tracking app. UI language: Turkish. Style: bold, poster-driven, content-first, similar in
+a TV-series-only tracking app with personal recommendations. UI language: Turkish. Style: bold, poster-driven, content-first, similar in
 layout spirit to classic social TV trackers — but fully original: no existing brand names, logos, mascots or icons.
 
 VISUAL SYSTEM
@@ -32,6 +32,7 @@ SCREENS TO DESIGN
      series name, "S03B02", episode title, air date
 3. Keşfet
    - Search field on top, segmented "Diziler | Kullanıcılar"
+   - At the very top: a wide yellow-accented card "Sana Özel Öneriler" with a sparkle icon and chevron
    - Empty-query state: "Bu haftanın trendleri" 3-column poster grid
 4. Dizi Detayı
    - Full-bleed backdrop with dark gradient, poster overlapping, title, year, status chip ("Devam ediyor")
@@ -55,11 +56,18 @@ SCREENS TO DESIGN
      and "İzlenen bölüm" showing "2.418"
    - "Dizilerim" header with "Tümü ›" link, horizontal poster row
 7. Bildirimler — list: new follower, comment liked, badge earned (no comment text previews)
-8. Giriş / Kayıt — minimal, logo wordmark "Sezonluk" (original, simple), email + password fields,
+8. Öneriler (Sana Özel Öneriler)
+   - Title "Sana Özel Öneriler", subtitle "En fazla 3 kategori seç"
+   - Horizontally scrolling genre chips (Dram, Komedi, Suç, Bilim Kurgu & Fantastik, Gizem, Animasyon,
+     Aksiyon & Macera, Belgesel…); selected chips filled yellow with black text, others outlined
+   - 3-column poster grid of recommendations; each poster has a small round "+" button (top-right)
+   - Section "Gölgeler izlediğin için" — horizontal poster row of similar shows
+   - Empty state variant: "Öneri almak için en az bir kategori seç"
+9. Giriş / Kayıt — minimal, logo wordmark "Sezonluk" (original, simple), email + password fields,
    username field on sign-up, terms checkbox, yellow primary button
 
 DELIVERABLES
-- All 8 screens side by side on one canvas, plus a small component sheet: poster card with progress,
-  primary/secondary buttons, segmented control, emoji reaction chip, comment card (normal + spoiler),
+- All 9 screens side by side on one canvas, plus a small component sheet: poster card with progress,
+  primary/secondary buttons, segmented control, genre chip (selected/unselected), emoji reaction chip, comment card (normal + spoiler),
   stat card, tab bar.
 ```

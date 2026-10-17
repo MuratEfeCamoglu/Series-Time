@@ -2,10 +2,10 @@
 
 ## Proje
 Yalnızca dizi takip eden, TV Time arayüzüne benzeyen iOS/Android uygulaması: dizi ekleme, bölüm işaretleme,
-istatistikler, bölüm sonrası tepki/oylama/yorum ve takipçi sistemi. "Sezonluk" geçici addır.
+istatistikler, kategoriye göre dizi önerileri, bölüm sonrası tepki/oylama/yorum ve takipçi sistemi. "Sezonluk" geçici addır.
 TV Time adı, logosu, ikonları ve görselleri hiçbir yerde kullanılmaz.
 
-- Kapsam, kabul kriterleri (F1–F17), veri modeli, `tmdb-proxy` sözleşmesi (§3.5), aşamalar: @ISKELET.md
+- Kapsam, kabul kriterleri (F1–F18), veri modeli, `tmdb-proxy` sözleşmesi (§3.5), aşamalar: @ISKELET.md
 - Agent rolü, yetkiler, yasaklar, "bitti" tanımı: @AGENT.md
 
 ## Teknoloji Yığını
@@ -69,7 +69,7 @@ Maestro CLI (yalnızca Aşama 7). Node.js gerekmez.
 - Veritabanı adları ISKELET.md §3.3 ile aynıdır; özellik kodları (F1…) commit ve PR başlıklarında kullanılır.
 - Rotalar yalnızca `lib/app/router.dart` içinde tanımlanır; yollar: `/shows`, `/discover`, `/profile`, `/show/:id`,
   `/show/:id/season/:season`, `/episode/:id`, `/user/:username` (+ `/followers`, `/following`, `/shows`),
-  `/badges`, `/notifications`, `/settings/...`, `/sign-in`, `/sign-up`, `/forgot-password`, `/reset-password`.
+  `/suggest`, `/badges`, `/notifications`, `/settings/...`, `/sign-in`, `/sign-up`, `/forgot-password`, `/reset-password`.
 - Renk, boşluk, yazı stili yalnızca `lib/theme/*` üzerinden; widget'ta `Color(0x...)` veya sabit sayı stil yazılmaz.
 - Kullanıcıya görünen her metin `lib/l10n/app_tr.arb` içinde, `AppLocalizations.of(context)` ile kullanılır.
 - `dynamic` yalnızca `fromJson`'a gelen `Map<String, dynamic>` için kabul edilir; başka yerde kullanılmaz.

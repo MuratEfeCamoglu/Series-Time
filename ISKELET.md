@@ -1,7 +1,7 @@
 # Sezonluk — Proje İskeleti ve Sınırları
 
 > "Sezonluk" geçici çalışma adıdır (bkz. V2). Bu dosya projenin tek doğruluk kaynağıdır; CLAUDE.md ve AGENT.md buraya dayanır.
-> Bölüm numaraları (§) ve özellik kodları (F1…F17) diğer dosyalarda bu adlarla anılır.
+> Bölüm numaraları (§) ve özellik kodları (F1…F18) diğer dosyalarda bu adlarla anılır.
 
 ## 1. Amaç ve Hedef Kullanıcı
 
@@ -40,6 +40,7 @@ Tüm özellikler "Zorunlu"dur; kullanıcı ilk sürümde hepsini istemiştir. "A
 | F15 | **Moderasyon**: şikayet, engelleme, kelime filtresi | 5 | (a) Her yorumda ve profilde "Şikayet et" (nedenler: spam, taciz, spoiler, uygunsuz içerik, diğer). Şikayet edilen içerik şikayet edene hemen gizlenir. (b) "Engelle": engellenen kişinin yorumları engelleyene gösterilmez, iki yönlü takip ilişkisi silinir, engellenen engelleyeni takip edemez. (c) Ayarlar'da engellenenler listesi ve engeli kaldırma. (d) `banned_words` tablosundaki kelimeleri (büyük/küçük harf duyarsız, Türkçe karakter normalize) içeren yorum reddedilir. (e) Yönetici şikayetleri Supabase panelinden inceler ve `comments.hidden_at` alanını doldurarak yorumu herkesten gizler (bkz. §5.4). |
 | F16 | **Hesap silme** | 7 | Ayarlar › Hesabı sil → kullanıcı adını yazarak onay → `delete-account` Edge Function kullanıcıyı, tüm satırlarını (cascade) ve Storage'daki avatarını siler; işlem ≤ 10 sn sürer ve kullanıcı giriş ekranına döner. Silinen hesapla tekrar giriş yapılamaz. (Apple Guideline 5.1.1(v) zorunluluğu.) |
 | F17 | **Yasal ve atıf ekranları** | 7 | Ayarlar › Hakkında: TMDB logosu ve "This product uses the TMDB API but is not endorsed or certified by TMDB." metni; Gizlilik Politikası ve Kullanım Şartları bağlantıları (yayında erişilebilir URL); uygulama sürümü. `docs/privacy.md` ve `docs/terms.md` GitHub Pages'te yayında ve bağlantılar HTTP 200 döner. Kullanım Şartları yorumlar için sıfır tolerans maddesi içerir. |
+| F18 | **Öneriler sayfası** (`/suggest`): kategoriye göre kişisel dizi önerisi | 4 | (a) Keşfet ekranının en üstünde "Sana Özel Öneriler" kartı vardır; dokununca `/suggest` açılır. (b) Kategori çipleri: TMDB dizi türleri Türkçe adlarıyla (`genres` tablosu); aynı anda 1–3 kategori seçilebilir, 4. seçimde "En fazla 3 kategori seçebilirsin" mesajı çıkar ve seçim eklenmez. (c) Varsayılan seçim: cihazda saklanan son seçim (`shared_preferences`); yoksa kullanıcının listesindeki dizilerde en sık geçen 3 tür (`get_top_genres()`); listesi boşsa hiçbir tür seçili değildir ve "Öneri almak için en az bir kategori seç" mesajı görünür. (d) Sonuçlar: seçili türlerden en az birine sahip, TMDB oy sayısı ≥ 100 olan diziler, popülerliğe göre azalan; kullanıcının listesindeki diziler **hariç**; 3'lü afiş ızgarası, 20'şerli sayfa, aşağı kaydırınca sonraki sayfa yüklenir. Seçim değişince sonuçlar ≤ 2 sn içinde yenilenir (yerel ortamda, `tmdb-proxy` logundan ölçülür). (e) Her afişte "+" kısayolu diziyi listeye ekler (F4(b) kuralı); eklenen dizi öneri ızgarasından hemen kalkar. Afişe dokunmak dizi detayını açar. (f) "İzlediklerine benzer" bölümü: en son izlenen dizi için TMDB önerileri, en fazla 20 dizi, listedekiler hariç, başlık "<Dizi adı> izlediğin için"; kullanıcı hiç bölüm izlememişse bölüm gösterilmez. (g) Sonuç yoksa "Bu kategorilerde yeni öneri kalmadı" boş durumu görünür. |
 
 ### 2.2 Sonraki Sürümler (MVP sonrası, öncelik sırasıyla)
 
@@ -48,9 +49,10 @@ Tüm özellikler "Zorunlu"dur; kullanıcı ilk sürümde hepsini istemiştir. "A
 3. İngilizce arayüz (i18n altyapısı MVP'de hazır).
 4. Yorumlara yanıt (tek seviye).
 5. "Nerede izlenir" (TMDB watch providers).
-6. Reklam veya premium (önce TMDB ticari lisansı, bkz. R1).
-7. Sosyal giriş (Apple, Google) — eklenirse Apple ile Giriş zorunlu olur.
-8. Açık tema, tablet düzeni.
+6. Önerilerde "İlgilenmiyorum" ile diziyi gizleme ve bu geri bildirime göre sıralama.
+7. Reklam veya premium (önce TMDB ticari lisansı, bkz. R1).
+8. Sosyal giriş (Apple, Google) — eklenirse Apple ile Giriş zorunlu olur.
+9. Açık tema, tablet düzeni.
 
 ### 2.3 Kapsam Dışı (bu projede yapılmayacak)
 
@@ -62,6 +64,7 @@ Tüm özellikler "Zorunlu"dur; kullanıcı ilk sürümde hepsini istemiştir. "A
 - Ayrı yönetici paneli — Supabase Dashboard yeterli.
 - Çevrimdışı işaretleme / senkronizasyon — çakışma çözümü karmaşık; çevrimdışıyken işaretleme hata mesajı verir, önceden yüklenmiş listeler okunabilir.
 - Dizi izletme, yayın akışı, torrent veya korsan bağlantı.
+- Kendi öneri algoritması / makine öğrenmesi modeli — F18 önerileri yalnızca TMDB `discover` ve `recommendations` uç noktalarına ve kullanıcının kendi listesine dayanır; model eğitmek ve barındırmak ücretsiz katmana ve MVP süresine sığmaz.
 
 ## 3. Mimari
 
@@ -95,7 +98,7 @@ Tüm özellikler "Zorunlu"dur; kullanıcı ilk sürümde hepsini istemiştir. "A
 | `tmdb-sync` | pg_cron ile günde 1 kez (03:00 UTC) çalışır; en az bir kullanıcının listesinde olan ve durumu "Returning Series"/"In Production" olan dizileri yeniler (çalışma başına en fazla 500 dizi). |
 | `delete-account` | Service role ile kullanıcıyı ve dosyalarını siler (F16). |
 | Postgres tetikleyicileri | Rozet verme (F14), bildirim üretme (F13), yorum hız sınırı ve kelime filtresi (F11, F15), `user_shows.last_watched_at` güncelleme. |
-| SQL fonksiyonları (RPC) | `get_watchlist()`, `get_upcoming(days int)`, `get_user_stats(user_id uuid)`, `mark_episodes_until(episode_id)`, `mark_season(show_id, season_number)`, `get_episode_reaction_stats(episode_id)`, `get_episode_star_stats(episode_id)`. Ağır hesaplar istemcide değil burada yapılır. |
+| SQL fonksiyonları (RPC) | `get_watchlist()`, `get_upcoming(days int)`, `get_user_stats(user_id uuid)`, `mark_episodes_until(episode_id)`, `mark_season(show_id, season_number)`, `get_episode_reaction_stats(episode_id)`, `get_episode_star_stats(episode_id)`, `get_top_genres(lim int default 3)` (F18: kullanıcının listesindeki dizilerde en sık geçen tür kimlikleri). Ağır hesaplar istemcide değil burada yapılır. |
 
 ### 3.3 Veri Modeli
 
@@ -105,10 +108,11 @@ Tüm kullanıcı tablolarında `user_id uuid references auth.users on delete cas
 
 | Tablo | Alanlar |
 |---|---|
-| `shows` | `id` (TMDB id, PK), `name`, `original_name`, `overview`, `poster_path`, `backdrop_path`, `status`, `first_air_date date`, `number_of_seasons`, `number_of_episodes`, `default_runtime int` (dk), `last_synced_at` |
+| `shows` | `id` (TMDB id, PK), `name`, `original_name`, `overview`, `poster_path`, `backdrop_path`, `status`, `first_air_date date`, `number_of_seasons`, `number_of_episodes`, `default_runtime int` (dk), `genre_ids int[]` default `'{}'` (F18), `last_synced_at` |
 | `seasons` | `id` (TMDB id, PK), `show_id → shows`, `season_number`, `name`, `poster_path`, `air_date`, `episode_count`; UNIQUE(`show_id`,`season_number`) |
 | `episodes` | `id` (TMDB id, PK), `show_id → shows`, `season_number`, `episode_number`, `name`, `overview`, `air_date date`, `runtime int`, `still_path`; UNIQUE(`show_id`,`season_number`,`episode_number`) |
 | `episode_credits` | `episode_id → episodes`, `person_id`, `name`, `character`, `profile_path`, `order`; PK(`episode_id`,`person_id`) |
+| `genres` | `id` (TMDB tür id, PK), `name` (Türkçe ad), `last_synced_at` — F18 kategori çipleri |
 
 **Kullanıcı tabloları:**
 
@@ -133,7 +137,7 @@ Tüm kullanıcı tablolarında `user_id uuid references auth.users on delete cas
 
 **Storage:** `avatars` kovası herkese okunur; kullanıcı yalnızca `avatars/<kendi uid>/` yoluna yazar/siler (Storage RLS politikası).
 
-**RLS özeti:** TMDB tabloları ve `badges`: herkese okuma, istemciye yazma yok. `profiles`, `user_shows`, `watched_episodes`, `user_badges`, `follows`, `reactions`, `star_votes`, `comments`(hidden_at null olanlar), `comment_likes`: oturum açmış herkes okur, yalnızca sahibi (`auth.uid() = user_id`) ekler/siler/günceller. `notifications`, `blocks`: yalnızca sahibi okur/yazar. `reports`: sahibi ekler, kimse istemciden okuyamaz. `banned_words`: istemci erişimi yok.
+**RLS özeti:** TMDB tabloları (`genres` dahil) ve `badges`: herkese okuma, istemciye yazma yok. `profiles`, `user_shows`, `watched_episodes`, `user_badges`, `follows`, `reactions`, `star_votes`, `comments`(hidden_at null olanlar), `comment_likes`: oturum açmış herkes okur, yalnızca sahibi (`auth.uid() = user_id`) ekler/siler/günceller. `notifications`, `blocks`: yalnızca sahibi okur/yazar. `reports`: sahibi ekler, kimse istemciden okuyamaz. `banned_words`: istemci erişimi yok.
 
 ### 3.4 Önemli İş Kuralları
 
@@ -145,7 +149,7 @@ Tüm kullanıcı tablolarında `user_id uuid references auth.users on delete cas
 
 ### 3.5 `tmdb-proxy` Sözleşmesi
 
-İstemci `supabase.functions.invoke('tmdb-proxy', body: {...})` ile çağırır; yalnızca oturum açmış kullanıcı (JWT doğrulanır). Edge Function gövdeyi `zod` (`npm:zod`) ile doğrular; geçersizse HTTP 400. Dönen JSON istemcide `lib/features/*/data/models.dart` içindeki `fromJson` fabrikalarıyla ayrıştırılır.
+İstemci `supabase.functions.invoke('tmdb-proxy', body: {...})` ile çağırır; yalnızca oturum açmış kullanıcı (JWT doğrulanır). Edge Function gövdeyi `zod` (`npm:zod`) ile doğrular; geçersizse HTTP 400. Dönen JSON istemcide `lib/features/*/data/models.dart` içindeki `fromJson` fabrikalarıyla ayrıştırılır. Tüm TMDB isteklerinde `language=tr-TR` kullanılır.
 
 | `action` | Diğer alanlar | TMDB uç noktası | Yazdığı tablo | Dönen |
 |---|---|---|---|---|
@@ -154,8 +158,11 @@ Tüm kullanıcı tablolarında `user_id uuid references auth.users on delete cas
 | `show` | `showId` | `/tv/{id}` | `shows`, `seasons` | `{ show, seasons }` |
 | `season` | `showId`, `seasonNumber` | `/tv/{id}/season/{n}` | `episodes` | `{ episodes }` |
 | `episode_credits` | `episodeId` | `/tv/{id}/season/{n}/episode/{e}/credits` (cast + guest_stars) | `episode_credits` | `{ credits }` |
+| `genres` | — | `/genre/tv/list` | `genres` | `{ genres }` |
+| `discover` | `genreIds` (1–3 tamsayı), `page` | `/discover/tv?with_genres=<id1>\|<id2>&sort_by=popularity.desc&vote_count.gte=100` | `shows` (özet alanlar) | `{ results: Show[], totalPages }` — çağıranın `user_shows` dizileri çıkarılmış |
+| `recommendations` | `showId` | `/tv/{id}/recommendations` (yalnızca 1. sayfa) | `shows` (özet alanlar) | `{ results: Show[] }` — çağıranın `user_shows` dizileri çıkarılmış |
 
-Önbellek kuralı: `show`, `season`, `episode_credits` için kayıt `last_synced_at` 24 saatten yeniyse TMDB'ye gidilmez ve yanıt başlığı `x-cache: hit` olur; aksi halde `x-cache: miss`. `search` ve `trending` önbelleklenmez. TMDB hata verirse HTTP 502 ve `{ error: "tmdb_unavailable" }` döner; önbellekte eski kayıt varsa o döner (`x-cache: stale`).
+Önbellek kuralı: `genres` 30 gün önbelleklenir. `show`, `season`, `episode_credits` için kayıt `last_synced_at` 24 saatten yeniyse TMDB'ye gidilmez ve yanıt başlığı `x-cache: hit` olur; aksi halde `x-cache: miss`. `search`, `trending`, `discover` ve `recommendations` önbelleklenmez. `search`, `trending`, `discover` ve `recommendations` sonuçlarındaki `genre_ids` alanı `shows.genre_ids` kolonuna yazılır; `show` eyleminde TMDB'nin döndürdüğü `genres[].id` değerleri aynı kolona yazılır. TMDB hata verirse HTTP 502 ve `{ error: "tmdb_unavailable" }` döner; önbellekte eski kayıt varsa o döner (`x-cache: stale`).
 `seasons` ve `episode_credits` tablolarına da `last_synced_at` kolonu eklenir.
 
 ### 3.6 Dış Bağımlılıklar
@@ -189,6 +196,7 @@ Series-Time/                      # depo kökü
 │   │   ├── auth/                 # F1: sign_in, sign_up, forgot_password, reset_password ekranları
 │   │   ├── profile/              # F2, F8: profil, düzenle, "Tümü"
 │   │   ├── discover/             # F3
+│   │   ├── suggest/              # F18: kategoriye göre öneriler, "İzlediklerine benzer"
 │   │   ├── shows/                # F4: dizi detayı, sezon, ekleme/çıkarma
 │   │   ├── tracking/             # F5–F7: işaretleme, sıradaki, ilerleme, yaklaşan
 │   │   ├── episode_feedback/     # F9–F11: tepki, yıldız, yorum
@@ -273,7 +281,7 @@ Her aşama, kendinden öncekiler bitmeden başlamaz. Her aşamanın sonunda CLAU
 | 1 — Hesap ve profil temeli | F1, F2 (kapak seçimi hariç — 4. aşamada tamamlanır); `profiles` tablosu, kayıt tetikleyicisi, `avatars` kovası ve RLS; `docs/privacy.md` ve `docs/terms.md` taslakları | F1 kabul kriterleri; F2 avatar/ad/ülke/biyografi; `profiles` ve Storage pgTAP testleri geçer. |
 | 2 — TMDB ve keşif | `tmdb-proxy` (§3.5), TMDB tabloları, F3, F4, `user_shows` | F3, F4 kabul kriterleri; aynı `show` isteği art arda iki kez yapıldığında ilki `x-cache: miss`, ikincisi `x-cache: hit` döner (`curl -i` çıktısı rapora eklenir); `git grep -n TMDB_API_KEY -- lib env android ios` boş döner. |
 | 3 — Takip çekirdeği | `watched_episodes`, işaretleme RPC'leri, F5, F6, F7, `tmdb-sync` | F5–F7 kabul kriterleri (F5(f) Bölüm Sonrası ekranına yönlendirme 5. aşamada bağlanır; bu aşamada boş `/episode/:id` ekranı açılır); sıradaki bölüm/ilerleme mantığı için birim testleri (sezon 0, gelecek bölüm, boş dizi durumları). |
-| 4 — Profil ve istatistik | F8, `get_user_stats`, kapak seçimi (F2 tamamlanır), "Tümü" ekranı | F8 kabul kriterleri (F8(b) zil sayacı ve F8(f) takipçi/takip/rozet sayıları bu aşamada 0 gösteren yer tutucu widget'larla durur, 6. aşamada gerçek veriye bağlanır); izleme süresi biçimlendirmesi birim testli (0 dk, 59 dk, 1 gün, 31 gün). |
+| 4 — Profil, istatistik ve öneriler | F8, `get_user_stats`, kapak seçimi (F2 tamamlanır), "Tümü" ekranı; F18 (`genres` tablosu, `shows.genre_ids`, `get_top_genres`, `tmdb-proxy` `genres`/`discover`/`recommendations` eylemleri) | F8 kabul kriterleri (F8(b) zil sayacı ve F8(f) takipçi/takip/rozet sayıları bu aşamada 0 gösteren yer tutucu widget'larla durur, 6. aşamada gerçek veriye bağlanır); izleme süresi biçimlendirmesi birim testli (0 dk, 59 dk, 1 gün, 31 gün); F18 kabul kriterleri; kategori seçimi (en fazla 3, varsayılan seçim önceliği) birim testli; `discover` yanıtında kullanıcının listesindeki bir dizinin bulunmadığı `curl` ile doğrulanır. |
 | 5 — Bölüm sonrası ve moderasyon | F9, F10, F11, F15 | F9–F11, F15 kabul kriterleri; hız sınırı ve kelime filtresi pgTAP testli. |
 | 6 — Sosyal | F12, F13, F14; F8(b) ve F8(f)'nin gerçek veriye bağlanması | F12–F14 ve F8(b), F8(f) kabul kriterleri; rozet ve bildirim tetikleyicileri pgTAP testli. |
 | 7 — Yayın hazırlığı | F16, F17, `docs/` metinlerinin son hali ve GitHub Pages yayını, uygulama ikonu ve adı, mağaza açıklamaları, Maestro duman testleri (kayıt → dizi ekle → bölüm işaretle), `codemagic.yaml` içinde `android-release` ve `ios-release` iş akışları, Codemagic ile release build (Android `appbundle`, iOS `ipa`), TestFlight ve Play iç test | Maestro akışı geçer; §5.2 performans hedefleri ölçülüp rapora yazılır; her iki mağazanın iç test kanalına build yüklenir. |
@@ -286,7 +294,7 @@ Her aşama, kendinden öncekiler bitmeden başlamaz. Her aşamanın sonunda CLAU
 | R2 | TV Time'a "fazla benzer" arayüz nedeniyle marka/ticari takdim şikayeti veya mağaza reddi | Yüksek | Ad, logo, ikon, renk tonu, maskot ve görseller özgün; düzen benzerliği serbest, birebir kopya varlık kullanılmaz; mağaza metninde TV Time adı geçmez. |
 | R3 | Supabase ücretsiz katman limitleri (veritabanı ~500 MB, Storage ~1 GB) veya hareketsizlikte duraklatma | Orta — hizmet kesintisi | `tmdb-sync` cron'u günlük istek üretir; aylık kullanım panelden kontrol edilir; %80 dolulukta Pro plana geçiş kararı verilir. Limitler kurulum günü Supabase sayfasından teyit edilir. |
 | R4 | Kullanıcı içeriği (yorum, avatar) nedeniyle App Store reddi (Guideline 1.2) | Yüksek | F15 (şikayet, engelleme, filtre), 24 saat inceleme taahhüdü (§5.4), Kullanım Şartları'nda sıfır tolerans maddesi. |
-| R5 | MVP kapsamı tek geliştirici için geniş (17 özellik) | Orta — gecikme | Aşamalar sıralı ve her biri kendi başına çalışır; 12 haftada 5. aşama bitmezse F14 ve F13 "Sonraki Sürümler"e taşınır (kullanıcı onayıyla). |
+| R5 | MVP kapsamı tek geliştirici için geniş (18 özellik) | Orta — gecikme | Aşamalar sıralı ve her biri kendi başına çalışır; 12 haftada 5. aşama bitmezse F14, F13 ve F18(f) "Sonraki Sürümler"e taşınır (kullanıcı onayıyla). |
 | R6 | TMDB'de eksik bölüm süresi, yayın tarihi veya kadro bilgisi | Düşük | Süre için 45 dk varsayılan; tarihsiz bölüm "yayınlanmamış" sayılır; kadrosuz bölümde F10 gizlenir. |
 | R8 | Windows'ta iOS derlenemez ve iOS simülatörü yoktur; Codemagic ücretsiz dakikaları biterse iOS build alınamaz | Orta — iOS testi gecikir | Günlük geliştirme Android emülatörde yapılır; iOS build'i yalnızca aşama sonlarında alınır; iOS kontrolü TestFlight ile gerçek cihazda yapılır; dakika biterse ücretli plana veya kiralık Mac'e geçiş kararı kullanıcıya bırakılır. |
 | R7 | Spoiler sızıntısı (bildirimde, önizlemede yorum metni) | Orta — kullanıcı memnuniyeti | Bildirimler yorum metni içermez; yorum önizlemesi hiçbir listede gösterilmez. |
@@ -317,4 +325,6 @@ Kullanıcı tarafından onaylanmamış, sonradan değiştirilebilir kararlar. Et
 - **V20:** Reklam/premium eklenebilmesi için ekran düzeninde yer ayrılmaz; eklenirken ayrı bir tasarım turu yapılır (önce R1 çözülmeli).
 - **V22:** iOS build'i ve mağaza yüklemeleri Codemagic (ücretsiz katman) ile yapılır; `codemagic.yaml` depoda tutulur, imza sertifikaları Codemagic panelinde saklanır.
 - **V23:** Supabase'in Dart için resmi tip üretici aracı olmadığından tablo modelleri elle yazılır; her modelin `fromJson` ayrıştırması birim testiyle doğrulanır.
+- **V24:** Öneriler sayfası (F18) alt menüde ayrı sekme değildir; alt menü 3 sekme (Diziler · Keşfet · Profil) kalsın diye Keşfet'in üstündeki karttan açılır.
+- **V25:** "Kategori" = TMDB dizi türü (Dram, Komedi, Suç, Bilim Kurgu & Fantastik vb.); öneriler TMDB `discover` ve `recommendations` sonuçlarıdır, kişiselleştirme kullanıcının listesindeki türler ve son izlediği diziyle sınırlıdır.
 - **V21:** Gizlilik/destek iletişimi için uygulamaya özel bir e-posta adresi (ör. ücretsiz bir posta hizmetinde) yayından önce açılır; yasal metinler GitHub Pages ile bu depodan yayınlanır.
