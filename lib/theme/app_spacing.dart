@@ -10,4 +10,10 @@ abstract final class AppSpacing {
   static const double posterAspectRatio = 2 / 3;
   static const double progressBarHeight = 3;
   static const double minTapTarget = 44;
+  static const double buttonHeight = 48;
+  static const double progressIndicatorSize = 20;
+  static const double progressIndicatorStroke = 2;
+  static const double formMaxWidth = 420;
+  static const double avatarLarge = 96;
+  static const double sheetHeightFactor = 0.75;
 }

@@ -117,6 +117,336 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Profil'**
   String get tabProfile;
+
+  /// No description provided for @retry.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tekrar dene'**
+  String get retry;
+
+  /// No description provided for @save.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kaydet'**
+  String get save;
+
+  /// No description provided for @errorNetwork.
+  ///
+  /// In tr, this message translates to:
+  /// **'İnternet bağlantısı yok. Bağlantını kontrol edip tekrar dene.'**
+  String get errorNetwork;
+
+  /// No description provided for @errorUnknown.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bir şeyler ters gitti.'**
+  String get errorUnknown;
+
+  /// No description provided for @errorInvalidCredentials.
+  ///
+  /// In tr, this message translates to:
+  /// **'E-posta veya şifre hatalı.'**
+  String get errorInvalidCredentials;
+
+  /// No description provided for @errorEmailNotConfirmed.
+  ///
+  /// In tr, this message translates to:
+  /// **'E-postanı doğrula. Gelen kutundaki bağlantıya dokunduktan sonra giriş yapabilirsin.'**
+  String get errorEmailNotConfirmed;
+
+  /// No description provided for @errorUsernameTaken.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu kullanıcı adı alınmış.'**
+  String get errorUsernameTaken;
+
+  /// No description provided for @errorWeakPassword.
+  ///
+  /// In tr, this message translates to:
+  /// **'Şifre en az 8 karakter olmalı.'**
+  String get errorWeakPassword;
+
+  /// No description provided for @errorSamePassword.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yeni şifre eskisiyle aynı olamaz.'**
+  String get errorSamePassword;
+
+  /// No description provided for @errorRateLimited.
+  ///
+  /// In tr, this message translates to:
+  /// **'Çok fazla deneme yaptın. Biraz bekleyip tekrar dene.'**
+  String get errorRateLimited;
+
+  /// No description provided for @errorFileTooLarge.
+  ///
+  /// In tr, this message translates to:
+  /// **'Görsel 2 MB\'tan büyük olamaz.'**
+  String get errorFileTooLarge;
+
+  /// No description provided for @errorLinkOpen.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bağlantı açılamadı.'**
+  String get errorLinkOpen;
+
+  /// No description provided for @fieldEmail.
+  ///
+  /// In tr, this message translates to:
+  /// **'E-posta'**
+  String get fieldEmail;
+
+  /// No description provided for @fieldPassword.
+  ///
+  /// In tr, this message translates to:
+  /// **'Şifre'**
+  String get fieldPassword;
+
+  /// No description provided for @fieldNewPassword.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yeni şifre'**
+  String get fieldNewPassword;
+
+  /// No description provided for @fieldPasswordRepeat.
+  ///
+  /// In tr, this message translates to:
+  /// **'Şifre (tekrar)'**
+  String get fieldPasswordRepeat;
+
+  /// No description provided for @fieldUsername.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kullanıcı adı'**
+  String get fieldUsername;
+
+  /// No description provided for @fieldDisplayName.
+  ///
+  /// In tr, this message translates to:
+  /// **'Görünen ad'**
+  String get fieldDisplayName;
+
+  /// No description provided for @fieldBio.
+  ///
+  /// In tr, this message translates to:
+  /// **'Biyografi'**
+  String get fieldBio;
+
+  /// No description provided for @fieldCountry.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ülke'**
+  String get fieldCountry;
+
+  /// No description provided for @validationEmailInvalid.
+  ///
+  /// In tr, this message translates to:
+  /// **'Geçerli bir e-posta adresi gir.'**
+  String get validationEmailInvalid;
+
+  /// No description provided for @validationPasswordShort.
+  ///
+  /// In tr, this message translates to:
+  /// **'Şifre en az 8 karakter olmalı.'**
+  String get validationPasswordShort;
+
+  /// No description provided for @validationPasswordMismatch.
+  ///
+  /// In tr, this message translates to:
+  /// **'Şifreler eşleşmiyor.'**
+  String get validationPasswordMismatch;
+
+  /// No description provided for @validationUsernameFormat.
+  ///
+  /// In tr, this message translates to:
+  /// **'3–20 karakter; yalnızca küçük harf, rakam ve _ kullanılabilir.'**
+  String get validationUsernameFormat;
+
+  /// No description provided for @validationDisplayNameLength.
+  ///
+  /// In tr, this message translates to:
+  /// **'Görünen ad 1–40 karakter olmalı.'**
+  String get validationDisplayNameLength;
+
+  /// No description provided for @validationBioLength.
+  ///
+  /// In tr, this message translates to:
+  /// **'Biyografi en fazla 160 karakter olabilir.'**
+  String get validationBioLength;
+
+  /// No description provided for @signInTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Giriş yap'**
+  String get signInTitle;
+
+  /// No description provided for @signInButton.
+  ///
+  /// In tr, this message translates to:
+  /// **'Giriş yap'**
+  String get signInButton;
+
+  /// No description provided for @signInToSignUp.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hesabın yok mu? Kayıt ol'**
+  String get signInToSignUp;
+
+  /// No description provided for @signInForgotPassword.
+  ///
+  /// In tr, this message translates to:
+  /// **'Şifremi unuttum'**
+  String get signInForgotPassword;
+
+  /// No description provided for @signUpTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kayıt ol'**
+  String get signUpTitle;
+
+  /// No description provided for @signUpButton.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kayıt ol'**
+  String get signUpButton;
+
+  /// No description provided for @signUpToSignIn.
+  ///
+  /// In tr, this message translates to:
+  /// **'Zaten hesabın var mı? Giriş yap'**
+  String get signUpToSignIn;
+
+  /// No description provided for @signUpConsent.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kullanım Şartları\'nı ve Gizlilik Politikası\'nı okudum, kabul ediyorum.'**
+  String get signUpConsent;
+
+  /// No description provided for @termsOfUse.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kullanım Şartları'**
+  String get termsOfUse;
+
+  /// No description provided for @privacyPolicy.
+  ///
+  /// In tr, this message translates to:
+  /// **'Gizlilik Politikası'**
+  String get privacyPolicy;
+
+  /// No description provided for @signUpCheckEmailTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'E-postanı doğrula'**
+  String get signUpCheckEmailTitle;
+
+  /// No description provided for @signUpCheckEmailBody.
+  ///
+  /// In tr, this message translates to:
+  /// **'{email} adresine bir doğrulama bağlantısı gönderdik. Bağlantıya dokunduktan sonra giriş yapabilirsin.'**
+  String signUpCheckEmailBody(String email);
+
+  /// No description provided for @backToSignIn.
+  ///
+  /// In tr, this message translates to:
+  /// **'Girişe dön'**
+  String get backToSignIn;
+
+  /// No description provided for @forgotPasswordTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Şifremi unuttum'**
+  String get forgotPasswordTitle;
+
+  /// No description provided for @forgotPasswordBody.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hesabının e-posta adresini gir; şifreni sıfırlaman için bir bağlantı gönderelim.'**
+  String get forgotPasswordBody;
+
+  /// No description provided for @forgotPasswordButton.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bağlantı gönder'**
+  String get forgotPasswordButton;
+
+  /// No description provided for @forgotPasswordSent.
+  ///
+  /// In tr, this message translates to:
+  /// **'E-posta gönderildi. Gelen kutundaki bağlantı uygulamada yeni şifre ekranını açar.'**
+  String get forgotPasswordSent;
+
+  /// No description provided for @resetPasswordTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yeni şifre belirle'**
+  String get resetPasswordTitle;
+
+  /// No description provided for @resetPasswordButton.
+  ///
+  /// In tr, this message translates to:
+  /// **'Şifreyi kaydet'**
+  String get resetPasswordButton;
+
+  /// No description provided for @resetPasswordDone.
+  ///
+  /// In tr, this message translates to:
+  /// **'Şifren güncellendi.'**
+  String get resetPasswordDone;
+
+  /// No description provided for @profileEdit.
+  ///
+  /// In tr, this message translates to:
+  /// **'Düzenle'**
+  String get profileEdit;
+
+  /// No description provided for @editProfileTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Profili düzenle'**
+  String get editProfileTitle;
+
+  /// No description provided for @changeAvatar.
+  ///
+  /// In tr, this message translates to:
+  /// **'Avatarı değiştir'**
+  String get changeAvatar;
+
+  /// No description provided for @countryNone.
+  ///
+  /// In tr, this message translates to:
+  /// **'Belirtilmemiş'**
+  String get countryNone;
+
+  /// No description provided for @countryPickerTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ülke seç'**
+  String get countryPickerTitle;
+
+  /// No description provided for @countrySearchHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ülke kodu ara (ör. TR)'**
+  String get countrySearchHint;
+
+  /// No description provided for @profileSaved.
+  ///
+  /// In tr, this message translates to:
+  /// **'Profil kaydedildi.'**
+  String get profileSaved;
+
+  /// No description provided for @settingsTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ayarlar'**
+  String get settingsTitle;
+
+  /// No description provided for @signOut.
+  ///
+  /// In tr, this message translates to:
+  /// **'Çıkış yap'**
+  String get signOut;
 }
 
 class _AppLocalizationsDelegate

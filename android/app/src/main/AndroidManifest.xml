@@ -25,6 +25,9 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <!-- Derin bağlantıları supabase_flutter (app_links) karşılar; go_router'a
+                 ham sezonluk:// adresi gelmesin diye Flutter'ın kendi işlemesi kapalı. -->
+            <meta-data android:name="flutter_deeplinking_enabled" android:value="false" />
             <!-- sezonluk:// derin bağlantıları (şifre sıfırlama, profil paylaşımı). -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>

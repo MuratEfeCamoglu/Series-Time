@@ -23,4 +23,22 @@ port = 54323
 [auth]
 enabled = true
 site_url = "http://127.0.0.1:3000"
-additional_redirect_urls = ["sezonluk://reset-password"]
+# sign-in: e-posta doğrulama bağlantısı uygulamayı açar; reset-password: F1(e).
+additional_redirect_urls = ["sezonluk://sign-in", "sezonluk://reset-password"]
+minimum_password_length = 8
+enable_signup = true
+
+[auth.email]
+enable_signup = true
+# F1(c): doğrulanmamış e-posta ile giriş yapılamaz.
+enable_confirmations = true
+double_confirm_changes = true
+
+[inbucket]
+# Yerel doğrulama / şifre sıfırlama e-postaları bu arayüzde görünür.
+enabled = true
+port = 54324
+
+[storage]
+enabled = true
+file_size_limit = "2MiB"

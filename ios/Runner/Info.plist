@@ -61,6 +61,10 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
+	<key>FlutterDeepLinkingEnabled</key>
+	<false/>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Profil fotoğrafını galerinden seçebilmen için fotoğraflarına erişim gerekiyor.</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>

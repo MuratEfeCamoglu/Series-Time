@@ -9,7 +9,17 @@ abstract final class AppTextStyles {
     fontWeight: FontWeight.w700,
     color: AppColors.textPrimary,
   );
+  static const headline = TextStyle(
+    fontSize: 28,
+    fontWeight: FontWeight.w800,
+    color: AppColors.textPrimary,
+  );
   static const body = TextStyle(fontSize: 15, color: AppColors.textPrimary);
+  static const bodySecondary = TextStyle(
+    fontSize: 15,
+    color: AppColors.textSecondary,
+  );
+  static const error = TextStyle(fontSize: 14, color: AppColors.danger);
   static const caption = TextStyle(
     fontSize: 12,
     color: AppColors.textSecondary,
