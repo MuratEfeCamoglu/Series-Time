@@ -1,0 +1,48 @@
+# Duman testi 2/2 (Aşama 7): doğrulanmış hesapla giriş → dizi ekle → bölüm işaretle (F1, F3, F4, F5).
+# E-posta doğrulaması otomatikleştirilemediği için önceden doğrulanmış bir test hesabı kullanılır.
+# Çalıştırma: maestro test e2e/ -e EMAIL=... -e PASSWORD=...
+# Not: sunucudaki veri silinmez; bölüm 1 bu hesapta zaten izlenmişse onay kutusu işareti kaldırır.
+# Her çalıştırmadan önce test hesabında diziyi listeden çıkarın (F4c izleme kayıtlarını da siler).
+appId: com.sezonluk.app
+---
+- launchApp:
+    clearState: true
+- tapOn: "E-posta"
+- inputText: ${EMAIL}
+- tapOn: "Şifre"
+- inputText: ${PASSWORD}
+- hideKeyboard
+- tapOn:
+    text: "Giriş yap"
+    index: 1
+- assertVisible: "İzleme Listesi"
+
+# Dizi ekle (F3, F4)
+- tapOn: "Keşfet"
+- tapOn: "Dizi ara"
+- inputText: "Breaking Bad"
+- extendedWaitUntil:
+    visible: "Breaking Bad"
+    timeout: 10000
+- tapOn:
+    text: "Breaking Bad"
+    index: 1
+- extendedWaitUntil:
+    visible: "Sezonlar"
+    timeout: 10000
+- runFlow:
+    when:
+      visible: "Ekle"
+    commands:
+      - tapOn: "Ekle"
+- assertVisible: "Listeden çıkar"
+
+# İlk bölümü işaretle (F5): onay kutusu → Bölüm Sonrası ekranı açılır (F5f)
+- tapOn: "1. Sezon"
+- extendedWaitUntil:
+    visible: "İzlendi"
+    timeout: 10000
+- tapOn:
+    text: "İzlendi"
+    index: 0
+- assertVisible: "Bu bölüm sana nasıl hissettirdi?"

@@ -4,8 +4,7 @@ title: Gizlilik Politikası
 
 # Sezonluk Gizlilik Politikası
 
-> **Taslak** — Aşama 7'de son hâli verilip GitHub Pages'te yayınlanacak. İletişim adresi uygulamaya özel
-> açılacak e-posta ile değiştirilecek (ISKELET.md V21).
+<!-- Yayından önce doldurulacak: [YAYIN TARİHİ] ve [İLETİŞİM E-POSTASI] (ISKELET.md V21). -->
 
 Son güncelleme: [YAYIN TARİHİ]
 
@@ -40,7 +39,8 @@ uygulamayı kullanan diğer kişilere açıktır. Gizli profil seçeneği yoktur
 
 ## 4. Hizmet sağlayıcılar
 
-- **Supabase** — kimlik doğrulama, veritabanı ve dosya depolama altyapısı. Veriler Supabase sunucularında saklanır.
+- **Supabase** — kimlik doğrulama, veritabanı ve dosya depolama altyapısı. Veriler Supabase'in Avrupa Birliği
+  (Frankfurt, Almanya) bölgesindeki sunucularında saklanır.
 - **TMDB (The Movie Database)** — dizi bilgileri ve görselleri. TMDB'ye kişisel verin gönderilmez; istekler
   sunucumuz üzerinden yapılır. Bu ürün TMDB API'sini kullanır ancak TMDB tarafından onaylanmamış veya
   sertifikalandırılmamıştır.

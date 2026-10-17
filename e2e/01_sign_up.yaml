@@ -1,0 +1,18 @@
+# Duman testi 1/2 (Aşama 7): kayıt formu doldurulur, e-posta doğrulama ekranı görünür (F1).
+# Çalıştırma: maestro test e2e/ -e EMAIL=... -e PASSWORD=... -e USERNAME=...
+# USERNAME her çalıştırmada yeni olmalı (benzersiz ad, F1a).
+appId: com.sezonluk.app
+---
+- launchApp:
+    clearState: true
+- tapOn: "Hesabın yok mu? Kayıt ol"
+- tapOn: "Kullanıcı adı"
+- inputText: ${USERNAME}
+- tapOn: "E-posta"
+- inputText: ${USERNAME}@example.com
+- tapOn: "Şifre"
+- inputText: ${PASSWORD}
+- hideKeyboard
+- tapOn: "Kullanım Şartları'nı ve Gizlilik Politikası'nı okudum, kabul ediyorum."
+- tapOn: "Kayıt ol"
+- assertVisible: "E-postanı doğrula"

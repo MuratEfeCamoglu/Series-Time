@@ -1,0 +1,104 @@
+# Codemagic iş akışları (ISKELET.md §6 Aşama 7, V22). Ücretsiz macOS dakikaları sınırlı olduğu için
+# (R8) hiçbir iş otomatik tetiklenmez; yalnızca Codemagic panelinden elle başlatılır (AGENT.md: onayla).
+#
+# Panelde önceden tanımlanması gerekenler:
+# - Ortam grubu `sezonluk_prod`: SUPABASE_URL, SUPABASE_ANON_KEY, LEGAL_PRIVACY_URL, LEGAL_TERMS_URL
+#   (bunlar uygulamaya gömülür; gizli değildir — service role ve TMDB anahtarı buraya KONMAZ).
+# - Android: `sezonluk_keystore` adlı imza anahtarı, `google_play` ortam grubunda GCLOUD_SERVICE_ACCOUNT_CREDENTIALS.
+# - iOS: App Store Connect API anahtarı entegrasyonu (`sezonluk_asc`), bundle id com.sezonluk.app.
+
+definitions:
+  scripts:
+    - &write_env
+      name: env/prod.json oluştur
+      script: |
+        mkdir -p env
+        cat > env/prod.json <<JSON
+        {
+          "SUPABASE_URL": "$SUPABASE_URL",
+          "SUPABASE_ANON_KEY": "$SUPABASE_ANON_KEY",
+          "LEGAL_PRIVACY_URL": "$LEGAL_PRIVACY_URL",
+          "LEGAL_TERMS_URL": "$LEGAL_TERMS_URL"
+        }
+        JSON
+    - &pub_get
+      name: flutter pub get
+      script: flutter pub get
+    - &verify
+      name: Doğrulama (analyze + format + test)
+      script: dart run tool/verify.dart
+    - &key_leak
+      name: Anahtar sızıntısı kontrolü
+      script: |
+        if git grep -n TMDB_API_KEY -- lib env android ios; then
+          echo "TMDB_API_KEY istemci koduna sızmış" && exit 1
+        fi
+
+workflows:
+  android-release:
+    name: Android release (Play iç test)
+    instance_type: linux_x2
+    max_build_duration: 45
+    environment:
+      flutter: stable
+      groups:
+        - sezonluk_prod
+        - google_play
+      android_signing:
+        - sezonluk_keystore
+    scripts:
+      - *write_env
+      - *pub_get
+      - *verify
+      - *key_leak
+      - name: App bundle
+        script: |
+          VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: //')
+          flutter build appbundle --release \
+            --dart-define-from-file=env/prod.json \
+            --dart-define=APP_VERSION="$VERSION" \
+            --build-number=$BUILD_NUMBER
+    artifacts:
+      - build/app/outputs/bundle/release/*.aab
+    publishing:
+      google_play:
+        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+        track: internal
+        submit_as_draft: true
+
+  ios-release:
+    name: iOS release (TestFlight)
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    integrations:
+      app_store_connect: sezonluk_asc
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+      groups:
+        - sezonluk_prod
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.sezonluk.app
+    scripts:
+      - *write_env
+      - *pub_get
+      - *verify
+      - *key_leak
+      - name: Kod imzalama profilleri
+        script: xcode-project use-profiles
+      - name: IPA
+        script: |
+          VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: //')
+          flutter build ipa --release \
+            --dart-define-from-file=env/prod.json \
+            --dart-define=APP_VERSION="$VERSION" \
+            --build-number=$BUILD_NUMBER \
+            --export-options-plist=/Users/builder/export_options.plist
+    artifacts:
+      - build/ios/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true

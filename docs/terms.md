@@ -4,8 +4,7 @@ title: Kullanım Şartları
 
 # Sezonluk Kullanım Şartları
 
-> **Taslak** — Aşama 7'de son hâli verilip GitHub Pages'te yayınlanacak. İletişim adresi uygulamaya özel
-> açılacak e-posta ile değiştirilecek (ISKELET.md V21).
+<!-- Yayından önce doldurulacak: [YAYIN TARİHİ] ve [İLETİŞİM E-POSTASI] (ISKELET.md V21). -->
 
 Son güncelleme: [YAYIN TARİHİ]
 
