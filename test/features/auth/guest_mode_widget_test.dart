@@ -93,7 +93,7 @@ void main() {
       GoRouter.of(tester.element(find.byType(GuestGate))).push('/show/1399');
       await tester.pumpAndSettle();
 
-      expect(find.text('Yedi krallık...'), findsOneWidget);
+      expect(find.text('Taht Oyunları'), findsWidgets);
       await tester.tap(find.byKey(const Key('showDetail.add')));
       await tester.pumpAndSettle();
       expect(find.byType(GuestGate), findsWidgets);

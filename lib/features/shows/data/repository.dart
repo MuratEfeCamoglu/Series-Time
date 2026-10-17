@@ -52,6 +52,18 @@ class ShowsRepository {
         ];
       });
 
+  /// Dizinin önbellekteki tüm bölümleri (dizi detayı Bölümler sekmesi). TMDB'ye gitmez;
+  /// eksik sezonlar açıldıklarında `season` eylemiyle gelir.
+  Future<List<Episode>> fetchCachedEpisodes(int showId) => _guard(() async {
+    final rows = await _client
+        .from('episodes')
+        .select()
+        .eq('show_id', showId)
+        .order('season_number')
+        .order('episode_number');
+    return [for (final row in rows) Episode.fromJson(row)];
+  });
+
   /// Oturum sahibinin listesi, en son eklenen önce.
   Future<List<UserShow>> fetchMyShows() =>
       _guard(() => fetchUserShows(_userId));

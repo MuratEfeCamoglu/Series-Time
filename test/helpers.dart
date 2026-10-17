@@ -103,6 +103,8 @@ class TestBackend {
     when(() => shows.fetchMyShows()).thenAnswer((_) async => const []);
     when(() => shows.trendingShows()).thenAnswer((_) async => const []);
     when(() => shows.onTheAirShows()).thenAnswer((_) async => const []);
+    when(() => shows.fetchCachedEpisodes(any()))
+        .thenAnswer((_) async => const []);
     when(() => profiles.fetchStats(any())).thenAnswer(
       (_) async => const UserStats(watchedEpisodes: 0, watchMinutes: 0),
     );

@@ -8,16 +8,22 @@ import '../../../core/tmdb_image.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/error_view.dart';
 import '../../../shared/widgets/guest_gate.dart';
-import '../../auth/providers.dart';
 import '../../../shared/widgets/poster_card.dart';
+import '../../../shared/widgets/progress_bar.dart';
+import '../../../shared/widgets/section_pill.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_text_styles.dart';
+import '../../auth/providers.dart';
+import '../../tracking/logic.dart';
+import '../../tracking/providers.dart';
 import '../data/models.dart';
 import '../logic.dart';
 import '../providers.dart';
+import 'season_screen.dart';
 
-/// Dizi detayı (F4): arka plan, afiş, ad, yıl, durum, özet, sezonlar ve listeye ekleme/çıkarma.
+/// Dizi detayı (F4): arka plan, afiş, ad, yıl, durum, listeye ekleme/çıkarma; Hakkında
+/// (özet) ve Bölümler (sıradaki bölüm, sezon kartları) sekmeleri.
 class ShowDetailScreen extends ConsumerWidget {
   const ShowDetailScreen({super.key, required this.showId});
 
@@ -52,6 +58,7 @@ class ShowDetailScreen extends ConsumerWidget {
   }
 }
 
+/// Hakkında / Bölümler sekmeleri; açılışta Bölümler seçilidir.
 class _DetailBody extends StatelessWidget {
   const _DetailBody({required this.detail});
 
@@ -63,40 +70,82 @@ class _DetailBody extends StatelessWidget {
     final show = detail.show;
     final seasons = splitSeasons(detail.seasons);
     final backdrop = tmdbImageUrl(show.backdropPath, TmdbImageSize.w780);
-    return CustomScrollView(
-      slivers: [
-        SliverAppBar(
-          pinned: true,
-          expandedHeight: AppSpacing.detailBackdropHeight,
-          title: Text(show.name),
-          flexibleSpace: FlexibleSpaceBar(
-            background: backdrop == null
-                ? const ColoredBox(color: AppColors.surface)
-                : CachedNetworkImage(
-                    imageUrl: backdrop,
-                    fit: BoxFit.cover,
-                    errorWidget: (_, _, _) =>
-                        const ColoredBox(color: AppColors.surface),
-                  ),
-          ),
-        ),
-        SliverPadding(
-          padding: const EdgeInsets.all(AppSpacing.md),
-          sliver: SliverToBoxAdapter(
-            child: _Header(
-              show: show,
-              seasonNumbers: [for (final s in seasons.regular) s.seasonNumber],
+    return DefaultTabController(
+      length: 2,
+      initialIndex: 1,
+      child: NestedScrollView(
+        headerSliverBuilder: (context, _) => [
+          SliverAppBar(
+            pinned: true,
+            expandedHeight: AppSpacing.detailBackdropHeight,
+            title: Text(show.name),
+            flexibleSpace: FlexibleSpaceBar(
+              background: backdrop == null
+                  ? const ColoredBox(color: AppColors.surface)
+                  : CachedNetworkImage(
+                      imageUrl: backdrop,
+                      fit: BoxFit.cover,
+                      errorWidget: (_, _, _) =>
+                          const ColoredBox(color: AppColors.surface),
+                    ),
             ),
           ),
+          SliverPadding(
+            padding: const EdgeInsets.all(AppSpacing.md),
+            sliver: SliverToBoxAdapter(
+              child: _Header(
+                show: show,
+                seasonNumbers: [
+                  for (final s in seasons.regular) s.seasonNumber,
+                ],
+              ),
+            ),
+          ),
+          SliverPersistentHeader(
+            pinned: true,
+            delegate: _TabBarDelegate(
+              TabBar(
+                tabs: [
+                  Tab(text: l10n.showTabAbout),
+                  Tab(text: l10n.showTabEpisodes),
+                ],
+              ),
+            ),
+          ),
+        ],
+        body: TabBarView(
+          children: [
+            _AboutTab(show: show),
+            _EpisodesTab(
+              showId: show.id,
+              regular: seasons.regular,
+              specials: seasons.specials,
+            ),
+          ],
         ),
-        if (seasons.regular.isNotEmpty)
-          _SeasonSection(title: l10n.showSeasons, seasons: seasons.regular),
-        if (seasons.specials.isNotEmpty)
-          _SeasonSection(title: l10n.showSpecials, seasons: seasons.specials),
-        const SliverPadding(padding: EdgeInsets.only(bottom: AppSpacing.lg)),
-      ],
+      ),
     );
   }
+}
+
+class _TabBarDelegate extends SliverPersistentHeaderDelegate {
+  _TabBarDelegate(this.tabBar);
+
+  final TabBar tabBar;
+
+  @override
+  double get minExtent => tabBar.preferredSize.height;
+
+  @override
+  double get maxExtent => tabBar.preferredSize.height;
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlaps) =>
+      ColoredBox(color: AppColors.background, child: tabBar);
+
+  @override
+  bool shouldRebuild(_TabBarDelegate oldDelegate) =>
+      oldDelegate.tabBar != tabBar;
 }
 
 class _Header extends StatelessWidget {
@@ -114,39 +163,283 @@ class _Header extends StatelessWidget {
       ShowRunStatus.ended => l10n.showStatusEnded,
       ShowRunStatus.unknown => null,
     };
-    return Column(
+    return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              width: AppSpacing.detailPosterWidth,
-              child: PosterCard(title: show.name, posterPath: show.posterPath),
+        SizedBox(
+          width: AppSpacing.detailPosterWidth,
+          child: PosterCard(title: show.name, posterPath: show.posterPath),
+        ),
+        const SizedBox(width: AppSpacing.md),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(show.name, style: AppTextStyles.title),
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                [?year?.toString(), ?status].join(' · '),
+                style: AppTextStyles.bodySecondary,
+              ),
+              const SizedBox(height: AppSpacing.md),
+              _MyShowsButton(show: show, seasonNumbers: seasonNumbers),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _AboutTab extends StatelessWidget {
+  const _AboutTab({required this.show});
+
+  final Show show;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      children: [
+        if (show.overview.isNotEmpty)
+          Text(show.overview, style: AppTextStyles.body),
+      ],
+    );
+  }
+}
+
+/// Bölümler sekmesi: "Sıradaki" bandı ve sezon kartları (F4a, F5b).
+class _EpisodesTab extends ConsumerWidget {
+  const _EpisodesTab({
+    required this.showId,
+    required this.regular,
+    required this.specials,
+  });
+
+  final int showId;
+  final List<Season> regular;
+  final List<Season> specials;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final episodes = ref.watch(showEpisodesProvider(showId)).value ?? const [];
+    final watched =
+        ref.watch(watchedEpisodesProvider(showId)).value ?? const {};
+    final now = DateTime.now();
+    final next = nextUnwatchedEpisode(episodes, watched, now);
+    final hasAired = episodes.any((e) => isAired(e, now));
+
+    return ListView(
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+      children: [
+        // Bölümler henüz önbellekte yoksa (liste dışı dizi) bant gösterilmez.
+        if (next != null || hasAired) ...[
+          SectionPill(title: l10n.showNextEpisode),
+          const SizedBox(height: AppSpacing.sm),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+            child: _NextEpisodeBanner(episode: next),
+          ),
+          const SizedBox(height: AppSpacing.lg),
+        ],
+        SectionPill(title: l10n.showAllEpisodes),
+        const SizedBox(height: AppSpacing.sm),
+        for (final season in [...regular, ...specials])
+          _SeasonCard(
+            season: season,
+            episodes: [
+              for (final e in episodes)
+                if (e.seasonNumber == season.seasonNumber) e,
+            ],
+            watched: watched,
+          ),
+      ],
+    );
+  }
+}
+
+/// Sıradaki bölümün sahne görseli; hepsi izlendiyse "Hepsini izledin!".
+class _NextEpisodeBanner extends ConsumerWidget {
+  const _NextEpisodeBanner({required this.episode});
+
+  /// null: yayınlanmış tüm bölümler izlendi.
+  final Episode? episode;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final next = episode;
+    final image = tmdbImageUrl(next?.stillPath, TmdbImageSize.w780);
+    final name = next?.name;
+    final label = next == null
+        ? l10n.showAllWatched
+        : [
+            episodeLabel(next.seasonNumber, next.episodeNumber),
+            if (name != null && name.isNotEmpty) name,
+          ].join(' · ');
+    return SizedBox(
+      height: AppSpacing.nextEpisodeBannerHeight,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(AppSpacing.posterRadius),
+        child: Material(
+          color: AppColors.surfaceAlt,
+          child: InkWell(
+            key: const Key('showDetail.next'),
+            onTap: next == null
+                ? null
+                : ref.read(isGuestProvider)
+                ? () => showGuestGate(context)
+                : () => context.push(AppRoutes.episode(next.id)),
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                if (image != null)
+                  CachedNetworkImage(
+                    imageUrl: image,
+                    fit: BoxFit.cover,
+                    errorWidget: (_, _, _) => const SizedBox.shrink(),
+                  ),
+                const DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [AppColors.scrimClear, AppColors.scrimTop],
+                    ),
+                  ),
+                ),
+                Align(
+                  alignment: next == null
+                      ? Alignment.center
+                      : Alignment.bottomLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.all(AppSpacing.md),
+                    child: Text(
+                      label,
+                      style: AppTextStyles.title.copyWith(
+                        color: next == null
+                            ? AppColors.accent
+                            : AppColors.textPrimary,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(width: AppSpacing.md),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// "1. Sezon  ⌄  13/13  ✓" kartı: dokununca sezon ekranı, yuvarlak düğme sezonu işaretler.
+class _SeasonCard extends ConsumerWidget {
+  const _SeasonCard({
+    required this.season,
+    required this.episodes,
+    required this.watched,
+  });
+
+  final Season season;
+
+  /// Önbellekteki bölümler; sezon hiç açılmadıysa boş olabilir.
+  final List<Episode> episodes;
+  final Set<int> watched;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final progress = seasonProgress(episodes, watched, DateTime.now());
+    final total = episodes.isEmpty
+        ? (season.episodeCount ?? 0)
+        : progress.released;
+    final complete = total > 0 && progress.watched == total;
+
+    Future<void> markSeason() async {
+      if (ref.read(isGuestProvider)) return showGuestGate(context);
+      // Bölümler önbellekte yoksa önce çekilir; RPC yalnızca önbellekteki bölümleri işaretler.
+      final seasonEpisodes = episodes.isNotEmpty
+          ? episodes
+          : await ref.read(
+              seasonEpisodesProvider((
+                showId: season.showId,
+                seasonNumber: season.seasonNumber,
+              )).future,
+            );
+      if (!context.mounted) return;
+      await runMarking(
+        context,
+        ref
+            .read(watchedEpisodesProvider(season.showId).notifier)
+            .markSeason(season.seasonNumber, seasonEpisodes),
+      );
+      ref.invalidate(showEpisodesProvider(season.showId));
+    }
+
+    return Card(
+      key: Key('season.${season.seasonNumber}'),
+      color: AppColors.surface,
+      clipBehavior: Clip.antiAlias,
+      margin: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.xs,
+      ),
+      child: InkWell(
+        onTap: () => context
+            .push(
+              AppRoutes.season(season.showId, season.seasonNumber),
+              extra: season.name,
+            )
+            // Sezon ekranında çekilen bölümler bu sayıları da günceller.
+            .then((_) => ref.invalidate(showEpisodesProvider(season.showId))),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.md,
+                AppSpacing.sm,
+                AppSpacing.sm,
+                AppSpacing.sm,
+              ),
+              child: Row(
                 children: [
-                  Text(show.name, style: AppTextStyles.title),
-                  const SizedBox(height: AppSpacing.xs),
+                  Expanded(
+                    child: Text(
+                      season.name ?? l10n.seasonTitle(season.seasonNumber),
+                      style: AppTextStyles.title,
+                    ),
+                  ),
                   Text(
-                    [?year?.toString(), ?status].join(' · '),
+                    l10n.seasonProgress(progress.watched, total),
                     style: AppTextStyles.bodySecondary,
                   ),
-                  const SizedBox(height: AppSpacing.md),
-                  _MyShowsButton(show: show, seasonNumbers: seasonNumbers),
+                  const SizedBox(width: AppSpacing.sm),
+                  IconButton(
+                    key: Key('season.markAll.${season.seasonNumber}'),
+                    tooltip: complete
+                        ? l10n.seasonCompleted
+                        : l10n.seasonMarkAll,
+                    onPressed: complete ? null : markSeason,
+                    icon: Icon(
+                      complete
+                          ? Icons.check_circle
+                          : Icons.check_circle_outline,
+                      color: complete
+                          ? AppColors.accent
+                          : AppColors.textPrimary,
+                    ),
+                  ),
                 ],
               ),
             ),
+            ProgressBar(value: total == 0 ? 0 : progress.watched / total),
           ],
         ),
-        if (show.overview.isNotEmpty) ...[
-          const SizedBox(height: AppSpacing.md),
-          Text(show.overview, style: AppTextStyles.body),
-        ],
-      ],
+      ),
     );
   }
 }
@@ -214,56 +507,5 @@ class _MyShowsButton extends ConsumerWidget {
     } catch (_) {
       messenger.showSnackBar(SnackBar(content: Text(message)));
     }
-  }
-}
-
-class _SeasonSection extends StatelessWidget {
-  const _SeasonSection({required this.title, required this.seasons});
-
-  final String title;
-  final List<Season> seasons;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    return SliverMainAxisGroup(
-      slivers: [
-        SliverPadding(
-          padding: const EdgeInsets.fromLTRB(
-            AppSpacing.md,
-            AppSpacing.md,
-            AppSpacing.md,
-            AppSpacing.xs,
-          ),
-          sliver: SliverToBoxAdapter(
-            child: Text(title, style: AppTextStyles.title),
-          ),
-        ),
-        SliverList.builder(
-          itemCount: seasons.length,
-          itemBuilder: (context, index) {
-            final season = seasons[index];
-            final count = season.episodeCount;
-            return ListTile(
-              title: Text(
-                season.name ?? l10n.seasonTitle(season.seasonNumber),
-                style: AppTextStyles.body,
-              ),
-              subtitle: count == null
-                  ? null
-                  : Text(
-                      l10n.seasonEpisodeCount(count),
-                      style: AppTextStyles.bodySecondary,
-                    ),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => context.push(
-                AppRoutes.season(season.showId, season.seasonNumber),
-                extra: season.name,
-              ),
-            );
-          },
-        ),
-      ],
-    );
   }
 }

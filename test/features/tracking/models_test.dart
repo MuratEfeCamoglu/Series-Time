@@ -13,6 +13,8 @@ void main() {
       'next_season_number': 1,
       'next_episode_number': 2,
       'next_episode_name': 'Kral Yolu',
+      'next_still_path': '/sahne.jpg',
+      'backdrop_path': '/arka.jpg',
       'aired_count': 73,
       'watched_count': 1,
     });
@@ -26,6 +28,8 @@ void main() {
     expect(item.nextSeasonNumber, 1);
     expect(item.nextEpisodeNumber, 2);
     expect(item.nextEpisodeName, 'Kral Yolu');
+    expect(item.nextStillPath, '/sahne.jpg');
+    expect(item.backdropPath, '/arka.jpg');
     expect(item.airedCount, 73);
     expect(item.watchedCount, 1);
     expect(item.pending, isFalse);

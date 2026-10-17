@@ -64,21 +64,69 @@ void main() {
   });
 
   group('splitWatchlist (F6a, F6e)', () {
-    test('30 günden eski izleme ayrı bölüme gider', () {
+    test('başlanmamış, son 30 gün ve daha eski ayrı bölümlere gider', () {
       final split = splitWatchlist([
         _item(1, lastWatchedAt: _now.subtract(const Duration(days: 30))),
         _item(2, lastWatchedAt: _now.subtract(const Duration(days: 31))),
         _item(3),
       ], _now);
 
-      expect(split.upNext.map((i) => i.showId), [3, 1]);
+      expect(split.upNext.map((i) => i.showId), [1]);
+      expect(split.notStarted.map((i) => i.showId), [3]);
       expect(split.notRecently.map((i) => i.showId), [2]);
     });
 
     test('boş liste', () {
       final split = splitWatchlist(const [], _now);
       expect(split.upNext, isEmpty);
+      expect(split.notStarted, isEmpty);
       expect(split.notRecently, isEmpty);
+    });
+  });
+
+  group('kart ayrıntıları (F6b)', () {
+    test('sıradakinden sonra kalan bölüm sayısı', () {
+      expect(remainingAfterNext(_item(1)), 9); // 10 yayınlanmış, 0 izlenmiş
+      final last = WatchlistItem(
+        showId: 1,
+        name: 'D',
+        addedAt: DateTime.utc(2026),
+        nextEpisodeId: 1,
+        nextSeasonNumber: 1,
+        nextEpisodeNumber: 10,
+        airedCount: 10,
+        watchedCount: 9,
+      );
+      expect(remainingAfterNext(last), 0);
+    });
+
+    test('sezon başı yalnızca ilk bölüm', () {
+      expect(isSeasonPremiere(1), isTrue);
+      expect(isSeasonPremiere(2), isFalse);
+    });
+  });
+
+  group('dizi detayı bölümler sekmesi', () {
+    final past = DateTime.utc(2026, 10, 1);
+    final episodes = [
+      _episode(2, airDate: past),
+      _episode(1, airDate: past),
+      _episode(3, airDate: DateTime.utc(2026, 11, 1)),
+      _episode(1, season: 0, airDate: past),
+    ];
+
+    test('sıradaki: izlenmemiş ilk yayınlanmış normal bölüm', () {
+      expect(nextUnwatchedEpisode(episodes, {}, _now)?.id, 101);
+      expect(nextUnwatchedEpisode(episodes, {101}, _now)?.id, 102);
+    });
+
+    test('hepsi izlendiyse sıradaki yok (gelecek ve özel bölüm sayılmaz)', () {
+      expect(nextUnwatchedEpisode(episodes, {101, 102}, _now), isNull);
+    });
+
+    test('sezon ilerlemesi yayınlanmış bölümlerden', () {
+      final season1 = episodes.where((e) => e.seasonNumber == 1).toList();
+      expect(seasonProgress(season1, {101}, _now), (watched: 1, released: 2));
     });
   });
 

@@ -46,13 +46,67 @@ void main() {
 
     expect(find.text('Taht Oyunları'), findsWidgets);
     expect(find.text('2011 · Bitti'), findsOneWidget);
-    expect(find.text('Yedi krallık...'), findsOneWidget);
-    expect(find.text('Sezonlar'), findsOneWidget);
+    // Açılışta Bölümler sekmesi: sezon kartları, özel bölümler en sonda (F4d).
+    expect(find.text('Tüm bölümler'), findsOneWidget);
     expect(find.text('1. Sezon'), findsOneWidget);
-    await tester.scrollUntilVisible(find.text('Özel'), 200);
-    expect(find.text('Özel Bölümler'), findsOneWidget);
+    expect(find.text('0/10'), findsOneWidget);
     expect(find.text('Özel'), findsOneWidget);
+
+    await tester.tap(find.text('Hakkında'));
+    await tester.pumpAndSettle();
+    expect(find.text('Yedi krallık...'), findsOneWidget);
   });
+
+  testWidgets(
+    'Bölümler: sıradaki bölüm bandı, sezon ilerlemesi ve sezonu işaretleme (F4a, F5b)',
+    (tester) async {
+      // Başlık, sekmeler, bant ve kartlar birlikte görünsün.
+      tester.view
+        ..physicalSize = const Size(800, 1800)
+        ..devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final backend = TestBackend();
+      final past = DateTime.utc(2020, 1, 1);
+      when(() => backend.shows.fetchShow(1399))
+          .thenAnswer((_) async => _detail);
+      when(() => backend.shows.fetchCachedEpisodes(1399)).thenAnswer(
+        (_) async => [
+          Episode(
+            id: 1,
+            showId: 1399,
+            seasonNumber: 1,
+            episodeNumber: 1,
+            name: 'Bir',
+            airDate: past,
+          ),
+          Episode(
+            id: 2,
+            showId: 1399,
+            seasonNumber: 1,
+            episodeNumber: 2,
+            name: 'İki',
+            airDate: past,
+          ),
+        ],
+      );
+      when(() => backend.tracking.fetchWatchedEpisodeIds(1399))
+          .thenAnswer((_) async => {1});
+      when(() => backend.tracking.markSeason(1399, 1)).thenAnswer((_) async {});
+      await backend.pumpApp(tester);
+      GoRouter.of(tester.element(find.byType(ShowsScreen))).push('/show/1399');
+      await tester.pumpAndSettle();
+
+      expect(find.text('Sıradaki'), findsOneWidget);
+      expect(find.text('S01 | B02 · İki'), findsOneWidget);
+      expect(find.text('1/2'), findsOneWidget);
+
+      await tester.tap(find.byKey(const Key('season.markAll.1')));
+      await tester.pumpAndSettle();
+      verify(() => backend.tracking.markSeason(1399, 1)).called(1);
+      expect(find.text('2/2'), findsOneWidget);
+      expect(find.text('Hepsini izledin!'), findsOneWidget);
+    },
+  );
 
   testWidgets(
     '"Ekle" düğmeyi beklemeden değiştirir, bölümleri çeker ve dizi Diziler sekmesinde görünür (F4b)',

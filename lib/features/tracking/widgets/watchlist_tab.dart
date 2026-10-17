@@ -6,9 +6,8 @@ import '../../../app/router.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_view.dart';
-import '../../../theme/app_colors.dart';
+import '../../../shared/widgets/section_pill.dart';
 import '../../../theme/app_spacing.dart';
-import '../../../theme/app_text_styles.dart';
 import '../../shows/providers.dart';
 import '../data/models.dart';
 import '../logic.dart';
@@ -51,6 +50,12 @@ class WatchlistTab extends ConsumerWidget {
                 slivers: [
                   if (split.upNext.isNotEmpty)
                     ..._section(l10n.watchlistUpNext, split.upNext, layout),
+                  if (split.notStarted.isNotEmpty)
+                    ..._section(
+                      l10n.watchlistNotStarted,
+                      split.notStarted,
+                      layout,
+                    ),
                   if (split.notRecently.isNotEmpty)
                     ..._section(
                       l10n.watchlistNotRecently,
@@ -84,30 +89,7 @@ class WatchlistTab extends ConsumerWidget {
         AppSpacing.md,
         AppSpacing.sm,
       ),
-      // Bölüm başlığı ortalanmış hap etiket (F6 görsel düzen).
-      sliver: SliverToBoxAdapter(
-        child: Center(
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: AppColors.surfaceAlt,
-              borderRadius: BorderRadius.circular(AppSpacing.lg),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.md,
-                vertical: AppSpacing.xs,
-              ),
-              child: Text(
-                title,
-                style: AppTextStyles.caption.copyWith(
-                  color: AppColors.textPrimary,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
+      sliver: SliverToBoxAdapter(child: SectionPill(title: title)),
     ),
     // F6(h): ızgara ve liste tembel oluşturulur; 100 dizide yalnızca görünenler çizilir.
     if (layout == WatchlistLayout.grid)

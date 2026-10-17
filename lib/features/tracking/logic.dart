@@ -36,11 +36,14 @@ List<WatchlistItem> sortWatchlist(List<WatchlistItem> items) {
   return [...items]..sort(compare);
 }
 
-/// F6(a, e): son izleme ≤ 30 gün önce (veya hiç) → Sıradaki; > 30 gün → Bir süredir izlemediklerin.
-({List<WatchlistItem> upNext, List<WatchlistItem> notRecently}) splitWatchlist(
-  List<WatchlistItem> items,
-  DateTime now,
-) {
+/// F6(a, e): hiç izlenmemişler "Henüz başlamadıkların"; son izleme ≤ 30 gün önce olanlar
+/// "Sıradaki"; > 30 gün önce olanlar "Bir süredir izlemediklerin".
+({
+  List<WatchlistItem> upNext,
+  List<WatchlistItem> notStarted,
+  List<WatchlistItem> notRecently,
+})
+splitWatchlist(List<WatchlistItem> items, DateTime now) {
   final sorted = sortWatchlist(items);
   bool isStale(WatchlistItem item) {
     final watched = item.lastWatchedAt;
@@ -50,12 +53,58 @@ List<WatchlistItem> sortWatchlist(List<WatchlistItem> items) {
   return (
     upNext: [
       for (final item in sorted)
-        if (!isStale(item)) item,
+        if (item.lastWatchedAt != null && !isStale(item)) item,
+    ],
+    notStarted: [
+      for (final item in sorted)
+        if (item.lastWatchedAt == null) item,
     ],
     notRecently: [
       for (final item in sorted)
         if (isStale(item)) item,
     ],
+  );
+}
+
+/// "S05 | B01 +38": sıradaki bölümden sonra kalan yayınlanmış bölüm sayısı.
+int remainingAfterNext(WatchlistItem item) =>
+    (item.airedCount - item.watchedCount - 1).clamp(0, item.airedCount);
+
+/// Sezonun ilk bölümü "Sezon başı" etiketiyle gösterilir.
+bool isSeasonPremiere(int episodeNumber) => episodeNumber == 1;
+
+/// Dizi detayındaki "Sıradaki" bandı: izlenmemiş ilk yayınlanmış normal bölüm.
+Episode? nextUnwatchedEpisode(
+  List<Episode> episodes,
+  Set<int> watchedIds,
+  DateTime now,
+) {
+  final candidates =
+      [
+        for (final e in episodes)
+          if (isAired(e, now) && !watchedIds.contains(e.id)) e,
+      ]..sort((a, b) {
+        final bySeason = a.seasonNumber.compareTo(b.seasonNumber);
+        return bySeason != 0
+            ? bySeason
+            : a.episodeNumber.compareTo(b.episodeNumber);
+      });
+  return candidates.isEmpty ? null : candidates.first;
+}
+
+/// Sezon kartı: izlenen / yayınlanmış bölüm sayısı (özel bölümler için yayın tarihi yeterli).
+({int watched, int released}) seasonProgress(
+  List<Episode> seasonEpisodes,
+  Set<int> watchedIds,
+  DateTime now,
+) {
+  final released = [
+    for (final e in seasonEpisodes)
+      if (isReleased(e, now)) e,
+  ];
+  return (
+    watched: released.where((e) => watchedIds.contains(e.id)).length,
+    released: released.length,
   );
 }
 

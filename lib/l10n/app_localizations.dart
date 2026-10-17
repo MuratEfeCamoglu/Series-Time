@@ -1365,6 +1365,66 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'{minutes} dk'**
   String episodeRuntime(int minutes);
+
+  /// No description provided for @watchlistNotStarted.
+  ///
+  /// In tr, this message translates to:
+  /// **'Henüz başlamadıkların'**
+  String get watchlistNotStarted;
+
+  /// No description provided for @seasonPremiere.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sezon başı'**
+  String get seasonPremiere;
+
+  /// No description provided for @remainingEpisodes.
+  ///
+  /// In tr, this message translates to:
+  /// **'+{count}'**
+  String remainingEpisodes(int count);
+
+  /// No description provided for @showTabAbout.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hakkında'**
+  String get showTabAbout;
+
+  /// No description provided for @showTabEpisodes.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bölümler'**
+  String get showTabEpisodes;
+
+  /// No description provided for @showNextEpisode.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sıradaki'**
+  String get showNextEpisode;
+
+  /// No description provided for @showAllWatched.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hepsini izledin!'**
+  String get showAllWatched;
+
+  /// No description provided for @showAllEpisodes.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tüm bölümler'**
+  String get showAllEpisodes;
+
+  /// No description provided for @seasonProgress.
+  ///
+  /// In tr, this message translates to:
+  /// **'{watched}/{total}'**
+  String seasonProgress(int watched, int total);
+
+  /// No description provided for @seasonCompleted.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sezon tamamlandı'**
+  String get seasonCompleted;
 }
 
 class _AppLocalizationsDelegate

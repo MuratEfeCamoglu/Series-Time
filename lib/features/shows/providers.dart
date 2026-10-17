@@ -23,6 +23,12 @@ final showDetailProvider = FutureProvider.autoDispose.family<ShowDetail, int>(
   (ref, showId) => ref.watch(showsRepositoryProvider).fetchShow(showId),
 );
 
+final showEpisodesProvider = FutureProvider.autoDispose
+    .family<List<Episode>, int>(
+      (ref, showId) =>
+          ref.watch(showsRepositoryProvider).fetchCachedEpisodes(showId),
+    );
+
 final seasonEpisodesProvider = FutureProvider.autoDispose
     .family<List<Episode>, ({int showId, int seasonNumber})>(
       (ref, key) => ref
@@ -67,7 +73,9 @@ class MyShowsNotifier extends AsyncNotifier<List<UserShow>> {
       // Dizi listeye eklendi; eksik sezonlar açıldıklarında veya tmdb-sync ile gelir.
       debugPrint('Sezon bölümleri önbelleğe alınamadı (${show.id}): $error');
     }
-    ref.invalidate(watchlistProvider);
+    ref
+      ..invalidate(watchlistProvider)
+      ..invalidate(showEpisodesProvider(show.id));
   }
 
   Future<void> remove(int showId) async {

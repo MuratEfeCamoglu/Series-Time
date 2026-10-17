@@ -376,5 +376,32 @@
         "type": "int"
       }
     }
-  }
+  },
+  "watchlistNotStarted": "Henüz başlamadıkların",
+  "seasonPremiere": "Sezon başı",
+  "remainingEpisodes": "+{count}",
+  "@remainingEpisodes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "showTabAbout": "Hakkında",
+  "showTabEpisodes": "Bölümler",
+  "showNextEpisode": "Sıradaki",
+  "showAllWatched": "Hepsini izledin!",
+  "showAllEpisodes": "Tüm bölümler",
+  "seasonProgress": "{watched}/{total}",
+  "@seasonProgress": {
+    "placeholders": {
+      "watched": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "seasonCompleted": "Sezon tamamlandı"
 }

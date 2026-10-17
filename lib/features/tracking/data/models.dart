@@ -14,6 +14,8 @@ class WatchlistItem {
     this.posterPath,
     this.lastWatchedAt,
     this.nextEpisodeName,
+    this.nextStillPath,
+    this.backdropPath,
     this.pending = false,
   });
 
@@ -30,6 +32,8 @@ class WatchlistItem {
     nextSeasonNumber: json['next_season_number'] as int,
     nextEpisodeNumber: json['next_episode_number'] as int,
     nextEpisodeName: json['next_episode_name'] as String?,
+    nextStillPath: json['next_still_path'] as String?,
+    backdropPath: json['backdrop_path'] as String?,
     airedCount: json['aired_count'] as int,
     watchedCount: json['watched_count'] as int,
   );
@@ -43,6 +47,10 @@ class WatchlistItem {
   final int nextSeasonNumber;
   final int nextEpisodeNumber;
   final String? nextEpisodeName;
+
+  /// Kartın solundaki yatay görsel: sıradaki bölümün sahnesi, yoksa dizinin arka planı.
+  final String? nextStillPath;
+  final String? backdropPath;
   final int airedCount;
   final int watchedCount;
 
@@ -59,6 +67,8 @@ class WatchlistItem {
     nextSeasonNumber: nextSeasonNumber,
     nextEpisodeNumber: nextEpisodeNumber,
     nextEpisodeName: nextEpisodeName,
+    nextStillPath: nextStillPath,
+    backdropPath: backdropPath,
     airedCount: airedCount,
     watchedCount: watchedCount + 1,
     pending: true,

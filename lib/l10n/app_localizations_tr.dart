@@ -702,4 +702,38 @@ class AppLocalizationsTr extends AppLocalizations {
   String episodeRuntime(int minutes) {
     return '$minutes dk';
   }
+
+  @override
+  String get watchlistNotStarted => 'Henüz başlamadıkların';
+
+  @override
+  String get seasonPremiere => 'Sezon başı';
+
+  @override
+  String remainingEpisodes(int count) {
+    return '+$count';
+  }
+
+  @override
+  String get showTabAbout => 'Hakkında';
+
+  @override
+  String get showTabEpisodes => 'Bölümler';
+
+  @override
+  String get showNextEpisode => 'Sıradaki';
+
+  @override
+  String get showAllWatched => 'Hepsini izledin!';
+
+  @override
+  String get showAllEpisodes => 'Tüm bölümler';
+
+  @override
+  String seasonProgress(int watched, int total) {
+    return '$watched/$total';
+  }
+
+  @override
+  String get seasonCompleted => 'Sezon tamamlandı';
 }
