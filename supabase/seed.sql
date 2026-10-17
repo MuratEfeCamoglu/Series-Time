@@ -1,0 +1,1 @@
+-- Yerel test verisi. Aşama 0'da boş; badges, banned_words ve 2 test kullanıcısı sonraki aşamalarda eklenir.

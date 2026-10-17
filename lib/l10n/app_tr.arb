@@ -1,0 +1,19 @@
+{
+  "@@locale": "tr",
+  "appTitle": "Sezonluk",
+  "@appTitle": {
+    "description": "Uygulamanın görünen adı (geçici ad, ISKELET.md V2)."
+  },
+  "tabShows": "Diziler",
+  "@tabShows": {
+    "description": "Alt menü: izleme listesi ve yaklaşan bölümler sekmesi."
+  },
+  "tabDiscover": "Keşfet",
+  "@tabDiscover": {
+    "description": "Alt menü: dizi/kullanıcı arama ve trendler sekmesi."
+  },
+  "tabProfile": "Profil",
+  "@tabProfile": {
+    "description": "Alt menü: kullanıcının kendi profili sekmesi."
+  }
+}
