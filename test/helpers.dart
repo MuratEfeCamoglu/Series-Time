@@ -183,7 +183,11 @@ class TestBackend {
     Map<String, Object> preferenceValues = const {},
   }) async {
     addTearDown(statusController.close);
-    SharedPreferences.setMockInitialValues(preferenceValues);
+    // Test cihazının dili İngilizcedir; testler aksi belirtilmedikçe Türkçe arayüzle çalışır.
+    SharedPreferences.setMockInitialValues({
+      'app.locale': 'tr',
+      ...preferenceValues,
+    });
     preferences = await SharedPreferences.getInstance();
     await tester.pumpWidget(
       ProviderScope(

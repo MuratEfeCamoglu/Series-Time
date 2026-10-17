@@ -6,6 +6,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../app/router.dart';
+import '../../../core/app_locale.dart';
 import '../../../core/format.dart';
 import '../../../core/tmdb_image.dart';
 import '../../../l10n/app_localizations.dart';
@@ -556,7 +557,7 @@ class _RatingsChart extends StatelessWidget {
     final average = averageRating(counts)!;
     String label(double rating) => rating == rating.roundToDouble()
         ? '${rating.toInt()}'
-        : '$rating'.replaceAll('.', ',');
+        : AppLocale.decimal(rating);
     return Padding(
       key: const Key('profile.ratings'),
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
@@ -566,7 +567,7 @@ class _RatingsChart extends StatelessWidget {
           Text(
             l10n.profileRatingsSummary(
               totalRatings(counts),
-              average.toStringAsFixed(1).replaceAll('.', ','),
+              AppLocale.decimal(average),
             ),
             style: AppTextStyles.bodySecondary,
           ),

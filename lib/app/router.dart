@@ -19,6 +19,7 @@ import '../features/profile/screens/user_profile_screen.dart';
 import '../features/profile/screens/user_shows_screen.dart';
 import '../features/settings/screens/about_screen.dart';
 import '../features/settings/screens/color_settings_screen.dart';
+import '../features/settings/screens/language_settings_screen.dart';
 import '../features/settings/screens/delete_account_screen.dart';
 import '../features/settings/screens/settings_screen.dart';
 import '../features/shows/screens/season_screen.dart';
@@ -38,6 +39,7 @@ abstract final class AppRoutes {
   static const blockedUsers = '/settings/blocked';
   static const about = '/settings/about';
   static const colorSettings = '/settings/colors';
+  static const languageSettings = '/settings/language';
   static const deleteAccount = '/settings/delete-account';
   static const signIn = '/sign-in';
   static const signUp = '/sign-up';
@@ -116,6 +118,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: 'colors',
             builder: (context, state) => const ColorSettingsScreen(),
+          ),
+          GoRoute(
+            path: 'language',
+            builder: (context, state) => const LanguageSettingsScreen(),
           ),
           GoRoute(
             path: 'profile',

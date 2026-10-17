@@ -11,4 +11,21 @@ void main() {
     expect(deleteConfirmationMatches('', 'ayse_1'), isFalse);
     expect(deleteConfirmationMatches('ayse', 'ayse_1'), isFalse);
   });
+
+  test('dil seçimi: Sistem telefon diline göre, elle seçim önce (F21b)', () {
+    expect(
+      resolveLanguageCode(choice: 'system', deviceLanguageCode: 'tr'),
+      'tr',
+    );
+    expect(
+      resolveLanguageCode(choice: 'system', deviceLanguageCode: 'de'),
+      'en',
+    );
+    expect(
+      resolveLanguageCode(choice: 'system', deviceLanguageCode: null),
+      'en',
+    );
+    expect(resolveLanguageCode(choice: 'en', deviceLanguageCode: 'tr'), 'en');
+    expect(resolveLanguageCode(choice: 'tr', deviceLanguageCode: 'en'), 'tr');
+  });
 }

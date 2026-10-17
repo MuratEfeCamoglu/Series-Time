@@ -3,6 +3,7 @@
 library;
 
 import 'data/models.dart';
+import '../../core/app_locale.dart';
 
 const maxCommentLength = 500;
 const commentPageSize = 20;
@@ -90,6 +91,5 @@ StarFill starFill(double? rating, int starIndex) {
   return StarFill.empty;
 }
 
-/// "4,5" — Türkçe ondalık ayırıcı.
-String formatRating(double rating) =>
-    rating.toStringAsFixed(1).replaceAll('.', ',');
+/// "4,5" / "4.5" — etkin dilin ondalık ayırıcısı (F21b).
+String formatRating(double rating) => AppLocale.decimal(rating);

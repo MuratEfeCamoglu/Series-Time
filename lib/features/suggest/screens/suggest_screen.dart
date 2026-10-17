@@ -1,3 +1,5 @@
+import '../../../core/app_locale.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -95,7 +97,13 @@ class _GenreChips extends ConsumerWidget {
                 for (final genre in genres)
                   FilterChip(
                     key: Key('genre.${genre.id}'),
-                    label: Text(genre.name),
+                    label: Text(
+                      genreLabel(
+                        id: genre.id,
+                        cachedName: genre.name,
+                        english: AppLocale.isEnglish,
+                      ),
+                    ),
                     selected: selected.contains(genre.id),
                     selectedColor: AppColors.accent,
                     checkmarkColor: AppColors.onAccent,

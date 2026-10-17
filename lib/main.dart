@@ -6,8 +6,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app/router.dart';
+import 'core/app_locale.dart';
 import 'core/config.dart';
 import 'core/preferences.dart';
+import 'features/settings/logic.dart';
 import 'features/settings/providers.dart';
 import 'l10n/app_localizations.dart';
 import 'theme/app_colors.dart';
@@ -43,13 +45,21 @@ class SezonlukApp extends ConsumerWidget {
     // uygulama ağacı palet anahtarıyla yeniden kurulur (rota yığını korunur).
     final palette = ref.watch(paletteProvider);
     AppColors.apply(palette);
+    final language = ref.watch(languageProvider);
     return MaterialApp.router(
       onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.dark,
       darkTheme: AppTheme.dark,
       themeMode: ThemeMode.dark,
-      locale: const Locale('tr'),
+      // F21(b): Sistem seçiliyse telefon dili Türkçe değilse İngilizce.
+      locale: language == AppLanguage.system ? null : Locale(language.name),
+      localeResolutionCallback: (device, supported) => Locale(
+        resolveLanguageCode(
+          choice: language.name,
+          deviceLanguageCode: device?.languageCode,
+        ),
+      ),
       supportedLocales: AppLocalizations.supportedLocales,
       localizationsDelegates: const [
         AppLocalizations.delegate,
@@ -58,8 +68,12 @@ class SezonlukApp extends ConsumerWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       routerConfig: ref.watch(routerProvider),
-      builder: (context, child) =>
-          KeyedSubtree(key: ValueKey(palette), child: child!),
+      builder: (context, child) {
+        // Bölüm kodu, ondalık ayırıcı ve TMDB dili çözülen dile göre (F21b).
+        final code = Localizations.localeOf(context).languageCode;
+        AppLocale.apply(code);
+        return KeyedSubtree(key: ValueKey((palette, code)), child: child!);
+      },
     );
   }
 }

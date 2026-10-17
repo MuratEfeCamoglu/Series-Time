@@ -1010,4 +1010,111 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get paletteOrange => 'Turuncu';
+
+  @override
+  String get settingsLanguage => 'Dil';
+
+  @override
+  String get settingsLanguageHint =>
+      'Arayüz dili hemen değişir. Dizi ve bölüm adları ile özetler şimdilik Türkçe gösterilir.';
+
+  @override
+  String get languageSystem => 'Telefonun dili';
+
+  @override
+  String get languageTurkish => 'Türkçe';
+
+  @override
+  String get languageEnglish => 'English';
+
+  @override
+  String get badgeFirstEpisodeName => 'İlk Bölüm';
+
+  @override
+  String get badgeFirstEpisodeDesc => 'İlk bölümünü izlendi olarak işaretle.';
+
+  @override
+  String get badgeEpisodes10Name => 'Isınma Turu';
+
+  @override
+  String get badgeEpisodes10Desc => '10 bölüm izle.';
+
+  @override
+  String get badgeEpisodes50Name => 'Alışkanlık';
+
+  @override
+  String get badgeEpisodes50Desc => '50 bölüm izle.';
+
+  @override
+  String get badgeEpisodes100Name => 'Dizi Kurdu';
+
+  @override
+  String get badgeEpisodes100Desc => '100 bölüm izle.';
+
+  @override
+  String get badgeEpisodes500Name => 'Ekran Bağımlısı';
+
+  @override
+  String get badgeEpisodes500Desc => '500 bölüm izle.';
+
+  @override
+  String get badgeEpisodes1000Name => 'Maraton Ustası';
+
+  @override
+  String get badgeEpisodes1000Desc => '1.000 bölüm izle.';
+
+  @override
+  String get badgeEpisodes5000Name => 'Efsane İzleyici';
+
+  @override
+  String get badgeEpisodes5000Desc => '5.000 bölüm izle.';
+
+  @override
+  String get badgeShows10Name => 'Koleksiyoncu';
+
+  @override
+  String get badgeShows10Desc => 'Listene 10 dizi ekle.';
+
+  @override
+  String get badgeShows25Name => 'Arşivci';
+
+  @override
+  String get badgeShows25Desc => 'Listene 25 dizi ekle.';
+
+  @override
+  String get badgeShows50Name => 'Kütüphaneci';
+
+  @override
+  String get badgeShows50Desc => 'Listene 50 dizi ekle.';
+
+  @override
+  String get badgeFirstFinishedName => 'Final Sahnesi';
+
+  @override
+  String get badgeFirstFinishedDesc =>
+      'Bitmiş bir dizinin tüm bölümlerini izle.';
+
+  @override
+  String get badgeFinished5Name => 'Bitirici';
+
+  @override
+  String get badgeFinished5Desc => 'Bitmiş 5 dizinin tüm bölümlerini izle.';
+
+  @override
+  String get badgeFirstCommentName => 'İlk Söz';
+
+  @override
+  String get badgeFirstCommentDesc => 'İlk yorumunu yaz.';
+
+  @override
+  String get badgeComments10Name => 'Sohbetçi';
+
+  @override
+  String get badgeComments10Desc => '10 yorum yaz.';
+
+  @override
+  String get badgeComments50Name => 'Eleştirmen';
+
+  @override
+  String get badgeComments50Desc => '50 yorum yaz.';
 }

@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../core/app_locale.dart';
 import '../../../core/failures.dart';
 import '../../../core/supabase_client.dart';
 import 'models.dart';
@@ -130,7 +131,11 @@ class ShowsRepository {
   }
 
   Future<Map<String, dynamic>> _invoke(Map<String, Object> body) async {
-    final response = await _client.functions.invoke(_tmdbProxy, body: body);
+    // F21(b): önbelleğe yazılmayan eylemler bu dilde döner.
+    final response = await _client.functions.invoke(
+      _tmdbProxy,
+      body: {...body, 'language': AppLocale.code},
+    );
     return response.data as Map<String, dynamic>;
   }
 

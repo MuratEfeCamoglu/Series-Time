@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/router.dart';
+import '../../../core/app_locale.dart';
 import '../../../core/format.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/empty_state.dart';
@@ -12,6 +13,7 @@ import '../../../theme/app_colors.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_text_styles.dart';
 import '../../badges/providers.dart';
+import '../../badges/widgets/badge_texts.dart';
 import '../../profile/providers.dart';
 import '../../profile/widgets/profile_avatar.dart';
 import '../../shows/logic.dart';
@@ -76,13 +78,17 @@ class _FeedTile extends ConsumerWidget {
         item.username,
         show,
         code,
-        (item.rating ?? 0).toStringAsFixed(1).replaceAll('.', ','),
+        AppLocale.decimal(item.rating ?? 0),
       ),
       FriendFeedKind.badge => l10n.feedBadge(
         item.username,
-        badges.where((b) => b.code == item.badgeCode).firstOrNull?.name ??
-            item.badgeCode ??
-            '',
+        badgeTitle(
+          l10n,
+          item.badgeCode ?? '',
+          badges.where((b) => b.code == item.badgeCode).firstOrNull?.name ??
+              item.badgeCode ??
+              '',
+        ),
       ),
     };
     final episodeId = item.episodeId;

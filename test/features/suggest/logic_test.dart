@@ -74,4 +74,10 @@ void main() {
       expect(lastWatchedShow(const []), isNull);
     });
   });
+
+  test('tür adı İngilizce arayüzde TMDB İngilizce adıyla (F21b)', () {
+    expect(genreLabel(id: 18, cachedName: 'Dram', english: true), 'Drama');
+    expect(genreLabel(id: 18, cachedName: 'Dram', english: false), 'Dram');
+    expect(genreLabel(id: 1, cachedName: 'Yeni', english: true), 'Yeni');
+  });
 }

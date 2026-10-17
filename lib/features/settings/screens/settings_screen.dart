@@ -45,6 +45,12 @@ class SettingsScreen extends ConsumerWidget {
             onTap: () => context.push(AppRoutes.colorSettings),
           ),
           ListTile(
+            key: const Key('settings.language'),
+            leading: const Icon(Icons.language),
+            title: Text(l10n.settingsLanguage),
+            onTap: () => context.push(AppRoutes.languageSettings),
+          ),
+          ListTile(
             key: const Key('settings.blocked'),
             leading: const Icon(Icons.block),
             title: Text(l10n.blockedUsersTitle),

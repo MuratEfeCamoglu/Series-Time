@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import 'app_localizations_en.dart';
 import 'app_localizations_tr.dart';
 
 // ignore_for_file: type=lint
@@ -92,7 +93,10 @@ abstract class AppLocalizations {
       ];
 
   /// A list of this localizations delegate's supported locales.
-  static const List<Locale> supportedLocales = <Locale>[Locale('tr')];
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('en'),
+    Locale('tr'),
+  ];
 
   /// Uygulamanın görünen adı (geçici ad, ISKELET.md V2).
   ///
@@ -1905,6 +1909,216 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Turuncu'**
   String get paletteOrange;
+
+  /// No description provided for @settingsLanguage.
+  ///
+  /// In tr, this message translates to:
+  /// **'Dil'**
+  String get settingsLanguage;
+
+  /// No description provided for @settingsLanguageHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Arayüz dili hemen değişir. Dizi ve bölüm adları ile özetler şimdilik Türkçe gösterilir.'**
+  String get settingsLanguageHint;
+
+  /// No description provided for @languageSystem.
+  ///
+  /// In tr, this message translates to:
+  /// **'Telefonun dili'**
+  String get languageSystem;
+
+  /// No description provided for @languageTurkish.
+  ///
+  /// In tr, this message translates to:
+  /// **'Türkçe'**
+  String get languageTurkish;
+
+  /// No description provided for @languageEnglish.
+  ///
+  /// In tr, this message translates to:
+  /// **'English'**
+  String get languageEnglish;
+
+  /// No description provided for @badgeFirstEpisodeName.
+  ///
+  /// In tr, this message translates to:
+  /// **'İlk Bölüm'**
+  String get badgeFirstEpisodeName;
+
+  /// No description provided for @badgeFirstEpisodeDesc.
+  ///
+  /// In tr, this message translates to:
+  /// **'İlk bölümünü izlendi olarak işaretle.'**
+  String get badgeFirstEpisodeDesc;
+
+  /// No description provided for @badgeEpisodes10Name.
+  ///
+  /// In tr, this message translates to:
+  /// **'Isınma Turu'**
+  String get badgeEpisodes10Name;
+
+  /// No description provided for @badgeEpisodes10Desc.
+  ///
+  /// In tr, this message translates to:
+  /// **'10 bölüm izle.'**
+  String get badgeEpisodes10Desc;
+
+  /// No description provided for @badgeEpisodes50Name.
+  ///
+  /// In tr, this message translates to:
+  /// **'Alışkanlık'**
+  String get badgeEpisodes50Name;
+
+  /// No description provided for @badgeEpisodes50Desc.
+  ///
+  /// In tr, this message translates to:
+  /// **'50 bölüm izle.'**
+  String get badgeEpisodes50Desc;
+
+  /// No description provided for @badgeEpisodes100Name.
+  ///
+  /// In tr, this message translates to:
+  /// **'Dizi Kurdu'**
+  String get badgeEpisodes100Name;
+
+  /// No description provided for @badgeEpisodes100Desc.
+  ///
+  /// In tr, this message translates to:
+  /// **'100 bölüm izle.'**
+  String get badgeEpisodes100Desc;
+
+  /// No description provided for @badgeEpisodes500Name.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ekran Bağımlısı'**
+  String get badgeEpisodes500Name;
+
+  /// No description provided for @badgeEpisodes500Desc.
+  ///
+  /// In tr, this message translates to:
+  /// **'500 bölüm izle.'**
+  String get badgeEpisodes500Desc;
+
+  /// No description provided for @badgeEpisodes1000Name.
+  ///
+  /// In tr, this message translates to:
+  /// **'Maraton Ustası'**
+  String get badgeEpisodes1000Name;
+
+  /// No description provided for @badgeEpisodes1000Desc.
+  ///
+  /// In tr, this message translates to:
+  /// **'1.000 bölüm izle.'**
+  String get badgeEpisodes1000Desc;
+
+  /// No description provided for @badgeEpisodes5000Name.
+  ///
+  /// In tr, this message translates to:
+  /// **'Efsane İzleyici'**
+  String get badgeEpisodes5000Name;
+
+  /// No description provided for @badgeEpisodes5000Desc.
+  ///
+  /// In tr, this message translates to:
+  /// **'5.000 bölüm izle.'**
+  String get badgeEpisodes5000Desc;
+
+  /// No description provided for @badgeShows10Name.
+  ///
+  /// In tr, this message translates to:
+  /// **'Koleksiyoncu'**
+  String get badgeShows10Name;
+
+  /// No description provided for @badgeShows10Desc.
+  ///
+  /// In tr, this message translates to:
+  /// **'Listene 10 dizi ekle.'**
+  String get badgeShows10Desc;
+
+  /// No description provided for @badgeShows25Name.
+  ///
+  /// In tr, this message translates to:
+  /// **'Arşivci'**
+  String get badgeShows25Name;
+
+  /// No description provided for @badgeShows25Desc.
+  ///
+  /// In tr, this message translates to:
+  /// **'Listene 25 dizi ekle.'**
+  String get badgeShows25Desc;
+
+  /// No description provided for @badgeShows50Name.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kütüphaneci'**
+  String get badgeShows50Name;
+
+  /// No description provided for @badgeShows50Desc.
+  ///
+  /// In tr, this message translates to:
+  /// **'Listene 50 dizi ekle.'**
+  String get badgeShows50Desc;
+
+  /// No description provided for @badgeFirstFinishedName.
+  ///
+  /// In tr, this message translates to:
+  /// **'Final Sahnesi'**
+  String get badgeFirstFinishedName;
+
+  /// No description provided for @badgeFirstFinishedDesc.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bitmiş bir dizinin tüm bölümlerini izle.'**
+  String get badgeFirstFinishedDesc;
+
+  /// No description provided for @badgeFinished5Name.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bitirici'**
+  String get badgeFinished5Name;
+
+  /// No description provided for @badgeFinished5Desc.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bitmiş 5 dizinin tüm bölümlerini izle.'**
+  String get badgeFinished5Desc;
+
+  /// No description provided for @badgeFirstCommentName.
+  ///
+  /// In tr, this message translates to:
+  /// **'İlk Söz'**
+  String get badgeFirstCommentName;
+
+  /// No description provided for @badgeFirstCommentDesc.
+  ///
+  /// In tr, this message translates to:
+  /// **'İlk yorumunu yaz.'**
+  String get badgeFirstCommentDesc;
+
+  /// No description provided for @badgeComments10Name.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sohbetçi'**
+  String get badgeComments10Name;
+
+  /// No description provided for @badgeComments10Desc.
+  ///
+  /// In tr, this message translates to:
+  /// **'10 yorum yaz.'**
+  String get badgeComments10Desc;
+
+  /// No description provided for @badgeComments50Name.
+  ///
+  /// In tr, this message translates to:
+  /// **'Eleştirmen'**
+  String get badgeComments50Name;
+
+  /// No description provided for @badgeComments50Desc.
+  ///
+  /// In tr, this message translates to:
+  /// **'50 yorum yaz.'**
+  String get badgeComments50Desc;
 }
 
 class _AppLocalizationsDelegate
@@ -1918,7 +2132,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['tr'].contains(locale.languageCode);
+      <String>['en', 'tr'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -1927,6 +2141,8 @@ class _AppLocalizationsDelegate
 AppLocalizations lookupAppLocalizations(Locale locale) {
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
+    case 'en':
+      return AppLocalizationsEn();
     case 'tr':
       return AppLocalizationsTr();
   }

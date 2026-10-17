@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:sezonluk/core/app_locale.dart';
 import 'package:sezonluk/core/failures.dart';
 import 'package:sezonluk/features/auth/logic.dart';
 import 'package:sezonluk/features/auth/screens/sign_in_screen.dart';
 import 'package:sezonluk/features/settings/screens/about_screen.dart';
+import 'package:sezonluk/features/shows/logic.dart';
 import 'package:sezonluk/features/settings/screens/color_settings_screen.dart';
 import 'package:sezonluk/features/settings/screens/delete_account_screen.dart';
 import 'package:sezonluk/features/tracking/screens/shows_screen.dart';
@@ -160,6 +162,49 @@ void main() {
             .scaffoldBackgroundColor,
         AppPalette.green.background,
       );
+    });
+  });
+
+  group('F21 dil', () {
+    tearDown(() => AppLocale.apply('tr'));
+
+    testWidgets(
+      'Dil: English seçilince arayüz hemen İngilizce olur ve saklanır (F21b)',
+      (tester) async {
+        final backend = await _openSettings(tester);
+        await tester.tap(find.byKey(const Key('settings.language')));
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const Key('language.en')));
+        await tester.pumpAndSettle();
+
+        expect(backend.preferences.getString('app.locale'), 'en');
+        expect(find.text('Language'), findsOneWidget);
+        expect(AppLocale.code, 'en');
+        expect(episodeLabel(1, 5), 'S01 | E05');
+      },
+    );
+
+    testWidgets('Sistem: telefon dili Türkçe değilse İngilizce açılır (F21b)', (
+      tester,
+    ) async {
+      // Test cihazının dili İngilizcedir.
+      await TestBackend().pumpApp(
+        tester,
+        preferenceValues: {'app.locale': 'system'},
+      );
+      expect(
+        find.descendant(
+          of: find.byType(NavigationBar),
+          matching: find.text('Discover'),
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('Türkçe seçiliyken bölüm kodu "B" ile (F21b)', (tester) async {
+      await TestBackend().pumpApp(tester);
+      expect(AppLocale.code, 'tr');
+      expect(episodeLabel(1, 5), 'S01 | B05');
     });
   });
 }

@@ -13,6 +13,8 @@ import {
   tmdb,
   TmdbError,
   type TmdbJson,
+  langParams,
+  type Lang,
   upsertSummaries,
 } from "../_shared/tmdb.ts";
 
@@ -22,6 +24,9 @@ const GENRES_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 const MAX_BACKDROPS = 30;
 
 const tmdbId = z.number().int().positive();
+
+// F21(b): önbelleğe yazılmayan eylemler bu dilde döner; önbellekli eylemler hep Türkçedir.
+const Language = z.object({ language: z.enum(["tr", "en"]).default("tr") });
 
 const Body = z.discriminatedUnion("action", [
   z.object({
@@ -70,9 +75,12 @@ Deno.serve(async (req) => {
     return json({ error: "invalid_body" }, 400);
   }
   const parsed = Body.safeParse(raw);
-  if (!parsed.success) {
-    return json({ error: "invalid_body", issues: parsed.error.issues }, 400);
+  const language = Language.safeParse(raw);
+  if (!parsed.success || !language.success) {
+    const issues = [...(parsed.error?.issues ?? []), ...(language.error?.issues ?? [])];
+    return json({ error: "invalid_body", issues }, 400);
   }
+  const lang = language.data.language;
 
   const db = createClient(env("SUPABASE_URL"), env("SUPABASE_SERVICE_ROLE_KEY"), {
     auth: { persistSession: false },
@@ -82,9 +90,9 @@ Deno.serve(async (req) => {
     const body = parsed.data;
     switch (body.action) {
       case "search":
-        return json(await search(db, body.query, body.page));
+        return json(await search(db, body.query, body.page, lang));
       case "trending":
-        return json(await trending(db));
+        return json(await trending(db, lang));
       case "show":
         return await show(db, body.showId);
       case "season":
@@ -94,15 +102,15 @@ Deno.serve(async (req) => {
       case "genres":
         return await genres(db);
       case "discover":
-        return json(await discover(db, userData.user.id, body.genreIds, body.page));
+        return json(await discover(db, userData.user.id, body.genreIds, body.page, lang));
       case "recommendations":
-        return json(await recommendations(db, userData.user.id, body.showId));
+        return json(await recommendations(db, userData.user.id, body.showId, lang));
       case "on_the_air":
-        return json(await onTheAir(db));
+        return json(await onTheAir(db, lang));
       case "popular":
-        return json(await popular(db));
+        return json(await popular(db, lang));
       case "show_credits":
-        return json(await showCredits(body.showId));
+        return json(await showCredits(body.showId, lang));
       case "show_images":
         return json(await showImages(body.showId));
     }
@@ -116,23 +124,23 @@ Deno.serve(async (req) => {
   }
 });
 
-async function search(db: SupabaseClient, query: string, page: number) {
-  const data = await tmdb("/search/tv", { query, page: String(page) });
-  const results = await upsertSummaries(db, data.results ?? []);
+async function search(db: SupabaseClient, query: string, page: number, lang: Lang) {
+  const data = await tmdb("/search/tv", { query, page: String(page), ...langParams(lang) });
+  const results = await upsertSummaries(db, data.results ?? [], lang);
   return { results, totalPages: data.total_pages ?? 0 };
 }
 
 // F6(i): yeni bölümü yayında olan diziler; kullanıcının listesindekiler de gösterilir.
 // F3(d): en ünlü diziler — TMDB'de en çok oy alanlar (anlık popülerlik değil).
-async function popular(db: SupabaseClient) {
-  const data = await tmdb("/discover/tv", { sort_by: "vote_count.desc" });
-  return { results: await upsertSummaries(db, data.results ?? []) };
+async function popular(db: SupabaseClient, lang: Lang) {
+  const data = await tmdb("/discover/tv", { sort_by: "vote_count.desc", ...langParams(lang) });
+  return { results: await upsertSummaries(db, data.results ?? [], lang) };
 }
 
 // F4(a) Hakkında: dizinin tüm sezonlardaki oyuncuları, en çok bölümde oynayan önce
 // (TMDB sırası). Önbelleğe yazılmaz; yalnızca görüntülenir.
-async function showCredits(showId: number) {
-  const data = await tmdb(`/tv/${showId}/aggregate_credits`);
+async function showCredits(showId: number, lang: Lang) {
+  const data = await tmdb(`/tv/${showId}/aggregate_credits`, langParams(lang));
   const cast = (data.cast ?? []).slice(0, MAX_CREDITS).map((p: TmdbJson) => ({
     person_id: p.id,
     name: p.name,
@@ -151,14 +159,14 @@ async function showImages(showId: number) {
   return { backdrops: paths(data.backdrops), posters: paths(data.posters) };
 }
 
-async function onTheAir(db: SupabaseClient) {
-  const data = await tmdb("/tv/on_the_air");
-  return { results: await upsertSummaries(db, data.results ?? []) };
+async function onTheAir(db: SupabaseClient, lang: Lang) {
+  const data = await tmdb("/tv/on_the_air", langParams(lang));
+  return { results: await upsertSummaries(db, data.results ?? [], lang) };
 }
 
-async function trending(db: SupabaseClient) {
-  const data = await tmdb("/trending/tv/week");
-  return { results: await upsertSummaries(db, data.results ?? []) };
+async function trending(db: SupabaseClient, lang: Lang) {
+  const data = await tmdb("/trending/tv/week", langParams(lang));
+  return { results: await upsertSummaries(db, data.results ?? [], lang) };
 }
 
 async function show(db: SupabaseClient, showId: number) {
@@ -280,14 +288,21 @@ async function genres(db: SupabaseClient) {
 }
 
 // F18(d): seçili türlerden en az biri ("|" = VEYA), en az 100 oy, popülerliğe göre.
-async function discover(db: SupabaseClient, userId: string, genreIds: number[], page: number) {
+async function discover(
+  db: SupabaseClient,
+  userId: string,
+  genreIds: number[],
+  page: number,
+  lang: Lang,
+) {
   const data = await tmdb("/discover/tv", {
     with_genres: genreIds.join("|"),
     sort_by: "popularity.desc",
     "vote_count.gte": "100",
     page: String(page),
+    ...langParams(lang),
   });
-  const results = await upsertSummaries(db, data.results ?? []);
+  const results = await upsertSummaries(db, data.results ?? [], lang);
   return {
     results: await withoutUserShows(db, userId, results),
     totalPages: data.total_pages ?? 0,
@@ -295,9 +310,9 @@ async function discover(db: SupabaseClient, userId: string, genreIds: number[], 
 }
 
 // F18(f): yalnızca ilk sayfa (en fazla 20 dizi).
-async function recommendations(db: SupabaseClient, userId: string, showId: number) {
-  const data = await tmdb(`/tv/${showId}/recommendations`);
-  const results = await upsertSummaries(db, data.results ?? []);
+async function recommendations(db: SupabaseClient, userId: string, showId: number, lang: Lang) {
+  const data = await tmdb(`/tv/${showId}/recommendations`, langParams(lang));
+  const results = await upsertSummaries(db, data.results ?? [], lang);
   return { results: await withoutUserShows(db, userId, results) };
 }
 

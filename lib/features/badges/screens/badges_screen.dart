@@ -10,6 +10,7 @@ import '../../../theme/app_text_styles.dart';
 import '../../auth/providers.dart';
 import '../../profile/providers.dart';
 import '../providers.dart';
+import '../widgets/badge_texts.dart';
 
 // Kazanılmamış rozet gri gösterilir (F14): görselin renkleri ışıklılığa indirgenir.
 const _grayscale = ColorFilter.matrix([
@@ -73,10 +74,12 @@ class _Shelf extends ConsumerWidget {
                     // `icon` kolonu assets/badges/ altındaki dosya adıdır (V16).
                     asset: 'assets/badges/${badge.icon}.png',
                     earned: earned,
-                    semanticLabel: earned ? badge.name : l10n.badgeLocked,
+                    semanticLabel: earned
+                        ? badgeTitle(l10n, badge.code, badge.name)
+                        : l10n.badgeLocked,
                   ),
                   title: Text(
-                    badge.name,
+                    badgeTitle(l10n, badge.code, badge.name),
                     style: earned
                         ? AppTextStyles.body
                         : AppTextStyles.bodySecondary,
@@ -84,7 +87,7 @@ class _Shelf extends ConsumerWidget {
                   subtitle: Text(
                     earned
                         ? l10n.badgeEarnedOn(formatLongDate(earnedAt.toLocal()))
-                        : badge.description,
+                        : badgeCondition(l10n, badge.code, badge.description),
                     style: AppTextStyles.caption,
                   ),
                 ),

@@ -93,10 +93,21 @@ export async function syncSeason(db: SupabaseClient, showId: number, seasonNumbe
 }
 
 // Arama/trend sonuçları: yalnızca özet kolonlar yazılır, detay kolonları ve last_synced_at korunur.
-export async function upsertSummaries(db: SupabaseClient, results: TmdbJson[]) {
+/// İstemci dili (F21b). Önbellekteki metinler Türkçedir; İngilizce yanıtlar yalnızca gösterilir.
+export type Lang = "tr" | "en";
+
+export function langParams(lang: Lang): Record<string, string> {
+  return lang === "en" ? { language: "en-US" } : {};
+}
+
+/// [lang] İngilizceyse mevcut Türkçe satırlar değiştirilmez, yalnızca eksik diziler eklenir
+/// (listeye eklemek için satırın var olması gerekir; ilk `show` senkronu Türkçeleştirir).
+export async function upsertSummaries(db: SupabaseClient, results: TmdbJson[], lang: Lang = "tr") {
   const rows = results.filter((r) => r.id && r.name).map(summaryRow);
   if (rows.length === 0) return [];
-  const { error } = await db.from("shows").upsert(rows);
+  const { error } = await db
+    .from("shows")
+    .upsert(rows, lang === "en" ? { onConflict: "id", ignoreDuplicates: true } : undefined);
   if (error) throw error;
   return rows;
 }

@@ -16,6 +16,7 @@ import '../../profile/providers.dart';
 import '../../profile/widgets/profile_avatar.dart';
 import '../data/models.dart';
 import '../providers.dart';
+import '../../badges/widgets/badge_texts.dart';
 import '../widgets/friends_feed_tab.dart';
 
 /// Bildirimler sekmesi (F13f): **Ben** (son 90 gün, açılınca hepsi okundu) ve **Arkadaşlar**.
@@ -97,7 +98,7 @@ class _NotificationTile extends ConsumerWidget {
       NotificationType.newFollower => l10n.notificationNewFollower(actor),
       NotificationType.commentLiked => l10n.notificationCommentLiked(actor),
       NotificationType.badgeEarned => l10n.notificationBadgeEarned(
-        n.badgeName ?? n.entityId ?? '',
+        badgeTitle(l10n, n.entityId ?? '', n.badgeName ?? n.entityId ?? ''),
       ),
     };
     final username = n.actorUsername;

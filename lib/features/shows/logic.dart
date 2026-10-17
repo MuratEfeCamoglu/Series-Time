@@ -2,6 +2,7 @@
 library;
 
 import 'data/models.dart';
+import '../../core/app_locale.dart';
 
 /// Sezon 0 TMDB'de özel bölümlerdir; ilerleme ve istatistiğe girmez (F4d).
 const specialsSeasonNumber = 0;
@@ -60,9 +61,9 @@ bool isReleased(Episode episode, DateTime now) {
 /// İzleme Listesi satırındaki "S01 | B05" biçimi (F6b).
 String episodeLabel(int seasonNumber, int episodeNumber) =>
     'S${seasonNumber.toString().padLeft(2, '0')} | '
-    'B${episodeNumber.toString().padLeft(2, '0')}';
+    '${AppLocale.episodeLetter}${episodeNumber.toString().padLeft(2, '0')}';
 
 /// "S01B05" biçimi.
 String episodeCode(int seasonNumber, int episodeNumber) =>
     'S${seasonNumber.toString().padLeft(2, '0')}'
-    'B${episodeNumber.toString().padLeft(2, '0')}';
+    '${AppLocale.episodeLetter}${episodeNumber.toString().padLeft(2, '0')}';

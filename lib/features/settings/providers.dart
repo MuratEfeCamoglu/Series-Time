@@ -24,3 +24,27 @@ class PaletteNotifier extends Notifier<AppPalette> {
 final paletteProvider = NotifierProvider<PaletteNotifier, AppPalette>(
   PaletteNotifier.new,
 );
+
+const _languageKey = 'app.locale';
+
+/// F21(b): Sistem, Türkçe veya İngilizce.
+enum AppLanguage { system, tr, en }
+
+class LanguageNotifier extends Notifier<AppLanguage> {
+  @override
+  AppLanguage build() {
+    final stored = ref.watch(sharedPreferencesProvider).getString(_languageKey);
+    return AppLanguage.values.asNameMap()[stored] ?? AppLanguage.system;
+  }
+
+  Future<void> select(AppLanguage language) async {
+    state = language;
+    await ref
+        .read(sharedPreferencesProvider)
+        .setString(_languageKey, language.name);
+  }
+}
+
+final languageProvider = NotifierProvider<LanguageNotifier, AppLanguage>(
+  LanguageNotifier.new,
+);
