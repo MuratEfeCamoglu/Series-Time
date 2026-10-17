@@ -103,4 +103,29 @@ void main() {
     expect(reactionFromName(null), isNull);
     expect(reactionFromName('bilinmeyen'), isNull);
   });
+
+  test(
+    'RatingSummary.fromJson get_episode_rating_stats ve kendi değerleri',
+    () {
+      final summary = RatingSummary.fromJson(
+        {'average': 3.8, 'rating_count': 2, 'like_count': 5},
+        myRating: 4.5,
+        liked: true,
+      );
+      expect(summary.average, 3.8);
+      expect(summary.ratingCount, 2);
+      expect(summary.likeCount, 5);
+      expect(summary.myRating, 4.5);
+      expect(summary.liked, isTrue);
+
+      final empty = RatingSummary.fromJson({
+        'average': null,
+        'rating_count': 0,
+        'like_count': 0,
+      });
+      expect(empty.average, isNull);
+      expect(empty.myRating, isNull);
+      expect(empty.liked, isFalse);
+    },
+  );
 }

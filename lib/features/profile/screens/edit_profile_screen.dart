@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../core/tmdb_image.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/error_view.dart';
 import '../../../theme/app_spacing.dart';
@@ -14,6 +15,7 @@ import '../../shows/providers.dart';
 import '../data/models.dart';
 import '../logic.dart';
 import '../providers.dart';
+import '../widgets/character_picker_sheet.dart';
 import '../widgets/country_picker_sheet.dart';
 import '../widgets/cover_picker_sheet.dart';
 import '../widgets/profile_avatar.dart';
@@ -61,7 +63,10 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
   late final _bio = TextEditingController(text: widget.profile.bio);
   late String? _countryCode = widget.profile.countryCode;
   late int? _coverShowId = widget.profile.coverShowId;
+  late String? _coverPath = widget.profile.coverPath;
+  String? _coverLabel;
   Uint8List? _avatarBytes;
+  String? _avatarTmdbPath;
   bool _saving = false;
   Object? _error;
 
@@ -71,6 +76,50 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
     _username.dispose();
     _bio.dispose();
     super.dispose();
+  }
+
+  /// F2: avatar galeriden veya bir dizinin karakter fotoğraflarından.
+  Future<void> _chooseAvatarSource() async {
+    final l10n = AppLocalizations.of(context);
+    final source = await showModalBottomSheet<_AvatarSource>(
+      context: context,
+      builder: (sheetContext) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              key: const Key('avatar.gallery'),
+              leading: const Icon(Icons.photo_library_outlined),
+              title: Text(l10n.avatarFromGallery),
+              onTap: () => Navigator.pop(sheetContext, _AvatarSource.gallery),
+            ),
+            ListTile(
+              key: const Key('avatar.character'),
+              leading: const Icon(Icons.theater_comedy_outlined),
+              title: Text(l10n.avatarFromCharacter),
+              onTap: () => Navigator.pop(sheetContext, _AvatarSource.character),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (!mounted || source == null) return;
+    switch (source) {
+      case _AvatarSource.gallery:
+        await _pickAvatar();
+      case _AvatarSource.character:
+        final path = await showModalBottomSheet<String>(
+          context: context,
+          isScrollControlled: true,
+          builder: (_) => const CharacterPickerSheet(),
+        );
+        if (path != null && mounted) {
+          setState(() {
+            _avatarTmdbPath = path;
+            _avatarBytes = null;
+          });
+        }
+    }
   }
 
   Future<void> _pickAvatar() async {
@@ -93,7 +142,10 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
       );
       return;
     }
-    setState(() => _avatarBytes = bytes);
+    setState(() {
+      _avatarBytes = bytes;
+      _avatarTmdbPath = null;
+    });
   }
 
   Future<void> _pickCountry() async {
@@ -109,9 +161,14 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
     final result = await showModalBottomSheet<CoverSelection>(
       context: context,
       isScrollControlled: true,
-      builder: (_) => CoverPickerSheet(selectedShowId: _coverShowId),
+      builder: (_) => CoverPickerSheet(selectedPath: _coverPath),
     );
-    if (result != null) setState(() => _coverShowId = result.showId);
+    if (result == null) return;
+    setState(() {
+      _coverShowId = result.show?.id;
+      _coverPath = result.path;
+      _coverLabel = result.show?.name;
+    });
   }
 
   Future<void> _save() async {
@@ -130,7 +187,9 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
               bio: _bio.text,
               countryCode: _countryCode,
               coverShowId: _coverShowId,
+              coverPath: _coverPath,
               avatarBytes: _avatarBytes,
+              avatarTmdbPath: _avatarTmdbPath,
             ),
           );
       if (!mounted) return;
@@ -146,10 +205,13 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
   }
 
   String? _coverName(WidgetRef ref) {
+    final label = _coverLabel;
+    if (label != null) return label;
     for (final entry in ref.watch(myShowsProvider).value ?? const []) {
       if (entry.show.id == _coverShowId) return entry.show.name;
     }
-    return null;
+    // Listede olmayan bir diziden seçilmiş kapak.
+    return _coverPath == null ? null : AppLocalizations.of(context).coverChosen;
   }
 
   @override
@@ -177,14 +239,17 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
             Center(
               child: ProfileAvatar(
                 bytes: _avatarBytes,
-                url: avatarPath == null
+                url: _avatarTmdbPath != null
+                    ? tmdbImageUrl(_avatarTmdbPath, TmdbImageSize.w185)
+                    : avatarPath == null
                     ? null
                     : ref.read(profileRepositoryProvider).avatarUrl(avatarPath),
               ),
             ),
             Center(
               child: TextButton(
-                onPressed: _saving ? null : _pickAvatar,
+                key: const Key('editProfile.avatar'),
+                onPressed: _saving ? null : _chooseAvatarSource,
                 child: Text(l10n.changeAvatar),
               ),
             ),
@@ -253,3 +318,5 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
     );
   }
 }
+
+enum _AvatarSource { gallery, character }

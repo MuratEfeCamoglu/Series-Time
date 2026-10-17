@@ -73,7 +73,7 @@ void main() {
   );
 
   testWidgets(
-    'tek bölüm işaretlenir ve Bölüm Sonrası ekranı açılır (F5a, F5f, F4e)',
+    'işaret kutusu yalnızca işaretler, Bölüm Sonrası açılmaz (F5a, F5f, F4e)',
     (tester) async {
       final backend = await _openSeason(tester);
       when(() => backend.tracking.markEpisode(episodeId: 2, showId: 1399))
@@ -84,10 +84,13 @@ void main() {
 
       verify(() => backend.tracking.markEpisode(episodeId: 2, showId: 1399))
           .called(1);
-      expect(find.byType(EpisodeScreen), findsOneWidget);
-      Navigator.of(tester.element(find.byType(EpisodeScreen))).pop();
-      await tester.pumpAndSettle();
+      expect(find.byType(EpisodeScreen), findsNothing);
       expect(_checkbox(tester, 2).value, isTrue);
+
+      // Banda dokunmak Bölüm Sonrası ekranını açar.
+      await tester.tap(find.byKey(const Key('episode.banner.2')));
+      await tester.pumpAndSettle();
+      expect(find.byType(EpisodeScreen), findsOneWidget);
     },
   );
 
@@ -113,8 +116,6 @@ void main() {
         .thenThrow(const AppFailure(AppFailureType.network));
 
     await tester.tap(find.byKey(const Key('episode.check.2')));
-    await tester.pumpAndSettle();
-    Navigator.of(tester.element(find.byType(EpisodeScreen))).pop();
     await tester.pumpAndSettle();
 
     expect(find.text('Kaydedilemedi, tekrar dene.'), findsOneWidget);

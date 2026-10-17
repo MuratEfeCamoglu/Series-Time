@@ -19,6 +19,7 @@ import '../data/models.dart';
 import '../logic.dart';
 import '../providers.dart';
 import '../widgets/comments_section.dart';
+import '../widgets/rating_section.dart';
 import '../widgets/reactions_section.dart';
 import '../widgets/star_section.dart';
 
@@ -159,7 +160,17 @@ class _EpisodeBody extends ConsumerWidget {
                 style: AppTextStyles.bodySecondary,
               ),
               const SizedBox(height: AppSpacing.md),
-              _WatchedButton(episode: episode, watched: watched),
+              Row(
+                children: [
+                  Expanded(
+                    child: _WatchedButton(episode: episode, watched: watched),
+                  ),
+                  const SizedBox(width: AppSpacing.sm),
+                  EpisodeLikeButton(episodeId: episode.id),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              RatingSection(episodeId: episode.id),
               const SizedBox(height: AppSpacing.lg),
               ReactionsSection(episodeId: episode.id),
               const SizedBox(height: AppSpacing.lg),

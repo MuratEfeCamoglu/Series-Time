@@ -115,6 +115,12 @@ class TestBackend {
     when(() => feedback.fetchEpisodeInfo(any()))
         .thenAnswer((invocation) async => testEpisodeInfo);
     when(() => feedback.fetchMyReaction(any())).thenAnswer((_) async => null);
+    when(() => feedback.fetchRatingSummary(any())).thenAnswer(
+      (_) async =>
+          const RatingSummary(ratingCount: 0, likeCount: 0, liked: false),
+    );
+    when(() => shows.fetchShowBackdrops(any()))
+        .thenAnswer((_) async => const []);
     when(() => feedback.fetchReactionCounts(any()))
         .thenAnswer((_) async => const {});
     when(() => feedback.fetchCredits(any())).thenAnswer((_) async => const []);

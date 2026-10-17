@@ -102,6 +102,66 @@ class EpisodeFeedbackRepository {
     });
   });
 
+  /// F20: puan özeti, oturum sahibinin puanı ve beğenisiyle.
+  Future<RatingSummary> fetchRatingSummary(int episodeId) => _guard(() async {
+    final (stats, mine, like) = await (
+      _client.rpc(
+        'get_episode_rating_stats',
+        params: {'episode_id': episodeId},
+      ),
+      _client
+          .from('episode_ratings')
+          .select('rating')
+          .eq('user_id', _userId)
+          .eq('episode_id', episodeId)
+          .maybeSingle(),
+      _client
+          .from('episode_likes')
+          .select('episode_id')
+          .eq('user_id', _userId)
+          .eq('episode_id', episodeId)
+          .maybeSingle(),
+    ).wait;
+    return RatingSummary.fromJson(
+      (stats as List).single as Map<String, dynamic>,
+      myRating: (mine?['rating'] as num?)?.toDouble(),
+      liked: like != null,
+    );
+  });
+
+  /// [rating] null ise puan kaldırılır.
+  Future<void> setRating(int episodeId, double? rating) => _guard(() async {
+    if (rating == null) {
+      await _client
+          .from('episode_ratings')
+          .delete()
+          .eq('user_id', _userId)
+          .eq('episode_id', episodeId);
+      return;
+    }
+    await _client.from('episode_ratings').upsert({
+      'user_id': _userId,
+      'episode_id': episodeId,
+      'rating': rating,
+    });
+  });
+
+  Future<void> setEpisodeLike(int episodeId, {required bool liked}) =>
+      _guard(() async {
+        if (liked) {
+          await _client.from('episode_likes').insert({
+            'user_id': _userId,
+            'episode_id': episodeId,
+          });
+        } else {
+          await _client
+              .from('episode_likes')
+              .delete()
+              .eq('user_id', _userId)
+              .eq('episode_id', episodeId);
+        }
+      });
+
   /// F11(d): [before] öncesindeki en fazla 20 yorum, en yeniden eskiye.
   Future<List<EpisodeComment>> fetchComments(
     int episodeId, {

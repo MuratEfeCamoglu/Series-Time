@@ -43,6 +43,12 @@ class ShowsRepository {
     ];
   });
 
+  /// F2 kapak seçimi: dizinin TMDB arka plan görsellerinin yolları.
+  Future<List<String>> fetchShowBackdrops(int showId) => _guard(() async {
+    final data = await _invoke({'action': 'show_images', 'showId': showId});
+    return [for (final path in data['backdrops'] as List) path as String];
+  });
+
   /// F6(i): TMDB'de yeni bölümü yayında olan diziler.
   Future<List<Show>> onTheAirShows() => _guard(() async {
     final data = await _invoke({'action': 'on_the_air'});

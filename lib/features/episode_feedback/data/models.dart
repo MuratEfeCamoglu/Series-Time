@@ -138,3 +138,45 @@ class EpisodeComment {
     likedByMe: liked,
   );
 }
+
+/// F20: ortalama puan, puan ve beğeni sayısı ile oturum sahibinin puanı ve beğenisi.
+class RatingSummary {
+  const RatingSummary({
+    required this.ratingCount,
+    required this.likeCount,
+    required this.liked,
+    this.average,
+    this.myRating,
+  });
+
+  /// `get_episode_rating_stats()` satırı; oturum sahibinin değerleri ayrıca eklenir.
+  factory RatingSummary.fromJson(
+    Map<String, dynamic> json, {
+    double? myRating,
+    bool liked = false,
+  }) => RatingSummary(
+    average: (json['average'] as num?)?.toDouble(),
+    ratingCount: json['rating_count'] as int,
+    likeCount: json['like_count'] as int,
+    myRating: myRating,
+    liked: liked,
+  );
+
+  final double? average;
+  final int ratingCount;
+  final int likeCount;
+  final double? myRating;
+  final bool liked;
+
+  RatingSummary copyWith({
+    double? Function()? myRating,
+    bool? liked,
+    int? likeCount,
+  }) => RatingSummary(
+    average: average,
+    ratingCount: ratingCount,
+    likeCount: likeCount ?? this.likeCount,
+    myRating: myRating == null ? this.myRating : myRating(),
+    liked: liked ?? this.liked,
+  );
+}

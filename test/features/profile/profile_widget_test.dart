@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:sezonluk/features/episode_feedback/screens/episode_screen.dart';
 import 'package:sezonluk/features/profile/data/models.dart';
 import 'package:sezonluk/features/profile/screens/user_shows_screen.dart';
 import 'package:sezonluk/features/shows/data/models.dart';
@@ -176,8 +175,6 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('watchlist.check.1')));
       await tester.pumpAndSettle();
-      Navigator.of(tester.element(find.byType(EpisodeScreen))).pop();
-      await tester.pumpAndSettle();
       await tester.tap(_navLabel('Profil'));
       await tester.pumpAndSettle();
 
@@ -186,7 +183,7 @@ void main() {
   );
 
   testWidgets(
-    'kapak listedeki bir dizinin arka planından seçilir ve kaydedilir (F2, V9)',
+    'kapak bir dizinin arka plan görsellerinden seçilir ve kaydedilir (F2, V9)',
     (tester) async {
       final backend = await _openProfile(
         tester,
@@ -204,6 +201,8 @@ void main() {
           countryCode: 'TR',
           coverShowId:
               (invocation.positionalArguments[1] as ProfileEdit).coverShowId,
+          coverPath:
+              (invocation.positionalArguments[1] as ProfileEdit).coverPath,
           createdAt: testProfile.createdAt,
         ),
       );
@@ -215,7 +214,11 @@ void main() {
       expect(find.text('Otomatik'), findsOneWidget);
       await tester.tap(find.byKey(const Key('editProfile.cover')));
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('cover.2')));
+      when(() => backend.shows.fetchShowBackdrops(2))
+          .thenAnswer((_) async => ['/arka1.jpg', '/arka2.jpg']);
+      await tester.tap(find.byKey(const Key('showChooser.2')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('cover.image.1')));
       await tester.pumpAndSettle();
       expect(find.text('Dizi 2'), findsOneWidget);
 
@@ -228,7 +231,48 @@ void main() {
                   .single
               as ProfileEdit;
       expect(edit.coverShowId, 2);
+      expect(edit.coverPath, '/arka2.jpg');
       expect(find.byKey(const Key('profile.cover')), findsOneWidget);
     },
   );
+
+  testWidgets('avatar bir dizinin karakter fotoğraflarından seçilir (F2)', (
+    tester,
+  ) async {
+    final backend = await _openProfile(tester, myShows: [_entry(1)]);
+    when(() => backend.shows.fetchShowCast(1)).thenAnswer(
+      (_) async => const [
+        ShowCastMember(
+          personId: 7,
+          name: 'Oyuncu',
+          character: 'Karakter',
+          profilePath: '/kisi.jpg',
+        ),
+      ],
+    );
+    when(() => backend.profiles.saveProfile(any(), any()))
+        .thenAnswer((_) async => testProfile);
+
+    await tester.tap(find.text('Düzenle'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('editProfile.avatar')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('avatar.character')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('showChooser.1')));
+    await tester.pumpAndSettle();
+    expect(find.text('Karakter'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('character.7')));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const Key('editProfile.save')));
+    await tester.pumpAndSettle();
+    final edit =
+        verify(() => backend.profiles.saveProfile(any(), captureAny()))
+                .captured
+                .single
+            as ProfileEdit;
+    expect(edit.avatarTmdbPath, '/kisi.jpg');
+    expect(edit.avatarBytes, isNull);
+  });
 }

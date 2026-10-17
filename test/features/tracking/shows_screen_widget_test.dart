@@ -122,7 +122,7 @@ void main() {
   });
 
   testWidgets(
-    'onay düğmesi sıradaki bölümü iyimser işaretler ve Bölüm Sonrası ekranını açar (F6d, F5e, F5f)',
+    'onay düğmesi sıradaki bölümü iyimser işaretler, Bölüm Sonrası açılmaz (F6d, F5e, F5f)',
     (tester) async {
       final backend = await _open(
         tester,
@@ -138,8 +138,8 @@ void main() {
 
       verify(() => backend.tracking.markEpisode(episodeId: 100, showId: 1))
           .called(1);
-      await tester.pumpAndSettle();
-      expect(find.byType(EpisodeScreen), findsOneWidget);
+      await tester.pump();
+      expect(find.byType(EpisodeScreen), findsNothing);
 
       request.complete();
       await tester.pumpAndSettle();
@@ -162,9 +162,6 @@ void main() {
       await tester.tap(find.byKey(const Key('watchlist.check.1')));
       await tester.pumpAndSettle();
 
-      // İleti, Bölüm Sonrası ekranının altındaki Diziler ekranında gösterilir.
-      Navigator.of(tester.element(find.byType(EpisodeScreen))).pop();
-      await tester.pumpAndSettle();
       expect(find.text('Kaydedilemedi, tekrar dene.'), findsOneWidget);
       final bar = tester.widget<ProgressBar>(find.byType(ProgressBar));
       expect(bar.value, 0.4);

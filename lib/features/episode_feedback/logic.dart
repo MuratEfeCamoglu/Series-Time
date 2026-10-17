@@ -69,3 +69,27 @@ bool isSpoilerGateClosed({required bool? watched, required bool revealed}) =>
 
 /// Sonraki sayfa var mı: son sayfa tam doluysa olabilir.
 bool hasMoreComments(int lastPageLength) => lastPageLength >= commentPageSize;
+
+/// F20(a): 5 yıldız, 0,5 adım.
+const maxRatingStars = 5;
+
+enum StarFill { full, half, empty }
+
+/// Yıldızın sol yarısı buçuk, sağ yarısı tam puan verir.
+double ratingFromTap({required int starIndex, required bool leftHalf}) =>
+    starIndex + (leftHalf ? 0.5 : 1.0);
+
+/// Aynı puana tekrar dokunmak puanı kaldırır.
+double? nextRating(double? current, double tapped) =>
+    current == tapped ? null : tapped;
+
+StarFill starFill(double? rating, int starIndex) {
+  final value = rating ?? 0;
+  if (value >= starIndex + 1) return StarFill.full;
+  if (value >= starIndex + 0.5) return StarFill.half;
+  return StarFill.empty;
+}
+
+/// "4,5" — Türkçe ondalık ayırıcı.
+String formatRating(double rating) =>
+    rating.toStringAsFixed(1).replaceAll('.', ',');

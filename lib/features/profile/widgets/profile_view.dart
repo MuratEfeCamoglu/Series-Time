@@ -39,7 +39,7 @@ class ProfileView extends ConsumerWidget {
         : ref.watch(userShowsProvider(profile.id));
     final sortedShows = sortByLastWatched(shows.value ?? const []);
     final cover = tmdbImageUrl(
-      coverShow(profile.coverShowId, sortedShows)?.backdropPath,
+      profileCoverPath(profile, sortedShows),
       TmdbImageSize.w780,
     );
 

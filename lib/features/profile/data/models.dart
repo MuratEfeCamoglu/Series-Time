@@ -9,6 +9,7 @@ class Profile {
     this.countryCode,
     this.avatarPath,
     this.coverShowId,
+    this.coverPath,
   });
 
   factory Profile.fromJson(Map<String, dynamic> json) => Profile(
@@ -20,6 +21,7 @@ class Profile {
     countryCode: (json['country_code'] as String?)?.trim(),
     avatarPath: json['avatar_path'] as String?,
     coverShowId: json['cover_show_id'] as int?,
+    coverPath: json['cover_path'] as String?,
     createdAt: DateTime.parse(json['created_at'] as String),
   );
 
@@ -30,6 +32,9 @@ class Profile {
   final String? countryCode;
   final String? avatarPath;
   final int? coverShowId;
+
+  /// Seçilen TMDB arka plan görseli; null ise dizinin ana arka planı (V9).
+  final String? coverPath;
   final DateTime createdAt;
 
   Map<String, Object?> toJson() => {
@@ -40,6 +45,7 @@ class Profile {
     'country_code': countryCode,
     'avatar_path': avatarPath,
     'cover_show_id': coverShowId,
+    'cover_path': coverPath,
     'created_at': createdAt.toIso8601String(),
   };
 }
@@ -52,7 +58,9 @@ class ProfileEdit {
     required this.bio,
     required this.countryCode,
     required this.coverShowId,
+    this.coverPath,
     this.avatarBytes,
+    this.avatarTmdbPath,
   });
 
   final String username;
@@ -62,7 +70,13 @@ class ProfileEdit {
 
   /// null: kapak seçilmemiş (V9: son izlenen dizinin arka planı kullanılır).
   final int? coverShowId;
+  final String? coverPath;
+
+  /// Yüklenecek galeri görseli; [avatarTmdbPath] ile birlikte verilmez.
   final List<int>? avatarBytes;
+
+  /// Seçilen oyuncu/karakter fotoğrafının TMDB yolu.
+  final String? avatarTmdbPath;
 }
 
 /// `get_user_stats()` satırı (F8d).

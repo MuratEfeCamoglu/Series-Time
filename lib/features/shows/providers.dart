@@ -24,6 +24,12 @@ final showCastProvider = FutureProvider.autoDispose
       (ref, showId) => ref.watch(showsRepositoryProvider).fetchShowCast(showId),
     );
 
+final showBackdropsProvider = FutureProvider.autoDispose
+    .family<List<String>, int>(
+      (ref, showId) =>
+          ref.watch(showsRepositoryProvider).fetchShowBackdrops(showId),
+    );
+
 final showDetailProvider = FutureProvider.autoDispose.family<ShowDetail, int>(
   (ref, showId) => ref.watch(showsRepositoryProvider).fetchShow(showId),
 );

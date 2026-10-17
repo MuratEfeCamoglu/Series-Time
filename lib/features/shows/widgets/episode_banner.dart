@@ -129,7 +129,7 @@ class EpisodeBanner extends StatelessWidget {
   }
 }
 
-/// Sezon listesindeki bölüm bandı (F4a, F5): sağdaki yuvarlak kutu işaretler (F4e),
+/// Sezon listesindeki bölüm bandı (F4a, F5): sağdaki yuvarlak kutu yalnızca işaretler (F5f),
 /// banda dokunmak Bölüm Sonrası ekranını açar, uzun basmak "Buraya kadar izledim" sunar.
 class EpisodeBannerTile extends ConsumerWidget {
   const EpisodeBannerTile({
@@ -161,11 +161,8 @@ class EpisodeBannerTile extends ConsumerWidget {
     } else if (isGuest) {
       onChanged = (_) => gate();
     } else {
-      onChanged = (_) {
-        runMarking(context, notifier.toggle(episode));
-        // F5(f): tek bölüm işaretlenince (geri alınınca değil) Bölüm Sonrası açılır.
-        if (isWatched == false) context.push(AppRoutes.episode(episode.id));
-      };
+      // F5(f): yalnızca işaretler; Bölüm Sonrası banda dokununca açılır.
+      onChanged = (_) => runMarking(context, notifier.toggle(episode));
     }
 
     return Padding(

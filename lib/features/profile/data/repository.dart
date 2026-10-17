@@ -3,6 +3,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/failures.dart';
 import '../../../core/supabase_client.dart';
+import '../../../core/tmdb_image.dart';
+import '../logic.dart';
 import 'models.dart';
 
 const _avatarBucket = 'avatars';
@@ -47,7 +49,10 @@ class ProfileRepository {
   ) => _guard(() async {
     String? newAvatarPath;
     final bytes = edit.avatarBytes;
-    if (bytes != null) {
+    final tmdbAvatar = edit.avatarTmdbPath;
+    if (tmdbAvatar != null) {
+      newAvatarPath = toTmdbAvatarPath(tmdbAvatar);
+    } else if (bytes != null) {
       // Her yüklemede yeni ad: aynı adres önbellekteki eski görseli gösterirdi.
       newAvatarPath =
           '${current.id}/${DateTime.now().millisecondsSinceEpoch}.jpg';
@@ -66,6 +71,7 @@ class ProfileRepository {
           'bio': edit.bio.trim(),
           'country_code': edit.countryCode,
           'cover_show_id': edit.coverShowId,
+          'cover_path': edit.coverPath,
           'avatar_path': ?newAvatarPath,
         })
         .eq('id', current.id)
@@ -73,13 +79,17 @@ class ProfileRepository {
         .single();
 
     final oldPath = current.avatarPath;
-    if (newAvatarPath != null && oldPath != null) {
+    // TMDB avatarı Storage'da dosya değildir; yalnızca yüklenmiş eski dosya silinir.
+    if (newAvatarPath != null && oldPath != null && !isTmdbAvatar(oldPath)) {
       await _removeOldAvatar(oldPath);
     }
     return Profile.fromJson(row);
   });
 
-  String avatarUrl(String path) => _avatars.getPublicUrl(path);
+  /// Avatar adresi: TMDB karakter fotoğrafı veya Storage'daki yüklenmiş görsel.
+  String avatarUrl(String path) => isTmdbAvatar(path)
+      ? tmdbImageUrl(fromTmdbAvatarPath(path), TmdbImageSize.w185)!
+      : _avatars.getPublicUrl(path);
 
   // Profil bu noktada kaydedilmiştir; eski dosya silinemese de kullanıcıya hata
   // gösterilmez. Artık dosya F16'da kullanıcının klasörüyle birlikte silinir.

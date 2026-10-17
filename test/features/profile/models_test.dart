@@ -64,4 +64,20 @@ void main() {
     expect(stats.watchedEpisodes, 73);
     expect(stats.watchMinutes, 4380);
   });
+
+  test('Profile.fromJson cover_path kolonunu ayrıştırır', () {
+    final profile = Profile.fromJson({
+      'id': 'x',
+      'username': 'abc',
+      'display_name': 'abc',
+      'bio': '',
+      'country_code': null,
+      'avatar_path': 'tmdb:/kisi.jpg',
+      'cover_show_id': 1399,
+      'cover_path': '/arka.jpg',
+      'created_at': '2026-10-01T12:00:00Z',
+    });
+    expect(profile.coverPath, '/arka.jpg');
+    expect(profile.avatarPath, 'tmdb:/kisi.jpg');
+  });
 }

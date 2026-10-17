@@ -106,4 +106,30 @@ void main() {
     expect(hasMoreComments(20), isTrue);
     expect(hasMoreComments(19), isFalse);
   });
+
+  group('bölüm puanı (F20a)', () {
+    test('yıldızın sol yarısı buçuk, sağ yarısı tam', () {
+      expect(ratingFromTap(starIndex: 0, leftHalf: true), 0.5);
+      expect(ratingFromTap(starIndex: 3, leftHalf: false), 4.0);
+      expect(ratingFromTap(starIndex: 4, leftHalf: true), 4.5);
+    });
+
+    test('aynı puana tekrar dokunmak kaldırır', () {
+      expect(nextRating(4.5, 4.5), isNull);
+      expect(nextRating(4.5, 3.0), 3.0);
+      expect(nextRating(null, 2.5), 2.5);
+    });
+
+    test('yıldız dolulukları', () {
+      expect(starFill(3.5, 2), StarFill.full);
+      expect(starFill(3.5, 3), StarFill.half);
+      expect(starFill(3.5, 4), StarFill.empty);
+      expect(starFill(null, 0), StarFill.empty);
+    });
+
+    test('Türkçe ondalık', () {
+      expect(formatRating(4.5), '4,5');
+      expect(formatRating(3), '3,0');
+    });
+  });
 }

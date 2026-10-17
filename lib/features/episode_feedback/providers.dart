@@ -237,3 +237,50 @@ class CommentsNotifier extends AsyncNotifier<CommentsState> {
 
 final commentsProvider = AsyncNotifierProvider.autoDispose
     .family<CommentsNotifier, CommentsState, int>(CommentsNotifier.new);
+
+/// F20: puan ve beğeni. Puan iyimser değişir, ortalama sunucudan yenilenir; beğeni sayısı
+/// iyimser değişir (F20c).
+class RatingNotifier extends AsyncNotifier<RatingSummary> {
+  RatingNotifier(this.episodeId);
+
+  final int episodeId;
+
+  EpisodeFeedbackRepository get _repository =>
+      ref.read(episodeFeedbackRepositoryProvider);
+
+  @override
+  Future<RatingSummary> build() => _repository.fetchRatingSummary(episodeId);
+
+  Future<void> rate(double tapped) async {
+    final previous = await future;
+    final next = nextRating(previous.myRating, tapped);
+    state = AsyncData(previous.copyWith(myRating: () => next));
+    try {
+      await _repository.setRating(episodeId, next);
+    } catch (_) {
+      state = AsyncData(previous);
+      rethrow;
+    }
+    state = AsyncData(await _repository.fetchRatingSummary(episodeId));
+  }
+
+  Future<void> toggleLike() async {
+    final previous = await future;
+    final liked = !previous.liked;
+    state = AsyncData(
+      previous.copyWith(
+        liked: liked,
+        likeCount: previous.likeCount + (liked ? 1 : -1),
+      ),
+    );
+    try {
+      await _repository.setEpisodeLike(episodeId, liked: liked);
+    } catch (_) {
+      state = AsyncData(previous);
+      rethrow;
+    }
+  }
+}
+
+final ratingProvider = AsyncNotifierProvider.autoDispose
+    .family<RatingNotifier, RatingSummary, int>(RatingNotifier.new);

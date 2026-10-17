@@ -775,14 +775,8 @@ abstract class AppLocalizations {
   /// No description provided for @coverPickerHint.
   ///
   /// In tr, this message translates to:
-  /// **'Kapak, listendeki bir dizinin arka plan görselidir. Seçmezsen en son izlediğin dizi kullanılır.'**
+  /// **'Bir dizi seç, sonra o dizinin arka plan görsellerinden birini kapak yap. Seçmezsen en son izlediğin dizi kullanılır.'**
   String get coverPickerHint;
-
-  /// No description provided for @coverPickerEmpty.
-  ///
-  /// In tr, this message translates to:
-  /// **'Kapak seçmek için önce listene dizi ekle.'**
-  String get coverPickerEmpty;
 
   /// No description provided for @suggestCardTitle.
   ///
@@ -1449,6 +1443,90 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Bölümleri gizle'**
   String get seasonCollapse;
+
+  /// No description provided for @ratingTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Puanın'**
+  String get ratingTitle;
+
+  /// No description provided for @ratingNone.
+  ///
+  /// In tr, this message translates to:
+  /// **'Henüz puan verilmedi.'**
+  String get ratingNone;
+
+  /// No description provided for @ratingAverage.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ortalama {average} · {count} puan'**
+  String ratingAverage(String average, int count);
+
+  /// No description provided for @ratingStar.
+  ///
+  /// In tr, this message translates to:
+  /// **'{count} yıldız'**
+  String ratingStar(int count);
+
+  /// No description provided for @episodeLike.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bölümü beğen'**
+  String get episodeLike;
+
+  /// No description provided for @episodeUnlike.
+  ///
+  /// In tr, this message translates to:
+  /// **'Beğeniyi geri al'**
+  String get episodeUnlike;
+
+  /// No description provided for @coverNoImages.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu dizinin arka plan görseli yok.'**
+  String get coverNoImages;
+
+  /// No description provided for @coverChosen.
+  ///
+  /// In tr, this message translates to:
+  /// **'Seçili görsel'**
+  String get coverChosen;
+
+  /// No description provided for @pickerMyShows.
+  ///
+  /// In tr, this message translates to:
+  /// **'Listendeki diziler'**
+  String get pickerMyShows;
+
+  /// No description provided for @pickerSearchResults.
+  ///
+  /// In tr, this message translates to:
+  /// **'Arama sonuçları'**
+  String get pickerSearchResults;
+
+  /// No description provided for @pickerSearchHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bir dizi ara.'**
+  String get pickerSearchHint;
+
+  /// No description provided for @avatarFromGallery.
+  ///
+  /// In tr, this message translates to:
+  /// **'Galeriden seç'**
+  String get avatarFromGallery;
+
+  /// No description provided for @avatarFromCharacter.
+  ///
+  /// In tr, this message translates to:
+  /// **'Dizi karakterinden seç'**
+  String get avatarFromCharacter;
+
+  /// No description provided for @characterPickerTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Karakter seç'**
+  String get characterPickerTitle;
 }
 
 class _AppLocalizationsDelegate

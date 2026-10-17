@@ -372,10 +372,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get coverPickerHint =>
-      'Kapak, listendeki bir dizinin arka plan görselidir. Seçmezsen en son izlediğin dizi kullanılır.';
-
-  @override
-  String get coverPickerEmpty => 'Kapak seçmek için önce listene dizi ekle.';
+      'Bir dizi seç, sonra o dizinin arka plan görsellerinden birini kapak yap. Seçmezsen en son izlediğin dizi kullanılır.';
 
   @override
   String get suggestCardTitle => 'Sana Özel Öneriler';
@@ -748,4 +745,50 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get seasonCollapse => 'Bölümleri gizle';
+
+  @override
+  String get ratingTitle => 'Puanın';
+
+  @override
+  String get ratingNone => 'Henüz puan verilmedi.';
+
+  @override
+  String ratingAverage(String average, int count) {
+    return 'Ortalama $average · $count puan';
+  }
+
+  @override
+  String ratingStar(int count) {
+    return '$count yıldız';
+  }
+
+  @override
+  String get episodeLike => 'Bölümü beğen';
+
+  @override
+  String get episodeUnlike => 'Beğeniyi geri al';
+
+  @override
+  String get coverNoImages => 'Bu dizinin arka plan görseli yok.';
+
+  @override
+  String get coverChosen => 'Seçili görsel';
+
+  @override
+  String get pickerMyShows => 'Listendeki diziler';
+
+  @override
+  String get pickerSearchResults => 'Arama sonuçları';
+
+  @override
+  String get pickerSearchHint => 'Bir dizi ara.';
+
+  @override
+  String get avatarFromGallery => 'Galeriden seç';
+
+  @override
+  String get avatarFromCharacter => 'Dizi karakterinden seç';
+
+  @override
+  String get characterPickerTitle => 'Karakter seç';
 }

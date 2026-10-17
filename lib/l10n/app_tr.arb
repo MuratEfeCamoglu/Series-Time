@@ -180,8 +180,7 @@
   "fieldCover": "Kapak",
   "coverNone": "Otomatik",
   "coverPickerTitle": "Kapak seç",
-  "coverPickerHint": "Kapak, listendeki bir dizinin arka plan görselidir. Seçmezsen en son izlediğin dizi kullanılır.",
-  "coverPickerEmpty": "Kapak seçmek için önce listene dizi ekle.",
+  "coverPickerHint": "Bir dizi seç, sonra o dizinin arka plan görsellerinden birini kapak yap. Seçmezsen en son izlediğin dizi kullanılır.",
   "suggestCardTitle": "Sana Özel Öneriler",
   "suggestCardBody": "Sevdiğin kategorilere göre yeni diziler keşfet.",
   "suggestTitle": "Sana Özel Öneriler",
@@ -407,5 +406,36 @@
   "showCastTitle": "Oyuncular",
   "showCastEmpty": "Oyuncu bilgisi yok.",
   "seasonExpand": "Bölümleri göster",
-  "seasonCollapse": "Bölümleri gizle"
+  "seasonCollapse": "Bölümleri gizle",
+  "ratingTitle": "Puanın",
+  "ratingNone": "Henüz puan verilmedi.",
+  "ratingAverage": "Ortalama {average} · {count} puan",
+  "@ratingAverage": {
+    "placeholders": {
+      "average": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "ratingStar": "{count} yıldız",
+  "@ratingStar": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "episodeLike": "Bölümü beğen",
+  "episodeUnlike": "Beğeniyi geri al",
+  "coverNoImages": "Bu dizinin arka plan görseli yok.",
+  "coverChosen": "Seçili görsel",
+  "pickerMyShows": "Listendeki diziler",
+  "pickerSearchResults": "Arama sonuçları",
+  "pickerSearchHint": "Bir dizi ara.",
+  "avatarFromGallery": "Galeriden seç",
+  "avatarFromCharacter": "Dizi karakterinden seç",
+  "characterPickerTitle": "Karakter seç"
 }

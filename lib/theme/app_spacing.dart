@@ -62,4 +62,7 @@ abstract final class AppSpacing {
   static const double pillRadius = 24;
   static const double nextEpisodeBannerHeight = 120;
   static const double bannerCheckScale = 1.4;
+  static const double ratingStarSize = 40;
+  static const double characterAvatarSize = 76;
+  static const double characterTileAspectRatio = 0.62;
 }

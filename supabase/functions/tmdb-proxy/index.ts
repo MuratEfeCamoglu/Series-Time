@@ -1,6 +1,6 @@
 // TMDB API v3 vekili (ISKELET.md §3.5). API anahtarı yalnızca burada, Edge Function sırrı olarak bulunur.
 // Eylemler: search, trending, show, season, episode_credits, genres, discover, recommendations,
-// on_the_air, popular, show_credits.
+// on_the_air, popular, show_credits, show_images.
 // Ortak TMDB kodu: ../_shared/tmdb.ts.
 import { z } from "npm:zod@3";
 import { createClient, type SupabaseClient } from "jsr:@supabase/supabase-js@2";
@@ -19,6 +19,7 @@ import {
 // F10(a): oylamada ilk 20 kişi gösterildiği için fazlası saklanmaz.
 const MAX_CREDITS = 20;
 const GENRES_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+const MAX_BACKDROPS = 30;
 
 const tmdbId = z.number().int().positive();
 
@@ -46,6 +47,7 @@ const Body = z.discriminatedUnion("action", [
   z.object({ action: z.literal("on_the_air") }),
   z.object({ action: z.literal("popular") }),
   z.object({ action: z.literal("show_credits"), showId: tmdbId }),
+  z.object({ action: z.literal("show_images"), showId: tmdbId }),
 ]);
 
 type CacheState = "hit" | "miss" | "stale";
@@ -101,6 +103,8 @@ Deno.serve(async (req) => {
         return json(await popular(db));
       case "show_credits":
         return json(await showCredits(body.showId));
+      case "show_images":
+        return json(await showImages(body.showId));
     }
   } catch (error) {
     if (error instanceof TmdbError) {
@@ -136,6 +140,15 @@ async function showCredits(showId: number) {
     profile_path: p.profile_path ?? null,
   }));
   return { cast };
+}
+
+// F2 kapak seçimi: dizinin arka plan görselleri (yazısız ve Türkçe/İngilizce olanlar).
+async function showImages(showId: number) {
+  const data = await tmdb(`/tv/${showId}/images`, { include_image_language: "null,tr,en" });
+  const backdrops = (data.backdrops ?? [])
+    .slice(0, MAX_BACKDROPS)
+    .map((b: TmdbJson) => b.file_path as string);
+  return { backdrops };
 }
 
 async function onTheAir(db: SupabaseClient) {

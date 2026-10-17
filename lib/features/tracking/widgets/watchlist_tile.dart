@@ -102,11 +102,9 @@ class _CheckButton extends ConsumerWidget {
   Future<void> _markNext(BuildContext context, WidgetRef ref) async {
     final messenger = ScaffoldMessenger.of(context);
     final message = AppLocalizations.of(context).saveFailed;
-    final mark = ref.read(watchlistProvider.notifier).markNext(item);
-    // F5(f): tek bölüm işaretlenince Bölüm Sonrası ekranı açılır.
-    context.push(AppRoutes.episode(item.nextEpisodeId));
+    // F5(f): yalnızca işaretler; Bölüm Sonrası ekranına geçmez.
     try {
-      await mark;
+      await ref.read(watchlistProvider.notifier).markNext(item);
     } catch (_) {
       messenger.showSnackBar(SnackBar(content: Text(message)));
     }

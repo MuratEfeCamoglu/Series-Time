@@ -2,6 +2,7 @@
 library;
 
 import '../shows/data/models.dart';
+import 'data/models.dart';
 
 const maxDisplayNameLength = 40;
 const maxBioLength = 160;
@@ -80,6 +81,20 @@ Show? coverShow(int? coverShowId, List<UserShow> shows) {
   }
   return null;
 }
+
+const _tmdbAvatarPrefix = 'tmdb:';
+
+/// F2: `avatar_path` TMDB oyuncu/karakter fotoğrafıysa "tmdb:" öneklidir.
+bool isTmdbAvatar(String path) => path.startsWith(_tmdbAvatarPrefix);
+
+String toTmdbAvatarPath(String tmdbPath) => '$_tmdbAvatarPrefix$tmdbPath';
+
+String fromTmdbAvatarPath(String path) =>
+    path.substring(_tmdbAvatarPrefix.length);
+
+/// Profil kapağının TMDB yolu: seçilen görsel; yoksa V9 kuralıyla dizinin arka planı.
+String? profileCoverPath(Profile profile, List<UserShow> shows) =>
+    profile.coverPath ?? coverShow(profile.coverShowId, shows)?.backdropPath;
 
 /// ISO 3166-1 alpha-2, resmî olarak atanmış 249 kod.
 const isoCountryCodes = [

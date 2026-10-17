@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sezonluk/features/profile/data/models.dart';
 import 'package:sezonluk/features/profile/logic.dart';
 import 'package:sezonluk/features/shows/data/models.dart';
 
@@ -110,6 +111,49 @@ void main() {
 
     test('arka planı olmayan dizi kapak olamaz', () {
       expect(coverShow(5, [entry(5, backdrop: null)]), isNull);
+    });
+  });
+
+  group('TMDB avatarı ve kapak yolu (F2)', () {
+    test('avatar yolu öneki', () {
+      expect(isTmdbAvatar('tmdb:/a.jpg'), isTrue);
+      expect(isTmdbAvatar('uid/1.jpg'), isFalse);
+      expect(toTmdbAvatarPath('/a.jpg'), 'tmdb:/a.jpg');
+      expect(fromTmdbAvatarPath('tmdb:/a.jpg'), '/a.jpg');
+    });
+
+    Profile profile({int? coverShowId, String? coverPath}) => Profile(
+      id: 'u',
+      username: 'u',
+      displayName: 'U',
+      bio: '',
+      coverShowId: coverShowId,
+      coverPath: coverPath,
+      createdAt: DateTime.utc(2026),
+    );
+
+    final shows = [
+      UserShow(
+        show: const Show(id: 1, name: 'D', backdropPath: '/ana.jpg'),
+        addedAt: DateTime.utc(2026),
+        lastWatchedAt: DateTime.utc(2026, 10),
+      ),
+    ];
+
+    test('seçilen görsel önce gelir', () {
+      expect(
+        profileCoverPath(
+          profile(coverShowId: 1, coverPath: '/secilen.jpg'),
+          shows,
+        ),
+        '/secilen.jpg',
+      );
+    });
+
+    test('görsel seçilmemişse dizinin ana arka planı (V9)', () {
+      expect(profileCoverPath(profile(coverShowId: 1), shows), '/ana.jpg');
+      expect(profileCoverPath(profile(), shows), '/ana.jpg');
+      expect(profileCoverPath(profile(), const []), isNull);
     });
   });
 }

@@ -461,4 +461,58 @@ void main() {
       expect(find.text('Burak engellendi.'), findsOneWidget);
     });
   });
+
+  group('F20 puan ve beğeni', () {
+    testWidgets(
+      'yıldızın yarısına dokununca buçuk puan verilir, ortalama yenilenir',
+      (tester) async {
+        final backend = await _openEpisode(tester);
+        when(() => backend.feedback.setRating(100, 3.5))
+            .thenAnswer((_) async {});
+        await tester.ensureVisible(find.byKey(const Key('rating.star.3')));
+        await tester.pumpAndSettle();
+        expect(find.text('Henüz puan verilmedi.'), findsOneWidget);
+
+        when(() => backend.feedback.fetchRatingSummary(100)).thenAnswer(
+          (_) async => const RatingSummary(
+            average: 3.5,
+            ratingCount: 1,
+            likeCount: 0,
+            liked: false,
+            myRating: 3.5,
+          ),
+        );
+        final star = find.byKey(const Key('rating.star.3'));
+        await tester.tapAt(tester.getTopLeft(star) + const Offset(5, 20));
+        await tester.pumpAndSettle();
+
+        verify(() => backend.feedback.setRating(100, 3.5)).called(1);
+        expect(find.byKey(const Key('rating.mine')), findsOneWidget);
+        expect(find.text('3,5'), findsOneWidget);
+        expect(find.text('Ortalama 3,5 · 1 puan'), findsOneWidget);
+      },
+    );
+
+    testWidgets('kalp bölümü beğenir; sayı beklemeden artar (F20b, F20c)', (
+      tester,
+    ) async {
+      final backend = await _openEpisode(
+        tester,
+        setUp: (b) => when(() => b.feedback.fetchRatingSummary(100)).thenAnswer(
+          (_) async =>
+              const RatingSummary(ratingCount: 0, likeCount: 4, liked: false),
+        ),
+      );
+      when(() => backend.feedback.setEpisodeLike(100, liked: true))
+          .thenAnswer((_) async {});
+
+      expect(find.text('4'), findsOneWidget);
+      await tester.tap(find.byKey(const Key('episode.like')));
+      await tester.pump();
+
+      expect(find.text('5'), findsOneWidget);
+      expect(find.byIcon(Icons.favorite), findsOneWidget);
+      verify(() => backend.feedback.setEpisodeLike(100, liked: true)).called(1);
+    });
+  });
 }
