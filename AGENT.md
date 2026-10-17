@@ -17,8 +17,8 @@ arasında gerçek bir çelişki görürsen hiçbirini seçme: dur, çelişkiyi a
   `l10n.yaml`, `codemagic.yaml`, `env/example.json`, `.gitignore`, `supabase/config.toml`) oluşturma ve düzenleme.
 - `android/` ve `ios/` içinde yalnızca CLAUDE.md'de anlatılan ayarları yapma: uygulama kimliği, görünen ad,
   derin bağlantı şeması, `image_picker` için galeri izin metinleri, minimum sürüm (iOS 15, Android API 26).
-- ISKELET.md §3.3 veri modelini uygulayan **yeni** migration dosyası yazma ve yerelde uygulama (`supabase db reset`).
-- `supabase/seed.sql` dosyasını düzenleme (yalnızca yerel test verisi).
+- ISKELET.md §3.3 veri modelini uygulayan **yeni** migration dosyası yazma (geliştirme projesine uygulamak onay ister).
+- `supabase/seed.sql` dosyasını düzenleme (yalnızca CI'daki yerel yığının test verisi).
 - CLAUDE.md "Komutlar" tablosundaki tüm yerel komutları çalıştırma (build ve uzak işlemler hariç, aşağıya bak).
 - CLAUDE.md'de "onaysız kullanılabilecek" olarak listelenen paketleri `flutter pub add` ile ekleme.
 - Yerel ortamda TMDB API'sine geliştirme amaçlı istek atma (`tmdb-proxy` üzerinden).
@@ -33,8 +33,9 @@ arasında gerçek bir çelişki görürsen hiçbirini seçme: dur, çelişkiyi a
   diğer tüm özelliklerin temelidir ve kullanıcı verisini etkiler.
 - **ISKELET.md, CLAUDE.md veya AGENT.md'yi değiştirmek** — çünkü bunlar proje sözleşmesidir; sessizce değişirse sonraki
   oturumlar yanlış kurallarla çalışır. (Yazım hatası düzeltmek hariç.)
-- **Uzak Supabase projesine herhangi bir işlem**: `supabase link`, `supabase db push`, `supabase functions deploy`,
-  `supabase secrets set` — çünkü canlı kullanıcı verisini ve hizmeti doğrudan etkiler.
+- **Uzak Supabase projesine herhangi bir işlem** (geliştirme projesi `sezonluk-dev` dahil): `supabase link`,
+  `supabase db push`, `supabase test db --linked`, `supabase functions deploy`, `supabase secrets set` — çünkü canlı
+  kullanıcı verisini ve hizmeti doğrudan etkiler; geliştirme projesi de geri alınamaz şekilde değişir (sıfırlanamaz).
 - **Codemagic build'i tetiklemek, `flutter build appbundle`/`ipa` release çıktısını mağazaya yüklemek, imza anahtarı
   oluşturmak** — çünkü Codemagic ücretsiz macOS dakikaları sınırlıdır (R8), mağaza gönderimi geri alınamaz ve imza
   anahtarı kaybolursa Android uygulaması güncellenemez.
@@ -79,7 +80,7 @@ Her görev (bir F-özelliği veya hata) için:
    liste olarak yaz. Onay gerektiren bir adım varsa burada sor ve bekle.
 3. **Uygula** — Önce saf mantık + testi (`logic.dart` / `logic_test.dart`), sonra SQL + pgTAP, sonra
    `data/models.dart` + `data/repository.dart` + `providers.dart`, en son ekran ve widget'lar. Her adım küçük ve tek başına derlenebilir olsun.
-4. **Doğrula** — `dart run tool/verify.dart`; SQL değiştiyse `supabase db reset` + `supabase test db`. Kabul kriterlerini
+4. **Doğrula** — `dart run tool/verify.dart`; SQL değiştiyse (onayla) `supabase db push` + `supabase test db --linked`. Kabul kriterlerini
    tek tek işaretle: otomatik testle doğrulananları test adıyla, elle doğrulananları (ör. animasyon, ≤ 100 ms geri
    bildirim) nasıl kontrol ettiğinle yaz.
 5. **Düzelt** — Başarısızlıkta kök nedeni bul ve düzelt, 4. adıma dön. Aynı hata için **en fazla 3 deneme**; sonra dur,
@@ -91,7 +92,8 @@ Her görev (bir F-özelliği veya hata) için:
 Bir F-özelliği ancak hepsi doğruysa bitmiştir:
 - [ ] ISKELET.md §2.1'deki **tüm** kabul kriteri maddeleri karşılandı ve her biri için kanıt raporda var.
 - [ ] `dart run tool/verify.dart` hatasız (analyze + format + test).
-- [ ] SQL değiştiyse `supabase db reset` hatasız ve `supabase test db` geçiyor; yeni her tablo için RLS testi var.
+- [ ] SQL değiştiyse `supabase db push` hatasız ve `supabase test db --linked` geçiyor (CI'daki yerel yığında da);
+      yeni her tablo için RLS testi var.
 - [ ] Şema değiştiyse ilgili `data/models.dart` güncellendi ve `fromJson` testi yeni kolonları kapsıyor.
 - [ ] Yeni `logic.dart` fonksiyonlarının her biri için birim testi var.
 - [ ] Kullanıcıya görünen tüm yeni metinler `lib/l10n/app_tr.arb` içinde; widget'larda sabit renk kodu yok.

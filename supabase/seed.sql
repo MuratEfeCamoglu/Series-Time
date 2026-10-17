@@ -1,4 +1,4 @@
--- Yalnızca yerel test verisi. badges ve banned_words sonraki aşamalarda eklenir.
+-- Yalnızca CI'daki yerel yığının test verisi; geliştirme projesine uygulanmaz. badges ve banned_words migration ile eklenir.
 -- İki doğrulanmış test kullanıcısı; profilleri kayıt tetikleyicisiyle oluşur.
 -- Bu hesapların bilgileri yalnızca bu dosyada tutulur (CLAUDE.md).
 --   test1@sezonluk.local / sezonluk-test-n74YwSp26ABN  (kullanıcı adı: test_bir)
