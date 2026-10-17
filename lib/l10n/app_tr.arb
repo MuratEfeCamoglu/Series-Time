@@ -208,7 +208,7 @@
   },
   "errorCommentRateLimited": "Çok hızlı yorum yapıyorsun. Biraz bekleyip tekrar dene.",
   "errorCommentBannedWord": "Yorumun uygunsuz bir ifade içeriyor.",
-  "reactionsTitle": "Bu bölüm sana nasıl hissettirdi?",
+  "reactionsTitle": "Ruh hâlin",
   "reactionFunny": "Komik",
   "reactionLove": "Bayıldım",
   "reactionShocked": "Şok oldum",
@@ -364,6 +364,16 @@
     "placeholders": {
       "code": {
         "type": "String"
+      }
+    }
+  },
+  "episodeWatched": "İzlendi",
+  "episodeMarkAsWatched": "İzledim olarak işaretle",
+  "episodeRuntime": "{minutes} dk",
+  "@episodeRuntime": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
       }
     }
   }

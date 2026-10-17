@@ -57,6 +57,11 @@ bool isReleased(Episode episode, DateTime now) {
   return airDate != null && !airDate.isAfter(utcDate(now));
 }
 
+/// İzleme Listesi satırındaki "S01 | B05" biçimi (F6b).
+String episodeLabel(int seasonNumber, int episodeNumber) =>
+    'S${seasonNumber.toString().padLeft(2, '0')} | '
+    'B${episodeNumber.toString().padLeft(2, '0')}';
+
 /// "S01B05" biçimi.
 String episodeCode(int seasonNumber, int episodeNumber) =>
     'S${seasonNumber.toString().padLeft(2, '0')}'

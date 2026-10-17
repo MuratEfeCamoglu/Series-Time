@@ -1,7 +1,10 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
 import '../../../app/router.dart';
 import '../../../core/format.dart';
 import '../../../l10n/app_localizations.dart';
-
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_view.dart';
 import '../../../shared/widgets/guest_gate.dart';
@@ -14,10 +17,6 @@ import '../data/models.dart';
 import '../logic.dart';
 import '../providers.dart';
 import '../widgets/episode_still.dart';
-
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 /// Sezonun bölümleri (F4a, F5): no, ad, yayın tarihi, izlendi onay kutusu.
 /// Onay kutusu işaretler (F4e); satırın geri kalanı Bölüm Sonrası ekranını açar.

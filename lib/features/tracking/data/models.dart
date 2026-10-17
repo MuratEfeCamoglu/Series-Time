@@ -13,6 +13,7 @@ class WatchlistItem {
     required this.watchedCount,
     this.posterPath,
     this.lastWatchedAt,
+    this.nextEpisodeName,
     this.pending = false,
   });
 
@@ -28,6 +29,7 @@ class WatchlistItem {
     nextEpisodeId: json['next_episode_id'] as int,
     nextSeasonNumber: json['next_season_number'] as int,
     nextEpisodeNumber: json['next_episode_number'] as int,
+    nextEpisodeName: json['next_episode_name'] as String?,
     airedCount: json['aired_count'] as int,
     watchedCount: json['watched_count'] as int,
   );
@@ -40,6 +42,7 @@ class WatchlistItem {
   final int nextEpisodeId;
   final int nextSeasonNumber;
   final int nextEpisodeNumber;
+  final String? nextEpisodeName;
   final int airedCount;
   final int watchedCount;
 
@@ -55,6 +58,7 @@ class WatchlistItem {
     nextEpisodeId: nextEpisodeId,
     nextSeasonNumber: nextSeasonNumber,
     nextEpisodeNumber: nextEpisodeNumber,
+    nextEpisodeName: nextEpisodeName,
     airedCount: airedCount,
     watchedCount: watchedCount + 1,
     pending: true,

@@ -43,7 +43,8 @@ abstract final class AppSpacing {
   static const double castRowHeight = 150;
   static const double reactionEmojiSize = 28;
   static const double avatarSmall = 36;
-  static const double reactionTileAspectRatio = 1.4;
+  static const double reactionTileAspectRatio = 0.85;
+  static const int reactionGridColumns = 4;
 
   /// TMDB atıf logosu (F17); uygulama ikonundan küçük kalmalı.
   static const double tmdbLogoHeight = 20;
@@ -51,4 +52,10 @@ abstract final class AppSpacing {
   /// Bölüm sahne görseli (TMDB still, 16:9).
   static const double stillThumbWidth = 112;
   static const double stillAspectRatio = 16 / 9;
+
+  /// İzleme Listesi satırı (F6b): afiş ve büyük yuvarlak onay düğmesi.
+  static const double watchlistPosterWidth = 56;
+  static const double checkButtonSize = 48;
+  static const double checkButtonBorder = 2;
+  static const double episodeHeaderHeight = 240;
 }

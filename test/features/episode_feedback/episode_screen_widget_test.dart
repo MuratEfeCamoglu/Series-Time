@@ -56,6 +56,26 @@ Future<TestBackend> _openEpisode(
 }
 
 void main() {
+  testWidgets(
+    'üstte bölüm bilgisi; İzlendi düğmesi bölümü işaretler ve geri alır (F5a)',
+    (tester) async {
+      final backend = await _openEpisode(tester, watched: false);
+      when(() => backend.tracking.markEpisode(episodeId: 100, showId: 1399))
+          .thenAnswer((_) async {});
+
+      expect(find.text('S01 | B01'), findsOneWidget);
+      expect(find.text('Kış Geliyor'), findsOneWidget);
+      expect(find.text('İzledim olarak işaretle'), findsOneWidget);
+
+      await tester.tap(find.byKey(const Key('episode.watched')));
+      await tester.pumpAndSettle();
+
+      verify(() => backend.tracking.markEpisode(episodeId: 100, showId: 1399))
+          .called(1);
+      expect(find.text('İzlendi'), findsOneWidget);
+    },
+  );
+
   group('F9 tepkiler', () {
     testWidgets('12 tepki; yüzdeler tepki verdikten sonra görünür', (
       tester,

@@ -859,7 +859,7 @@ abstract class AppLocalizations {
   /// No description provided for @reactionsTitle.
   ///
   /// In tr, this message translates to:
-  /// **'Bu bölüm sana nasıl hissettirdi?'**
+  /// **'Ruh hâlin'**
   String get reactionsTitle;
 
   /// No description provided for @reactionFunny.
@@ -1347,6 +1347,24 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'{code} sahnesi'**
   String episodeStill(String code);
+
+  /// No description provided for @episodeWatched.
+  ///
+  /// In tr, this message translates to:
+  /// **'İzlendi'**
+  String get episodeWatched;
+
+  /// No description provided for @episodeMarkAsWatched.
+  ///
+  /// In tr, this message translates to:
+  /// **'İzledim olarak işaretle'**
+  String get episodeMarkAsWatched;
+
+  /// No description provided for @episodeRuntime.
+  ///
+  /// In tr, this message translates to:
+  /// **'{minutes} dk'**
+  String episodeRuntime(int minutes);
 }
 
 class _AppLocalizationsDelegate

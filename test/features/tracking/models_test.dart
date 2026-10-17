@@ -12,6 +12,7 @@ void main() {
       'next_episode_id': 63057,
       'next_season_number': 1,
       'next_episode_number': 2,
+      'next_episode_name': 'Kral Yolu',
       'aired_count': 73,
       'watched_count': 1,
     });
@@ -24,6 +25,7 @@ void main() {
     expect(item.nextEpisodeId, 63057);
     expect(item.nextSeasonNumber, 1);
     expect(item.nextEpisodeNumber, 2);
+    expect(item.nextEpisodeName, 'Kral Yolu');
     expect(item.airedCount, 73);
     expect(item.watchedCount, 1);
     expect(item.pending, isFalse);

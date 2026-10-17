@@ -104,6 +104,10 @@ void main() {
     });
   });
 
+  test('episodeLabel İzleme Listesi biçimi (F6b)', () {
+    expect(episodeLabel(3, 7), 'S03 | B07');
+  });
+
   test('episodeCode iki haneli doldurur', () {
     expect(episodeCode(1, 5), 'S01B05');
     expect(episodeCode(12, 103), 'S12B103');

@@ -143,7 +143,7 @@ class WatchlistLayoutNotifier extends Notifier<WatchlistLayout> {
   @override
   WatchlistLayout build() {
     final stored = ref.watch(sharedPreferencesProvider).getString(_layoutKey);
-    return WatchlistLayout.values.asNameMap()[stored] ?? WatchlistLayout.grid;
+    return WatchlistLayout.values.asNameMap()[stored] ?? WatchlistLayout.list;
   }
 
   Future<void> toggle() async {

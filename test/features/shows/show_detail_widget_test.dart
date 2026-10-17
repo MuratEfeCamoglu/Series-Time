@@ -93,7 +93,7 @@ void main() {
       GoRouter.of(tester.element(find.byType(Scaffold).last)).pop();
       await tester.pumpAndSettle();
       expect(find.byType(ShowsScreen), findsOneWidget);
-      expect(find.text('S01B01'), findsOneWidget);
+      expect(find.text('S01 | B01'), findsOneWidget);
     },
   );
 

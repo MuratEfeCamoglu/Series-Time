@@ -11,4 +11,8 @@ abstract final class AppColors {
   static const textPrimary = Color(0xFFFFFFFF);
   static const textSecondary = Color(0xFFA0A0A0);
   static const danger = Color(0xFFFF453A);
+
+  /// Görsel üstündeki başlığın okunması için koyu geçiş (yalnızca üst kısım ve şeffaf).
+  static const scrimTop = Color(0x99000000);
+  static const scrimClear = Color(0x00000000);
 }

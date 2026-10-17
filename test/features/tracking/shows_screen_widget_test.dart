@@ -73,7 +73,7 @@ void main() {
       );
 
       expect(find.text('Sıradaki'), findsOneWidget);
-      expect(find.text('S01B05'), findsWidgets);
+      expect(find.text('S01 | B05'), findsWidgets);
       await tester.scrollUntilVisible(
         find.text('Bir süredir izlemediklerin'),
         200,
@@ -98,27 +98,27 @@ void main() {
     expect(find.text('İzleyecek yeni bölüm yok'), findsOneWidget);
   });
 
-  testWidgets('ızgara varsayılandır; liste tercihi cihazda saklanır (F6c)', (
+  testWidgets('liste varsayılandır; ızgara tercihi cihazda saklanır (F6c)', (
     tester,
   ) async {
     final backend = await _open(tester, watchlist: [_item(1)]);
-    expect(find.byType(SliverGrid), findsOneWidget);
+    expect(find.byType(SliverGrid), findsNothing);
+    expect(find.text('S01 | B05'), findsOneWidget);
 
     await tester.tap(find.byKey(const Key('watchlist.layout')));
     await tester.pumpAndSettle();
 
-    expect(find.byType(SliverGrid), findsNothing);
-    expect(backend.preferences.getString('watchlist.layout'), 'list');
+    expect(find.byType(SliverGrid), findsOneWidget);
+    expect(backend.preferences.getString('watchlist.layout'), 'grid');
   });
 
-  testWidgets('saklanan liste tercihiyle açılır (F6c)', (tester) async {
+  testWidgets('saklanan ızgara tercihiyle açılır (F6c)', (tester) async {
     await _open(
       tester,
       watchlist: [_item(1)],
-      preferences: {'watchlist.layout': 'list'},
+      preferences: {'watchlist.layout': 'grid'},
     );
-    expect(find.byType(SliverGrid), findsNothing);
-    expect(find.text('Dizi 1'), findsWidgets);
+    expect(find.byType(SliverGrid), findsOneWidget);
   });
 
   testWidgets(

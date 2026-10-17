@@ -420,7 +420,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get errorCommentBannedWord => 'Yorumun uygunsuz bir ifade içeriyor.';
 
   @override
-  String get reactionsTitle => 'Bu bölüm sana nasıl hissettirdi?';
+  String get reactionsTitle => 'Ruh hâlin';
 
   @override
   String get reactionFunny => 'Komik';
@@ -690,5 +690,16 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String episodeStill(String code) {
     return '$code sahnesi';
+  }
+
+  @override
+  String get episodeWatched => 'İzlendi';
+
+  @override
+  String get episodeMarkAsWatched => 'İzledim olarak işaretle';
+
+  @override
+  String episodeRuntime(int minutes) {
+    return '$minutes dk';
   }
 }

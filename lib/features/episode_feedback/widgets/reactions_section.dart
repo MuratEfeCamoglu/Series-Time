@@ -63,7 +63,7 @@ class ReactionsSection extends ConsumerWidget {
                 Text(l10n.reactionsTitle, style: AppTextStyles.title),
                 const SizedBox(height: AppSpacing.sm),
                 GridView.count(
-                  crossAxisCount: AppSpacing.posterGridColumns,
+                  crossAxisCount: AppSpacing.reactionGridColumns,
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   mainAxisSpacing: AppSpacing.sm,

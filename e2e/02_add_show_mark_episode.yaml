@@ -45,4 +45,4 @@ appId: com.sezonluk.app
 - tapOn:
     text: "İzlendi"
     index: 0
-- assertVisible: "Bu bölüm sana nasıl hissettirdi?"
+- assertVisible: "Ruh hâlin"

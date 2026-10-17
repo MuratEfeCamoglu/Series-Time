@@ -6,6 +6,7 @@ import '../../../app/router.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_view.dart';
+import '../../../theme/app_colors.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_text_styles.dart';
 import '../../shows/providers.dart';
@@ -83,8 +84,29 @@ class WatchlistTab extends ConsumerWidget {
         AppSpacing.md,
         AppSpacing.sm,
       ),
+      // Bölüm başlığı ortalanmış hap etiket (F6 görsel düzen).
       sliver: SliverToBoxAdapter(
-        child: Text(title, style: AppTextStyles.title),
+        child: Center(
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: AppColors.surfaceAlt,
+              borderRadius: BorderRadius.circular(AppSpacing.lg),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.md,
+                vertical: AppSpacing.xs,
+              ),
+              child: Text(
+                title,
+                style: AppTextStyles.caption.copyWith(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
     ),
     // F6(h): ızgara ve liste tembel oluşturulur; 100 dizide yalnızca görünenler çizilir.
