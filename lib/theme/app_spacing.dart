@@ -47,4 +47,8 @@ abstract final class AppSpacing {
 
   /// TMDB atıf logosu (F17); uygulama ikonundan küçük kalmalı.
   static const double tmdbLogoHeight = 20;
+
+  /// Bölüm sahne görseli (TMDB still, 16:9).
+  static const double stillThumbWidth = 112;
+  static const double stillAspectRatio = 16 / 9;
 }

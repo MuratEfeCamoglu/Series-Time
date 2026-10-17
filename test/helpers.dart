@@ -102,6 +102,7 @@ class TestBackend {
         .thenReturn('https://example.test/a.jpg');
     when(() => shows.fetchMyShows()).thenAnswer((_) async => const []);
     when(() => shows.trendingShows()).thenAnswer((_) async => const []);
+    when(() => shows.onTheAirShows()).thenAnswer((_) async => const []);
     when(() => profiles.fetchStats(any())).thenAnswer(
       (_) async => const UserStats(watchedEpisodes: 0, watchMinutes: 0),
     );

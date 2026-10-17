@@ -1,19 +1,22 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import '../../../core/tmdb_image.dart';
 import '../../../l10n/app_localizations.dart';
+
 import '../../../shared/widgets/error_view.dart';
 import '../../../shared/widgets/guest_gate.dart';
-import '../../auth/providers.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_text_styles.dart';
+import '../../auth/providers.dart';
 import '../../shows/logic.dart';
+import '../../shows/widgets/episode_still.dart';
 import '../../tracking/providers.dart';
 import '../logic.dart';
 import '../providers.dart';
 import '../widgets/comments_section.dart';
 import '../widgets/reactions_section.dart';
 import '../widgets/star_section.dart';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Bölüm Sonrası ekranı (`/episode/:id`): tepki (F9), bölümün yıldızı (F10), yorumlar (F11).
 class EpisodeScreen extends ConsumerStatefulWidget {
@@ -54,6 +57,17 @@ class _EpisodeScreenState extends ConsumerState<EpisodeScreen> {
         data: (info) => ListView(
           padding: const EdgeInsets.all(AppSpacing.md),
           children: [
+            EpisodeStill(
+              stillPath: info.episode.stillPath,
+              size: TmdbImageSize.original,
+              semanticLabel: l10n.episodeStill(
+                episodeCode(
+                  info.episode.seasonNumber,
+                  info.episode.episodeNumber,
+                ),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
             Text(
               episodeCode(
                 info.episode.seasonNumber,

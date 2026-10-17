@@ -57,7 +57,7 @@ Future<TestBackend> _openEpisode(
 
 void main() {
   group('F9 tepkiler', () {
-    testWidgets('6 tepki; yüzdeler tepki verdikten sonra görünür', (
+    testWidgets('12 tepki; yüzdeler tepki verdikten sonra görünür', (
       tester,
     ) async {
       final backend = await _openEpisode(
@@ -76,6 +76,12 @@ void main() {
         'Hüzünlendim',
         'Sinirlendim',
         'Sıkıldım',
+        'Kafam yandı',
+        'Korktum',
+        'Efsane',
+        'Düşündürdü',
+        'Duygulandım',
+        'Gerildim',
       ]) {
         expect(find.text(label), findsOneWidget);
       }

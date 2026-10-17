@@ -1299,6 +1299,54 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Hesabım var, giriş yap'**
   String get guestHaveAccount;
+
+  /// No description provided for @reactionMindblown.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kafam yandı'**
+  String get reactionMindblown;
+
+  /// No description provided for @reactionScared.
+  ///
+  /// In tr, this message translates to:
+  /// **'Korktum'**
+  String get reactionScared;
+
+  /// No description provided for @reactionEpic.
+  ///
+  /// In tr, this message translates to:
+  /// **'Efsane'**
+  String get reactionEpic;
+
+  /// No description provided for @reactionThoughtful.
+  ///
+  /// In tr, this message translates to:
+  /// **'Düşündürdü'**
+  String get reactionThoughtful;
+
+  /// No description provided for @reactionTouched.
+  ///
+  /// In tr, this message translates to:
+  /// **'Duygulandım'**
+  String get reactionTouched;
+
+  /// No description provided for @reactionTense.
+  ///
+  /// In tr, this message translates to:
+  /// **'Gerildim'**
+  String get reactionTense;
+
+  /// No description provided for @onTheAirTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Şu an yayında'**
+  String get onTheAirTitle;
+
+  /// No description provided for @episodeStill.
+  ///
+  /// In tr, this message translates to:
+  /// **'{code} sahnesi'**
+  String episodeStill(String code);
 }
 
 class _AppLocalizationsDelegate

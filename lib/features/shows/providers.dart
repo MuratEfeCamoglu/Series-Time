@@ -14,6 +14,11 @@ final showsRepositoryProvider = Provider<ShowsRepository>(
   (ref) => ShowsRepository(ref.watch(supabaseClientProvider)),
 );
 
+/// Diziler sekmesinin üstündeki "Şu an yayında" satırı (F6i).
+final onTheAirProvider = FutureProvider.autoDispose<List<Show>>(
+  (ref) => ref.watch(showsRepositoryProvider).onTheAirShows(),
+);
+
 final showDetailProvider = FutureProvider.autoDispose.family<ShowDetail, int>(
   (ref, showId) => ref.watch(showsRepositoryProvider).fetchShow(showId),
 );

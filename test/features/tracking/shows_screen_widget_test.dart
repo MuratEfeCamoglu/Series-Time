@@ -174,6 +174,11 @@ void main() {
   testWidgets('Yaklaşan: Bugün, Yarın ve tarih başlıkları (F7)', (
     tester,
   ) async {
+    // "Şu an yayında" satırı da ekranda; tüm gruplar görünsün.
+    tester.view
+      ..physicalSize = const Size(800, 1600)
+      ..devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
     final today = DateTime.now().toUtc();
     DateTime day(int offset) =>
         DateTime.utc(today.year, today.month, today.day + offset);

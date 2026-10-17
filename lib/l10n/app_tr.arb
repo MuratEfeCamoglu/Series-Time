@@ -351,5 +351,20 @@
   "guestContinue": "Misafir olarak devam et",
   "guestGateTitle": "Bu özellik için hesap oluştur",
   "guestGateBody": "Dizilerini takip etmek, bölüm işaretlemek, yorum yapmak ve arkadaşlarını takip etmek için ücretsiz bir hesap aç.",
-  "guestHaveAccount": "Hesabım var, giriş yap"
+  "guestHaveAccount": "Hesabım var, giriş yap",
+  "reactionMindblown": "Kafam yandı",
+  "reactionScared": "Korktum",
+  "reactionEpic": "Efsane",
+  "reactionThoughtful": "Düşündürdü",
+  "reactionTouched": "Duygulandım",
+  "reactionTense": "Gerildim",
+  "onTheAirTitle": "Şu an yayında",
+  "episodeStill": "{code} sahnesi",
+  "@episodeStill": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  }
 }

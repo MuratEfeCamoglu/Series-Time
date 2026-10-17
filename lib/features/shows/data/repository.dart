@@ -28,6 +28,12 @@ class ShowsRepository {
     return showsFromJson(data['results'] as List);
   });
 
+  /// F6(i): TMDB'de yeni bölümü yayında olan diziler.
+  Future<List<Show>> onTheAirShows() => _guard(() async {
+    final data = await _invoke({'action': 'on_the_air'});
+    return showsFromJson(data['results'] as List);
+  });
+
   Future<ShowDetail> fetchShow(int showId) => _guard(() async {
     final data = await _invoke({'action': 'show', 'showId': showId});
     return ShowDetail.fromJson(data);

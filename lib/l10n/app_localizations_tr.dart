@@ -665,4 +665,30 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get guestHaveAccount => 'Hesabım var, giriş yap';
+
+  @override
+  String get reactionMindblown => 'Kafam yandı';
+
+  @override
+  String get reactionScared => 'Korktum';
+
+  @override
+  String get reactionEpic => 'Efsane';
+
+  @override
+  String get reactionThoughtful => 'Düşündürdü';
+
+  @override
+  String get reactionTouched => 'Duygulandım';
+
+  @override
+  String get reactionTense => 'Gerildim';
+
+  @override
+  String get onTheAirTitle => 'Şu an yayında';
+
+  @override
+  String episodeStill(String code) {
+    return '$code sahnesi';
+  }
 }

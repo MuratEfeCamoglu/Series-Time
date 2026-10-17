@@ -1,7 +1,20 @@
 import '../../shows/data/models.dart';
 
-/// F9(a): 6 sabit tepki; adlar `reaction_emoji` enum değerleriyle aynıdır.
-enum ReactionType { funny, love, shocked, sad, angry, bored }
+/// F9(a): 12 sabit tepki; adlar `reaction_emoji` enum değerleriyle aynıdır.
+enum ReactionType {
+  funny,
+  love,
+  shocked,
+  sad,
+  angry,
+  bored,
+  mindblown,
+  scared,
+  epic,
+  thoughtful,
+  touched,
+  tense,
+}
 
 ReactionType? reactionFromName(String? name) =>
     name == null ? null : ReactionType.values.asNameMap()[name];

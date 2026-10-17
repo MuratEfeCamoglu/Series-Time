@@ -1,19 +1,23 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-
 import '../../../app/router.dart';
 import '../../../core/format.dart';
 import '../../../l10n/app_localizations.dart';
+
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_view.dart';
-import '../../../theme/app_text_styles.dart';
 import '../../../shared/widgets/guest_gate.dart';
+import '../../../theme/app_colors.dart';
+import '../../../theme/app_spacing.dart';
+import '../../../theme/app_text_styles.dart';
 import '../../auth/providers.dart';
 import '../../tracking/providers.dart';
 import '../data/models.dart';
 import '../logic.dart';
 import '../providers.dart';
+import '../widgets/episode_still.dart';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 /// Sezonun bölümleri (F4a, F5): no, ad, yayın tarihi, izlendi onay kutusu.
 /// Onay kutusu işaretler (F4e); satırın geri kalanı Bölüm Sonrası ekranını açar.
@@ -123,7 +127,7 @@ class _EpisodeTile extends ConsumerWidget {
     if (ref.watch(isGuestProvider)) {
       void gate() => showGuestGate(context);
       return ListTile(
-        leading: Text('${episode.episodeNumber}', style: AppTextStyles.title),
+        leading: _EpisodeLeading(episode: episode),
         title: Text(episode.name ?? '', style: AppTextStyles.body),
         subtitle: Text(
           airDate == null ? l10n.episodeNoAirDate : formatLongDate(airDate),
@@ -140,7 +144,7 @@ class _EpisodeTile extends ConsumerWidget {
     }
 
     return ListTile(
-      leading: Text('${episode.episodeNumber}', style: AppTextStyles.title),
+      leading: _EpisodeLeading(episode: episode),
       title: Text(episode.name ?? '', style: AppTextStyles.body),
       subtitle: Text(
         airDate == null ? l10n.episodeNoAirDate : formatLongDate(airDate),
@@ -179,6 +183,50 @@ class _EpisodeTile extends ConsumerWidget {
                 ),
               ),
             ),
+    );
+  }
+}
+
+/// Bölüm numarası ve sahne görseli (F4a).
+class _EpisodeLeading extends StatelessWidget {
+  const _EpisodeLeading({required this.episode});
+
+  final Episode episode;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return SizedBox(
+      width: AppSpacing.stillThumbWidth,
+      child: Stack(
+        children: [
+          EpisodeStill(
+            stillPath: episode.stillPath,
+            semanticLabel: l10n.episodeStill(
+              episodeCode(episode.seasonNumber, episode.episodeNumber),
+            ),
+          ),
+          Positioned(
+            left: AppSpacing.xs,
+            bottom: AppSpacing.xs,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: AppColors.background,
+                borderRadius: BorderRadius.circular(AppSpacing.posterRadius),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+                child: Text(
+                  '${episode.episodeNumber}',
+                  style: AppTextStyles.caption.copyWith(
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

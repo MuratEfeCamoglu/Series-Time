@@ -1,5 +1,6 @@
 // TMDB API v3 vekili (ISKELET.md §3.5). API anahtarı yalnızca burada, Edge Function sırrı olarak bulunur.
-// Eylemler: search, trending, show, season, episode_credits, genres, discover, recommendations.
+// Eylemler: search, trending, show, season, episode_credits, genres, discover, recommendations,
+// on_the_air.
 // Ortak TMDB kodu: ../_shared/tmdb.ts.
 import { z } from "npm:zod@3";
 import { createClient, type SupabaseClient } from "jsr:@supabase/supabase-js@2";
@@ -42,6 +43,7 @@ const Body = z.discriminatedUnion("action", [
     page: z.number().int().min(1).max(500).default(1),
   }),
   z.object({ action: z.literal("recommendations"), showId: tmdbId }),
+  z.object({ action: z.literal("on_the_air") }),
 ]);
 
 type CacheState = "hit" | "miss" | "stale";
@@ -91,6 +93,8 @@ Deno.serve(async (req) => {
         return json(await discover(db, userData.user.id, body.genreIds, body.page));
       case "recommendations":
         return json(await recommendations(db, userData.user.id, body.showId));
+      case "on_the_air":
+        return json(await onTheAir(db));
     }
   } catch (error) {
     if (error instanceof TmdbError) {
@@ -106,6 +110,12 @@ async function search(db: SupabaseClient, query: string, page: number) {
   const data = await tmdb("/search/tv", { query, page: String(page) });
   const results = await upsertSummaries(db, data.results ?? []);
   return { results, totalPages: data.total_pages ?? 0 };
+}
+
+// F6(i): yeni bölümü yayında olan diziler; kullanıcının listesindekiler de gösterilir.
+async function onTheAir(db: SupabaseClient) {
+  const data = await tmdb("/tv/on_the_air");
+  return { results: await upsertSummaries(db, data.results ?? []) };
 }
 
 async function trending(db: SupabaseClient) {

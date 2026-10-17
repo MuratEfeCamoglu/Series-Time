@@ -54,6 +54,10 @@ void main() {
   testWidgets('hesap çağrısındaki "Kayıt ol" kayıt ekranını açar (F19e)', (
     tester,
   ) async {
+    tester.view
+      ..physicalSize = const Size(800, 1600)
+      ..devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
     await TestBackend(initialStatus: AuthStatus.guest).pumpApp(tester);
 
     await tester.tap(find.byKey(const Key('guestGate.signUp')));

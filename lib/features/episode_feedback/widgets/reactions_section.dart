@@ -17,6 +17,12 @@ const _emoji = {
   ReactionType.sad: '😢',
   ReactionType.angry: '😡',
   ReactionType.bored: '😴',
+  ReactionType.mindblown: '🤯',
+  ReactionType.scared: '😱',
+  ReactionType.epic: '🔥',
+  ReactionType.thoughtful: '🤔',
+  ReactionType.touched: '🥰',
+  ReactionType.tense: '😬',
 };
 
 String reactionLabel(AppLocalizations l10n, ReactionType type) =>
@@ -27,9 +33,15 @@ String reactionLabel(AppLocalizations l10n, ReactionType type) =>
       ReactionType.sad => l10n.reactionSad,
       ReactionType.angry => l10n.reactionAngry,
       ReactionType.bored => l10n.reactionBored,
+      ReactionType.mindblown => l10n.reactionMindblown,
+      ReactionType.scared => l10n.reactionScared,
+      ReactionType.epic => l10n.reactionEpic,
+      ReactionType.thoughtful => l10n.reactionThoughtful,
+      ReactionType.touched => l10n.reactionTouched,
+      ReactionType.tense => l10n.reactionTense,
     };
 
-/// F9: 6 tepki; tepki verildikten sonra her birinin yüzdesi.
+/// F9: 12 tepki; tepki verildikten sonra her birinin yüzdesi.
 class ReactionsSection extends ConsumerWidget {
   const ReactionsSection({super.key, required this.episodeId});
 
