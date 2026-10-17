@@ -4,6 +4,7 @@ import '../../core/preferences.dart';
 import '../../core/supabase_client.dart';
 import '../auth/logic.dart';
 import '../auth/providers.dart';
+import '../profile/providers.dart';
 import '../shows/data/models.dart';
 import '../shows/providers.dart';
 import 'data/models.dart';
@@ -40,7 +41,9 @@ class WatchlistNotifier extends AsyncNotifier<List<WatchlistItem>> {
       state = AsyncData(previous);
       rethrow;
     }
-    ref.invalidate(watchedEpisodesProvider(item.showId));
+    ref
+      ..invalidate(watchedEpisodesProvider(item.showId))
+      ..invalidate(userStatsProvider);
     state = AsyncData(await repository.fetchWatchlist());
   }
 }
@@ -116,7 +119,8 @@ class WatchedEpisodesNotifier extends AsyncNotifier<Set<int>> {
     // İşaretleme listede olmayan diziyi listeye ekler ve sıradaki bölümü değiştirir.
     ref
       ..invalidate(watchlistProvider)
-      ..invalidate(myShowsProvider);
+      ..invalidate(myShowsProvider)
+      ..invalidate(userStatsProvider);
   }
 }
 

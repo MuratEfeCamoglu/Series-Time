@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sezonluk/features/profile/logic.dart';
+import 'package:sezonluk/features/shows/data/models.dart';
 
 void main() {
   test('isValidDisplayName 1–40 karakter ister (F2)', () {
@@ -46,6 +47,69 @@ void main() {
       expect(filterCountryCodes(' tr '), ['TR']);
       expect(filterCountryCodes('t'), everyElement(startsWith('T')));
       expect(filterCountryCodes('qq'), isEmpty);
+    });
+  });
+
+  group('splitWatchTime (F8d, V15)', () {
+    test('0 dk', () {
+      expect(splitWatchTime(0), (months: 0, days: 0, hours: 0));
+    });
+
+    test('59 dk bir saatten azdır', () {
+      expect(splitWatchTime(59), (months: 0, days: 0, hours: 0));
+    });
+
+    test('1 gün', () {
+      expect(splitWatchTime(24 * 60), (months: 0, days: 1, hours: 0));
+    });
+
+    test('31 gün = 1 ay 1 gün (1 ay = 30 gün)', () {
+      expect(splitWatchTime(31 * 24 * 60), (months: 1, days: 1, hours: 0));
+    });
+
+    test('ay, gün ve saat birlikte', () {
+      expect(splitWatchTime((30 + 2) * 24 * 60 + 5 * 60 + 30), (
+        months: 1,
+        days: 2,
+        hours: 5,
+      ));
+    });
+  });
+
+  group('sortByLastWatched ve coverShow (F8e, V9)', () {
+    UserShow entry(int id, {DateTime? watched, String? backdrop = '/b.jpg'}) =>
+        UserShow(
+          show: Show(id: id, name: 'D$id', backdropPath: backdrop),
+          addedAt: DateTime.utc(2026, 1, id),
+          lastWatchedAt: watched,
+        );
+
+    final shows = [
+      entry(1, watched: DateTime.utc(2026, 10, 1)),
+      entry(2),
+      entry(3, watched: DateTime.utc(2026, 10, 5)),
+      entry(4),
+    ];
+
+    test('son izlenen önce, izlenmeyenler eklenmeye göre sonda', () {
+      expect(sortByLastWatched(shows).map((e) => e.show.id), [3, 1, 4, 2]);
+    });
+
+    test('seçilen kapak listedeyse o kullanılır', () {
+      expect(coverShow(2, shows)?.id, 2);
+    });
+
+    test('kapak seçilmemişse veya listede yoksa en son izlenen', () {
+      expect(coverShow(null, shows)?.id, 3);
+      expect(coverShow(99, shows)?.id, 3);
+    });
+
+    test('hiç izleme yoksa kapak yok', () {
+      expect(coverShow(null, [entry(2)]), isNull);
+    });
+
+    test('arka planı olmayan dizi kapak olamaz', () {
+      expect(coverShow(5, [entry(5, backdrop: null)]), isNull);
     });
   });
 }

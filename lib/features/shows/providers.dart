@@ -4,9 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/supabase_client.dart';
 import '../auth/logic.dart';
 import '../auth/providers.dart';
+import '../profile/providers.dart';
 import '../tracking/providers.dart';
 import 'data/models.dart';
 import 'data/repository.dart';
+import 'logic.dart';
 
 final showsRepositoryProvider = Provider<ShowsRepository>(
   (ref) => ShowsRepository(ref.watch(supabaseClientProvider)),
@@ -32,9 +34,10 @@ class MyShowsNotifier extends AsyncNotifier<List<UserShow>> {
     return ref.read(showsRepositoryProvider).fetchMyShows();
   }
 
-  /// [seasonNumbers]: dizinin normal sezonları. Sıradaki bölüm ve ilerleme `episodes`
-  /// tablosundan hesaplandığı için eklenen dizinin bölümleri önbelleğe çekilir.
-  Future<void> add(Show show, {List<int> seasonNumbers = const []}) async {
+  /// [seasonNumbers]: dizinin normal sezonları; bilinmiyorsa (öneri ızgarasındaki "+")
+  /// dizi detayından alınır. Sıradaki bölüm ve ilerleme `episodes` tablosundan
+  /// hesaplandığı için eklenen dizinin bölümleri önbelleğe çekilir.
+  Future<void> add(Show show, {List<int>? seasonNumbers}) async {
     await _mutate(
       (current) => [
         UserShow(show: show, addedAt: DateTime.now().toUtc()),
@@ -45,9 +48,15 @@ class MyShowsNotifier extends AsyncNotifier<List<UserShow>> {
     );
     final repository = ref.read(showsRepositoryProvider);
     try {
+      final numbers =
+          seasonNumbers ??
+          [
+            for (final season in (await repository.fetchShow(show.id)).seasons)
+              if (season.seasonNumber != specialsSeasonNumber)
+                season.seasonNumber,
+          ];
       await Future.wait([
-        for (final n in seasonNumbers)
-          repository.fetchSeasonEpisodes(show.id, n),
+        for (final n in numbers) repository.fetchSeasonEpisodes(show.id, n),
       ]);
     } catch (error) {
       // Dizi listeye eklendi; eksik sezonlar açıldıklarında veya tmdb-sync ile gelir.
@@ -67,7 +76,8 @@ class MyShowsNotifier extends AsyncNotifier<List<UserShow>> {
     // İzleme kayıtları veritabanında silindi (F4c).
     ref
       ..invalidate(watchlistProvider)
-      ..invalidate(watchedEpisodesProvider(showId));
+      ..invalidate(watchedEpisodesProvider(showId))
+      ..invalidate(userStatsProvider);
   }
 
   Future<void> _mutate(

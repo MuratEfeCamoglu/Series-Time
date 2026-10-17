@@ -10,13 +10,15 @@ import '../../../shared/widgets/error_view.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_text_styles.dart';
 import '../../auth/logic.dart';
+import '../../shows/providers.dart';
 import '../data/models.dart';
 import '../logic.dart';
 import '../providers.dart';
 import '../widgets/country_picker_sheet.dart';
+import '../widgets/cover_picker_sheet.dart';
 import '../widgets/profile_avatar.dart';
 
-/// F2: görünen ad, kullanıcı adı, ülke, biyografi ve avatar. Kapak seçimi Aşama 4'te.
+/// F2: görünen ad, kullanıcı adı, ülke, biyografi, avatar ve kapak.
 class EditProfileScreen extends ConsumerWidget {
   const EditProfileScreen({super.key});
 
@@ -58,6 +60,7 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
   late final _username = TextEditingController(text: widget.profile.username);
   late final _bio = TextEditingController(text: widget.profile.bio);
   late String? _countryCode = widget.profile.countryCode;
+  late int? _coverShowId = widget.profile.coverShowId;
   Uint8List? _avatarBytes;
   bool _saving = false;
   Object? _error;
@@ -102,6 +105,15 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
     if (result != null) setState(() => _countryCode = result.code);
   }
 
+  Future<void> _pickCover() async {
+    final result = await showModalBottomSheet<CoverSelection>(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) => CoverPickerSheet(selectedShowId: _coverShowId),
+    );
+    if (result != null) setState(() => _coverShowId = result.showId);
+  }
+
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() {
@@ -117,6 +129,7 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
               displayName: _displayName.text,
               bio: _bio.text,
               countryCode: _countryCode,
+              coverShowId: _coverShowId,
               avatarBytes: _avatarBytes,
             ),
           );
@@ -130,6 +143,13 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
     } finally {
       if (mounted) setState(() => _saving = false);
     }
+  }
+
+  String? _coverName(WidgetRef ref) {
+    for (final entry in ref.watch(myShowsProvider).value ?? const []) {
+      if (entry.show.id == _coverShowId) return entry.show.name;
+    }
+    return null;
   }
 
   @override
@@ -212,6 +232,16 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
                 style: AppTextStyles.body,
               ),
               onTap: _saving ? null : _pickCountry,
+            ),
+            ListTile(
+              key: const Key('editProfile.cover'),
+              contentPadding: EdgeInsets.zero,
+              title: Text(l10n.fieldCover),
+              trailing: Text(
+                _coverName(ref) ?? l10n.coverNone,
+                style: AppTextStyles.body,
+              ),
+              onTap: _saving ? null : _pickCover,
             ),
             if (_error != null) ...[
               const SizedBox(height: AppSpacing.md),

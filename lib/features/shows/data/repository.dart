@@ -47,11 +47,15 @@ class ShowsRepository {
       });
 
   /// Oturum sahibinin listesi, en son eklenen önce.
-  Future<List<UserShow>> fetchMyShows() => _guard(() async {
+  Future<List<UserShow>> fetchMyShows() =>
+      _guard(() => fetchUserShows(_userId));
+
+  /// Herhangi bir kullanıcının listesi (V10: listeler herkese açık).
+  Future<List<UserShow>> fetchUserShows(String userId) => _guard(() async {
     final rows = await _client
         .from('user_shows')
         .select('*, shows(*)')
-        .eq('user_id', _userId)
+        .eq('user_id', userId)
         .order('added_at', ascending: false);
     return [for (final row in rows) UserShow.fromJson(row)];
   });

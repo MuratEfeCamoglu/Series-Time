@@ -146,5 +146,65 @@
   "episodeMarkUntil": "Buraya kadar izledim",
   "episodeMarkWatched": "İzlendi",
   "episodeTitle": "Bölüm",
-  "episodeFeedbackSoon": "Tepkiler, bölümün yıldızı ve yorumlar burada olacak."
+  "episodeFeedbackSoon": "Tepkiler, bölümün yıldızı ve yorumlar burada olacak.",
+  "profileNotifications": "Bildirimler",
+  "profileShare": "Profili paylaş",
+  "profileShareText": "Sezonluk'ta izlediğim dizilere göz at: {link}",
+  "@profileShareText": {
+    "placeholders": {
+      "link": {
+        "type": "String"
+      }
+    }
+  },
+  "statWatchTimeTitle": "Dizi izleme süresi",
+  "statWatchTimeValue": "{months} ay {days} gün {hours} saat",
+  "@statWatchTimeValue": {
+    "placeholders": {
+      "months": {
+        "type": "int"
+      },
+      "days": {
+        "type": "int"
+      },
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "statEpisodesTitle": "İzlenen bölüm",
+  "statFollowers": "Takipçi",
+  "statFollowing": "Takip",
+  "statBadges": "Rozet",
+  "profileMyShows": "Dizilerim",
+  "profileSeeAll": "Tümü",
+  "profileNoShows": "Henüz dizi eklenmemiş.",
+  "fieldCover": "Kapak",
+  "coverNone": "Otomatik",
+  "coverPickerTitle": "Kapak seç",
+  "coverPickerHint": "Kapak, listendeki bir dizinin arka plan görselidir. Seçmezsen en son izlediğin dizi kullanılır.",
+  "coverPickerEmpty": "Kapak seçmek için önce listene dizi ekle.",
+  "suggestCardTitle": "Sana Özel Öneriler",
+  "suggestCardBody": "Sevdiğin kategorilere göre yeni diziler keşfet.",
+  "suggestTitle": "Sana Özel Öneriler",
+  "suggestMaxGenres": "En fazla 3 kategori seçebilirsin",
+  "suggestPickGenre": "Öneri almak için en az bir kategori seç",
+  "suggestEmpty": "Bu kategorilerde yeni öneri kalmadı",
+  "suggestByGenre": "Seçtiğin kategorilerden",
+  "suggestSimilarTitle": "{name} izlediğin için",
+  "@suggestSimilarTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "suggestAddShow": "{name} listene ekle",
+  "@suggestAddShow": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  }
 }

@@ -23,6 +23,23 @@ class ProfileRepository {
     return Profile.fromJson(row);
   });
 
+  Future<Profile> fetchProfileByUsername(String username) => _guard(() async {
+    final row = await _client
+        .from('profiles')
+        .select()
+        .eq('username', username)
+        .single();
+    return Profile.fromJson(row);
+  });
+
+  Future<UserStats> fetchStats(String userId) => _guard(() async {
+    final rows = await _client.rpc(
+      'get_user_stats',
+      params: {'user_id': userId},
+    ) as List;
+    return UserStats.fromJson(rows.single as Map<String, dynamic>);
+  });
+
   /// Yeni avatar varsa önce yüklenir, sonra profil satırı güncellenir.
   Future<Profile> saveProfile(
     Profile current,
@@ -48,6 +65,7 @@ class ProfileRepository {
           'display_name': edit.displayName.trim(),
           'bio': edit.bio.trim(),
           'country_code': edit.countryCode,
+          'cover_show_id': edit.coverShowId,
           'avatar_path': ?newAvatarPath,
         })
         .eq('id', current.id)

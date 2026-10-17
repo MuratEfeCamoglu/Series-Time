@@ -5,6 +5,8 @@ import '../../core/failures.dart';
 import '../../core/supabase_client.dart';
 import '../auth/logic.dart';
 import '../auth/providers.dart';
+import '../shows/data/models.dart';
+import '../shows/providers.dart';
 import 'data/models.dart';
 import 'data/repository.dart';
 
@@ -40,3 +42,22 @@ class MyProfileNotifier extends AsyncNotifier<Profile> {
 final myProfileProvider = AsyncNotifierProvider<MyProfileNotifier, Profile>(
   MyProfileNotifier.new,
 );
+
+/// F8(d) istatistikleri. Profil her açıldığında ve her işaretlemeden sonra yeniden
+/// hesaplanır (F8h); işaretleme sağlayıcıları bu aileyi geçersiz kılar.
+final userStatsProvider = FutureProvider.autoDispose.family<UserStats, String>(
+  (ref, userId) => ref.watch(profileRepositoryProvider).fetchStats(userId),
+);
+
+final profileByUsernameProvider = FutureProvider.autoDispose
+    .family<Profile, String>(
+      (ref, username) =>
+          ref.watch(profileRepositoryProvider).fetchProfileByUsername(username),
+    );
+
+/// "Tümü" ekranı: kullanıcının tüm dizileri, son izlenene göre (F8e).
+final userShowsProvider = FutureProvider.autoDispose
+    .family<List<UserShow>, String>(
+      (ref, userId) =>
+          ref.watch(showsRepositoryProvider).fetchUserShows(userId),
+    );

@@ -18,6 +18,8 @@ export async function syncShow(db: SupabaseClient, showId: number) {
     number_of_seasons: data.number_of_seasons ?? null,
     number_of_episodes: data.number_of_episodes ?? null,
     default_runtime: data.episode_run_time?.[0] ?? null,
+    // Detayda türler `genres[].id`, liste sonuçlarında `genre_ids` olarak gelir (§3.5).
+    genre_ids: (data.genres ?? []).map((g: TmdbJson) => g.id),
     last_synced_at: syncedAt,
   };
   const { data: savedShow, error: showError } = await db
@@ -108,6 +110,7 @@ export function summaryRow(r: TmdbJson) {
     poster_path: r.poster_path ?? null,
     backdrop_path: r.backdrop_path ?? null,
     first_air_date: r.first_air_date || null,
+    genre_ids: r.genre_ids ?? [],
   };
 }
 

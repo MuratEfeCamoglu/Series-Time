@@ -1,5 +1,7 @@
-/// F2 saf kuralları: profil alanı doğrulama ve ülke bayrağı.
+/// F2, F8 saf kuralları: profil alanı doğrulama, ülke bayrağı, izleme süresi ve kapak.
 library;
+
+import '../shows/data/models.dart';
 
 const maxDisplayNameLength = 40;
 const maxBioLength = 160;
@@ -30,6 +32,53 @@ List<String> filterCountryCodes(String query) {
   final upper = query.trim().toUpperCase();
   if (upper.isEmpty) return isoCountryCodes;
   return isoCountryCodes.where((code) => code.startsWith(upper)).toList();
+}
+
+const _minutesPerHour = 60;
+const _minutesPerDay = 24 * _minutesPerHour;
+// V15: istatistikte 1 ay = 30 gün.
+const _minutesPerMonth = 30 * _minutesPerDay;
+
+/// F8(d): toplam dakika → ay, gün, saat. Bir saatten kısa kalan dakikalar atılır.
+({int months, int days, int hours}) splitWatchTime(int totalMinutes) {
+  final minutes = totalMinutes < 0 ? 0 : totalMinutes;
+  return (
+    months: minutes ~/ _minutesPerMonth,
+    days: minutes % _minutesPerMonth ~/ _minutesPerDay,
+    hours: minutes % _minutesPerDay ~/ _minutesPerHour,
+  );
+}
+
+/// F8(e): "Dizilerim" sırası — son izlenen önce, hiç izlenmeyenler en sonda (eklenmeye göre).
+List<UserShow> sortByLastWatched(List<UserShow> shows) {
+  int compare(UserShow a, UserShow b) {
+    final aWatched = a.lastWatchedAt;
+    final bWatched = b.lastWatchedAt;
+    if (aWatched != null && bWatched != null) {
+      return bWatched.compareTo(aWatched);
+    }
+    if (aWatched != null) return -1;
+    if (bWatched != null) return 1;
+    return b.addedAt.compareTo(a.addedAt);
+  }
+
+  return [...shows]..sort(compare);
+}
+
+/// V9: seçilen kapak listedeyse o; değilse en son izlenen dizi; o da yoksa null (düz renk).
+/// Arka plan görseli olmayan diziler kapak olamaz.
+Show? coverShow(int? coverShowId, List<UserShow> shows) {
+  final withBackdrop = [
+    for (final entry in shows)
+      if (entry.show.backdropPath != null) entry,
+  ];
+  for (final entry in withBackdrop) {
+    if (entry.show.id == coverShowId) return entry.show;
+  }
+  for (final entry in sortByLastWatched(withBackdrop)) {
+    if (entry.lastWatchedAt != null) return entry.show;
+  }
+  return null;
 }
 
 /// ISO 3166-1 alpha-2, resmî olarak atanmış 249 kod.

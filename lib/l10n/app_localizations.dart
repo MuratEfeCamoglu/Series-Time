@@ -693,6 +693,162 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Tepkiler, bölümün yıldızı ve yorumlar burada olacak.'**
   String get episodeFeedbackSoon;
+
+  /// No description provided for @profileNotifications.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bildirimler'**
+  String get profileNotifications;
+
+  /// No description provided for @profileShare.
+  ///
+  /// In tr, this message translates to:
+  /// **'Profili paylaş'**
+  String get profileShare;
+
+  /// No description provided for @profileShareText.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sezonluk\'ta izlediğim dizilere göz at: {link}'**
+  String profileShareText(String link);
+
+  /// No description provided for @statWatchTimeTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Dizi izleme süresi'**
+  String get statWatchTimeTitle;
+
+  /// No description provided for @statWatchTimeValue.
+  ///
+  /// In tr, this message translates to:
+  /// **'{months} ay {days} gün {hours} saat'**
+  String statWatchTimeValue(int months, int days, int hours);
+
+  /// No description provided for @statEpisodesTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'İzlenen bölüm'**
+  String get statEpisodesTitle;
+
+  /// No description provided for @statFollowers.
+  ///
+  /// In tr, this message translates to:
+  /// **'Takipçi'**
+  String get statFollowers;
+
+  /// No description provided for @statFollowing.
+  ///
+  /// In tr, this message translates to:
+  /// **'Takip'**
+  String get statFollowing;
+
+  /// No description provided for @statBadges.
+  ///
+  /// In tr, this message translates to:
+  /// **'Rozet'**
+  String get statBadges;
+
+  /// No description provided for @profileMyShows.
+  ///
+  /// In tr, this message translates to:
+  /// **'Dizilerim'**
+  String get profileMyShows;
+
+  /// No description provided for @profileSeeAll.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tümü'**
+  String get profileSeeAll;
+
+  /// No description provided for @profileNoShows.
+  ///
+  /// In tr, this message translates to:
+  /// **'Henüz dizi eklenmemiş.'**
+  String get profileNoShows;
+
+  /// No description provided for @fieldCover.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kapak'**
+  String get fieldCover;
+
+  /// No description provided for @coverNone.
+  ///
+  /// In tr, this message translates to:
+  /// **'Otomatik'**
+  String get coverNone;
+
+  /// No description provided for @coverPickerTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kapak seç'**
+  String get coverPickerTitle;
+
+  /// No description provided for @coverPickerHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kapak, listendeki bir dizinin arka plan görselidir. Seçmezsen en son izlediğin dizi kullanılır.'**
+  String get coverPickerHint;
+
+  /// No description provided for @coverPickerEmpty.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kapak seçmek için önce listene dizi ekle.'**
+  String get coverPickerEmpty;
+
+  /// No description provided for @suggestCardTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sana Özel Öneriler'**
+  String get suggestCardTitle;
+
+  /// No description provided for @suggestCardBody.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sevdiğin kategorilere göre yeni diziler keşfet.'**
+  String get suggestCardBody;
+
+  /// No description provided for @suggestTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sana Özel Öneriler'**
+  String get suggestTitle;
+
+  /// No description provided for @suggestMaxGenres.
+  ///
+  /// In tr, this message translates to:
+  /// **'En fazla 3 kategori seçebilirsin'**
+  String get suggestMaxGenres;
+
+  /// No description provided for @suggestPickGenre.
+  ///
+  /// In tr, this message translates to:
+  /// **'Öneri almak için en az bir kategori seç'**
+  String get suggestPickGenre;
+
+  /// No description provided for @suggestEmpty.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu kategorilerde yeni öneri kalmadı'**
+  String get suggestEmpty;
+
+  /// No description provided for @suggestByGenre.
+  ///
+  /// In tr, this message translates to:
+  /// **'Seçtiğin kategorilerden'**
+  String get suggestByGenre;
+
+  /// No description provided for @suggestSimilarTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'{name} izlediğin için'**
+  String suggestSimilarTitle(String name);
+
+  /// No description provided for @suggestAddShow.
+  ///
+  /// In tr, this message translates to:
+  /// **'{name} listene ekle'**
+  String suggestAddShow(String name);
 }
 
 class _AppLocalizationsDelegate

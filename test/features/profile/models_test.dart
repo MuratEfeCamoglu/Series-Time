@@ -54,4 +54,14 @@ void main() {
 
     expect(copy.toJson(), original.toJson());
   });
+
+  test('UserStats.fromJson get_user_stats kolonlarını ayrıştırır', () {
+    final stats = UserStats.fromJson({
+      'watched_episodes': 73,
+      'watch_minutes': 4380,
+    });
+
+    expect(stats.watchedEpisodes, 73);
+    expect(stats.watchMinutes, 4380);
+  });
 }

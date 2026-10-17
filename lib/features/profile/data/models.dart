@@ -51,6 +51,7 @@ class ProfileEdit {
     required this.displayName,
     required this.bio,
     required this.countryCode,
+    required this.coverShowId,
     this.avatarBytes,
   });
 
@@ -58,5 +59,21 @@ class ProfileEdit {
   final String displayName;
   final String bio;
   final String? countryCode;
+
+  /// null: kapak seçilmemiş (V9: son izlenen dizinin arka planı kullanılır).
+  final int? coverShowId;
   final List<int>? avatarBytes;
+}
+
+/// `get_user_stats()` satırı (F8d).
+class UserStats {
+  const UserStats({required this.watchedEpisodes, required this.watchMinutes});
+
+  factory UserStats.fromJson(Map<String, dynamic> json) => UserStats(
+    watchedEpisodes: json['watched_episodes'] as int,
+    watchMinutes: json['watch_minutes'] as int,
+  );
+
+  final int watchedEpisodes;
+  final int watchMinutes;
 }

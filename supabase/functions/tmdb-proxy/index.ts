@@ -1,6 +1,6 @@
 // TMDB API v3 vekili (ISKELET.md §3.5). API anahtarı yalnızca burada, Edge Function sırrı olarak bulunur.
-// Eylemler: search, trending, show, season, episode_credits. Ortak TMDB kodu: ../_shared/tmdb.ts.
-// genres, discover ve recommendations Aşama 4'te (F18, shows.genre_ids ile birlikte) eklenir.
+// Eylemler: search, trending, show, season, episode_credits, genres, discover, recommendations.
+// Ortak TMDB kodu: ../_shared/tmdb.ts.
 import { z } from "npm:zod@3";
 import { createClient, type SupabaseClient } from "jsr:@supabase/supabase-js@2";
 import {
@@ -17,6 +17,7 @@ import {
 
 // F10(a): oylamada ilk 20 kişi gösterildiği için fazlası saklanmaz.
 const MAX_CREDITS = 20;
+const GENRES_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 
 const tmdbId = z.number().int().positive();
 
@@ -34,6 +35,13 @@ const Body = z.discriminatedUnion("action", [
     seasonNumber: z.number().int().min(0),
   }),
   z.object({ action: z.literal("episode_credits"), episodeId: tmdbId }),
+  z.object({ action: z.literal("genres") }),
+  z.object({
+    action: z.literal("discover"),
+    genreIds: z.array(tmdbId).min(1).max(3),
+    page: z.number().int().min(1).max(500).default(1),
+  }),
+  z.object({ action: z.literal("recommendations"), showId: tmdbId }),
 ]);
 
 type CacheState = "hit" | "miss" | "stale";
@@ -77,6 +85,12 @@ Deno.serve(async (req) => {
         return await season(db, body.showId, body.seasonNumber);
       case "episode_credits":
         return await episodeCredits(db, body.episodeId);
+      case "genres":
+        return await genres(db);
+      case "discover":
+        return json(await discover(db, userData.user.id, body.genreIds, body.page));
+      case "recommendations":
+        return json(await recommendations(db, userData.user.id, body.showId));
     }
   } catch (error) {
     if (error instanceof TmdbError) {
@@ -182,6 +196,73 @@ async function episodeCredits(db: SupabaseClient, episodeId: number) {
     }
     throw error;
   }
+}
+
+async function genres(db: SupabaseClient) {
+  const { data: cached, error } = await db.from("genres").select("id, name, last_synced_at");
+  if (error) throw error;
+  const toResponse = (rows: TmdbJson[]) =>
+    rows
+      .map(({ id, name }) => ({ id, name }))
+      .sort((a, b) => a.name.localeCompare(b.name, "tr"));
+
+  const oldest = Math.min(...cached.map((g) => new Date(g.last_synced_at).getTime()));
+  if (cached.length > 0 && Date.now() - oldest < GENRES_TTL_MS) {
+    return json({ genres: toResponse(cached) }, 200, "hit");
+  }
+  try {
+    const data = await tmdb("/genre/tv/list");
+    const syncedAt = new Date().toISOString();
+    const rows = (data.genres ?? []).map((g: TmdbJson) => ({
+      id: g.id,
+      name: g.name,
+      last_synced_at: syncedAt,
+    }));
+    if (rows.length > 0) {
+      const { error: upsertError } = await db.from("genres").upsert(rows);
+      if (upsertError) throw upsertError;
+    }
+    return json({ genres: toResponse(rows) }, 200, "miss");
+  } catch (err) {
+    if (err instanceof TmdbError && cached.length > 0) {
+      return json({ genres: toResponse(cached) }, 200, "stale");
+    }
+    throw err;
+  }
+}
+
+// F18(d): seçili türlerden en az biri ("|" = VEYA), en az 100 oy, popülerliğe göre.
+async function discover(db: SupabaseClient, userId: string, genreIds: number[], page: number) {
+  const data = await tmdb("/discover/tv", {
+    with_genres: genreIds.join("|"),
+    sort_by: "popularity.desc",
+    "vote_count.gte": "100",
+    page: String(page),
+  });
+  const results = await upsertSummaries(db, data.results ?? []);
+  return {
+    results: await withoutUserShows(db, userId, results),
+    totalPages: data.total_pages ?? 0,
+  };
+}
+
+// F18(f): yalnızca ilk sayfa (en fazla 20 dizi).
+async function recommendations(db: SupabaseClient, userId: string, showId: number) {
+  const data = await tmdb(`/tv/${showId}/recommendations`);
+  const results = await upsertSummaries(db, data.results ?? []);
+  return { results: await withoutUserShows(db, userId, results) };
+}
+
+// Öneriler çağıranın listesindeki dizileri içermez (§3.5).
+async function withoutUserShows<T extends { id: number }>(
+  db: SupabaseClient,
+  userId: string,
+  results: T[],
+) {
+  const { data, error } = await db.from("user_shows").select("show_id").eq("user_id", userId);
+  if (error) throw error;
+  const mine = new Set(data.map((row) => row.show_id));
+  return results.filter((show) => !mine.has(show.id));
 }
 
 async function cachedShow(db: SupabaseClient, showId: number) {

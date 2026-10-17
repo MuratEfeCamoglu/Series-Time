@@ -15,6 +15,7 @@ class Show {
     this.numberOfSeasons,
     this.numberOfEpisodes,
     this.defaultRuntime,
+    this.genreIds = const [],
   });
 
   factory Show.fromJson(Map<String, dynamic> json) => Show(
@@ -29,6 +30,9 @@ class Show {
     numberOfSeasons: json['number_of_seasons'] as int?,
     numberOfEpisodes: json['number_of_episodes'] as int?,
     defaultRuntime: json['default_runtime'] as int?,
+    genreIds: [
+      for (final id in json['genre_ids'] as List? ?? const []) id as int,
+    ],
   );
 
   final int id;
@@ -42,6 +46,7 @@ class Show {
   final int? numberOfSeasons;
   final int? numberOfEpisodes;
   final int? defaultRuntime;
+  final List<int> genreIds;
 }
 
 /// `seasons` tablosu satırı.

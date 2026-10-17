@@ -13,6 +13,7 @@ import '../../../theme/app_spacing.dart';
 import '../logic.dart';
 import '../providers.dart';
 import '../widgets/show_result_tile.dart';
+import '../widgets/suggest_card.dart';
 import '../widgets/user_result_tile.dart';
 
 enum DiscoverMode { shows, users }
@@ -57,6 +58,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
       appBar: AppBar(title: Text(l10n.tabDiscover)),
       body: Column(
         children: [
+          const SuggestCard(),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
             child: SizedBox(

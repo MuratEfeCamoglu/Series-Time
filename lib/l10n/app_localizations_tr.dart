@@ -327,4 +327,92 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get episodeFeedbackSoon =>
       'Tepkiler, bölümün yıldızı ve yorumlar burada olacak.';
+
+  @override
+  String get profileNotifications => 'Bildirimler';
+
+  @override
+  String get profileShare => 'Profili paylaş';
+
+  @override
+  String profileShareText(String link) {
+    return 'Sezonluk\'ta izlediğim dizilere göz at: $link';
+  }
+
+  @override
+  String get statWatchTimeTitle => 'Dizi izleme süresi';
+
+  @override
+  String statWatchTimeValue(int months, int days, int hours) {
+    return '$months ay $days gün $hours saat';
+  }
+
+  @override
+  String get statEpisodesTitle => 'İzlenen bölüm';
+
+  @override
+  String get statFollowers => 'Takipçi';
+
+  @override
+  String get statFollowing => 'Takip';
+
+  @override
+  String get statBadges => 'Rozet';
+
+  @override
+  String get profileMyShows => 'Dizilerim';
+
+  @override
+  String get profileSeeAll => 'Tümü';
+
+  @override
+  String get profileNoShows => 'Henüz dizi eklenmemiş.';
+
+  @override
+  String get fieldCover => 'Kapak';
+
+  @override
+  String get coverNone => 'Otomatik';
+
+  @override
+  String get coverPickerTitle => 'Kapak seç';
+
+  @override
+  String get coverPickerHint =>
+      'Kapak, listendeki bir dizinin arka plan görselidir. Seçmezsen en son izlediğin dizi kullanılır.';
+
+  @override
+  String get coverPickerEmpty => 'Kapak seçmek için önce listene dizi ekle.';
+
+  @override
+  String get suggestCardTitle => 'Sana Özel Öneriler';
+
+  @override
+  String get suggestCardBody =>
+      'Sevdiğin kategorilere göre yeni diziler keşfet.';
+
+  @override
+  String get suggestTitle => 'Sana Özel Öneriler';
+
+  @override
+  String get suggestMaxGenres => 'En fazla 3 kategori seçebilirsin';
+
+  @override
+  String get suggestPickGenre => 'Öneri almak için en az bir kategori seç';
+
+  @override
+  String get suggestEmpty => 'Bu kategorilerde yeni öneri kalmadı';
+
+  @override
+  String get suggestByGenre => 'Seçtiğin kategorilerden';
+
+  @override
+  String suggestSimilarTitle(String name) {
+    return '$name izlediğin için';
+  }
+
+  @override
+  String suggestAddShow(String name) {
+    return '$name listene ekle';
+  }
 }

@@ -13,6 +13,7 @@ const _showRow = {
   'number_of_seasons': 8,
   'number_of_episodes': 73,
   'default_runtime': 60,
+  'genre_ids': [18, 10765],
   'last_synced_at': '2026-10-17T10:00:00+00:00',
 };
 
@@ -31,6 +32,7 @@ void main() {
     expect(show.numberOfSeasons, 8);
     expect(show.numberOfEpisodes, 73);
     expect(show.defaultRuntime, 60);
+    expect(show.genreIds, [18, 10765]);
   });
 
   test('Show.fromJson arama sonucundaki özet satırı kabul eder', () {
@@ -48,6 +50,7 @@ void main() {
     expect(show.firstAirDate, isNull);
     expect(show.status, isNull);
     expect(show.numberOfSeasons, isNull);
+    expect(show.genreIds, isEmpty);
   });
 
   test('Season.fromJson ve Episode.fromJson', () {

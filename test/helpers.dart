@@ -15,6 +15,8 @@ import 'package:sezonluk/features/shows/data/repository.dart';
 import 'package:sezonluk/features/shows/providers.dart';
 import 'package:sezonluk/features/social/data/repository.dart';
 import 'package:sezonluk/features/social/providers.dart';
+import 'package:sezonluk/features/suggest/data/repository.dart';
+import 'package:sezonluk/features/suggest/providers.dart';
 import 'package:sezonluk/features/tracking/data/repository.dart';
 import 'package:sezonluk/features/tracking/providers.dart';
 import 'package:sezonluk/main.dart';
@@ -29,6 +31,8 @@ class MockShowsRepository extends Mock implements ShowsRepository {}
 class MockSocialRepository extends Mock implements SocialRepository {}
 
 class MockTrackingRepository extends Mock implements TrackingRepository {}
+
+class MockSuggestRepository extends Mock implements SuggestRepository {}
 
 const testUserId = '11111111-1111-1111-1111-111111111111';
 
@@ -63,6 +67,11 @@ class TestBackend {
         .thenReturn('https://example.test/a.jpg');
     when(() => shows.fetchMyShows()).thenAnswer((_) async => const []);
     when(() => shows.trendingShows()).thenAnswer((_) async => const []);
+    when(() => profiles.fetchStats(any())).thenAnswer(
+      (_) async => const UserStats(watchedEpisodes: 0, watchMinutes: 0),
+    );
+    when(() => suggest.fetchGenres()).thenAnswer((_) async => const []);
+    when(() => suggest.topGenres()).thenAnswer((_) async => const []);
     when(() => tracking.fetchWatchlist()).thenAnswer((_) async => const []);
     when(() => tracking.fetchUpcoming(any())).thenAnswer((_) async => const []);
     when(() => tracking.fetchWatchedEpisodeIds(any()))
@@ -74,6 +83,7 @@ class TestBackend {
   final shows = MockShowsRepository();
   final social = MockSocialRepository();
   final tracking = MockTrackingRepository();
+  final suggest = MockSuggestRepository();
   late SharedPreferences preferences;
   final statusController = StreamController<AuthStatus>.broadcast();
 
@@ -100,6 +110,7 @@ class TestBackend {
           showsRepositoryProvider.overrideWithValue(shows),
           socialRepositoryProvider.overrideWithValue(social),
           trackingRepositoryProvider.overrideWithValue(tracking),
+          suggestRepositoryProvider.overrideWithValue(suggest),
           sharedPreferencesProvider.overrideWithValue(preferences),
         ],
         child: const SezonlukApp(),
