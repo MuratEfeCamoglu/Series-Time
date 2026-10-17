@@ -1803,6 +1803,60 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Varsayılan'**
   String get posterDefault;
+
+  /// No description provided for @tabNotifications.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bildirimler'**
+  String get tabNotifications;
+
+  /// No description provided for @notificationsMe.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ben'**
+  String get notificationsMe;
+
+  /// No description provided for @notificationsFriends.
+  ///
+  /// In tr, this message translates to:
+  /// **'Arkadaşlar'**
+  String get notificationsFriends;
+
+  /// No description provided for @friendsFeedEmpty.
+  ///
+  /// In tr, this message translates to:
+  /// **'Takip ettiğin kişilerin izlediği bölümler, puanları ve rozetleri burada görünür.'**
+  String get friendsFeedEmpty;
+
+  /// No description provided for @feedWatchedOne.
+  ///
+  /// In tr, this message translates to:
+  /// **'@{user} izledi: {show} · {code}'**
+  String feedWatchedOne(String user, String show, String code);
+
+  /// No description provided for @feedWatchedMany.
+  ///
+  /// In tr, this message translates to:
+  /// **'@{user} {count} bölüm izledi: {show}'**
+  String feedWatchedMany(String user, int count, String show);
+
+  /// No description provided for @feedRated.
+  ///
+  /// In tr, this message translates to:
+  /// **'@{user} puan verdi: {show} · {code} · {rating} ★'**
+  String feedRated(String user, String show, String code, String rating);
+
+  /// No description provided for @feedBadge.
+  ///
+  /// In tr, this message translates to:
+  /// **'@{user} \"{badge}\" rozetini kazandı'**
+  String feedBadge(String user, String badge);
+
+  /// No description provided for @unreadNotifications.
+  ///
+  /// In tr, this message translates to:
+  /// **'{count} okunmamış bildirim'**
+  String unreadNotifications(int count);
 }
 
 class _AppLocalizationsDelegate

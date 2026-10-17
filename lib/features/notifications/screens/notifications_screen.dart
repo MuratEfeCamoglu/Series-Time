@@ -10,40 +10,73 @@ import '../../../shared/widgets/error_view.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_text_styles.dart';
+import '../../../shared/widgets/guest_gate.dart';
+import '../../auth/providers.dart';
 import '../../profile/providers.dart';
 import '../../profile/widgets/profile_avatar.dart';
 import '../data/models.dart';
 import '../providers.dart';
+import '../widgets/friends_feed_tab.dart';
 
-/// `/notifications` (F13): son 90 gün, en yeniden eskiye. Açılınca hepsi okundu olur.
+/// Bildirimler sekmesi (F13f): **Ben** (son 90 gün, açılınca hepsi okundu) ve **Arkadaşlar**.
 class NotificationsScreen extends ConsumerWidget {
   const NotificationsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    return Scaffold(
-      appBar: AppBar(title: Text(l10n.notificationsTitle)),
-      body: ref
-          .watch(notificationsProvider)
-          .when(
-            data: (items) => items.isEmpty
-                ? EmptyState(
-                    message: l10n.notificationsEmpty,
-                    icon: Icons.notifications_none,
-                  )
-                : ListView.builder(
+    if (ref.watch(isGuestProvider)) {
+      return Scaffold(
+        appBar: AppBar(title: Text(l10n.tabNotifications)),
+        body: const GuestGate(),
+      );
+    }
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(l10n.tabNotifications),
+          bottom: TabBar(
+            tabs: [
+              Tab(text: l10n.notificationsMe),
+              Tab(text: l10n.notificationsFriends),
+            ],
+          ),
+        ),
+        body: const TabBarView(children: [_MeTab(), FriendsFeedTab()]),
+      ),
+    );
+  }
+}
+
+class _MeTab extends ConsumerWidget {
+  const _MeTab();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    return ref
+        .watch(notificationsProvider)
+        .when(
+          data: (items) => items.isEmpty
+              ? EmptyState(
+                  message: l10n.notificationsEmpty,
+                  icon: Icons.notifications_none,
+                )
+              : RefreshIndicator(
+                  onRefresh: () => ref.refresh(notificationsProvider.future),
+                  child: ListView.builder(
                     itemCount: items.length,
                     itemBuilder: (context, index) =>
                         _NotificationTile(notification: items[index]),
                   ),
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, _) => ErrorView(
-              error: error,
-              onRetry: () => ref.invalidate(notificationsProvider),
-            ),
+                ),
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (error, _) => ErrorView(
+            error: error,
+            onRetry: () => ref.invalidate(notificationsProvider),
           ),
-    );
+        );
   }
 }
 

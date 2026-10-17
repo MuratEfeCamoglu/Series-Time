@@ -139,3 +139,8 @@ final friendsActivityProvider =
     FutureProvider.autoDispose<List<FriendActivity>>(
       (ref) => ref.watch(socialRepositoryProvider).fetchFriendsActivity(),
     );
+
+/// F13(f): Bildirimler › Arkadaşlar.
+final friendsFeedProvider = FutureProvider.autoDispose<List<FriendFeedItem>>(
+  (ref) => ref.watch(socialRepositoryProvider).fetchFriendsFeed(),
+);

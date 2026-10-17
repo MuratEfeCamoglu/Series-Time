@@ -10,7 +10,7 @@ final notificationsRepositoryProvider = Provider<NotificationsRepository>(
   (ref) => NotificationsRepository(ref.watch(supabaseClientProvider)),
 );
 
-/// Profildeki zilin sayacı (F8b).
+/// Alt menüdeki Bildirimler sekmesinin sayacı (F13f).
 final unreadCountProvider = FutureProvider<int>((ref) async {
   if (!isRegistered(ref.watch(authStatusProvider))) return 0;
   return ref.read(notificationsRepositoryProvider).fetchUnreadCount();

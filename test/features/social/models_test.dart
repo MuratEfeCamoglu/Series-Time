@@ -73,4 +73,55 @@ void main() {
       );
     },
   );
+
+  test('FriendFeedItem.fromJson üç olay türünü ayrıştırır (F13f)', () {
+    final watched = FriendFeedItem.fromJson({
+      'kind': 'watched',
+      'user_id': 'u2',
+      'username': 'burak',
+      'avatar_path': 'u2/a.png',
+      'show_id': 1,
+      'show_name': 'Bir',
+      'poster_path': '/p.jpg',
+      'episode_id': 12,
+      'season_number': 1,
+      'episode_number': 2,
+      'episode_count': 3,
+      'rating': null,
+      'badge_code': null,
+      'happened_at': '2026-10-18T09:00:00Z',
+    });
+    expect(watched.kind, FriendFeedKind.watched);
+    expect(watched.username, 'burak');
+    expect(watched.avatarPath, 'u2/a.png');
+    expect(watched.showId, 1);
+    expect(watched.showName, 'Bir');
+    expect(watched.posterPath, '/p.jpg');
+    expect(watched.episodeId, 12);
+    expect(watched.seasonNumber, 1);
+    expect(watched.episodeNumber, 2);
+    expect(watched.episodeCount, 3);
+    expect(watched.happenedAt, DateTime.utc(2026, 10, 18, 9));
+    final rated = FriendFeedItem.fromJson({
+      'kind': 'rated',
+      'user_id': 'u2',
+      'username': 'burak',
+      'episode_id': 12,
+      'episode_count': 1,
+      'rating': 4,
+      'happened_at': '2026-10-18T09:00:00Z',
+    });
+    expect(rated.rating, 4.0);
+    final badge = FriendFeedItem.fromJson({
+      'kind': 'badge',
+      'user_id': 'u2',
+      'username': 'burak',
+      'episode_count': null,
+      'badge_code': 'first_episode',
+      'happened_at': '2026-10-18T09:00:00Z',
+    });
+    expect(badge.kind, FriendFeedKind.badge);
+    expect(badge.badgeCode, 'first_episode');
+    expect(badge.episodeCount, 1);
+  });
 }

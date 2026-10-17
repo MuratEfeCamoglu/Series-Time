@@ -11,13 +11,22 @@ Finder _navLabel(String text) =>
 
 void main() {
   testWidgets(
-    'uygulama açılınca 3 sekme etiketi görünür ve Diziler seçilidir',
+    'uygulama açılınca 4 sekme etiketi görünür ve Diziler seçilidir',
     (tester) async {
       await TestBackend().pumpApp(tester);
 
       expect(_navLabel('Diziler'), findsOneWidget);
       expect(_navLabel('Keşfet'), findsOneWidget);
+      expect(_navLabel('Bildirimler'), findsOneWidget);
       expect(_navLabel('Profil'), findsOneWidget);
+      // Bildirimler, Keşfet ile Profil arasında (F13f).
+      expect(
+        tester.getCenter(_navLabel('Bildirimler')).dx,
+        allOf(
+          greaterThan(tester.getCenter(_navLabel('Keşfet')).dx),
+          lessThan(tester.getCenter(_navLabel('Profil')).dx),
+        ),
+      );
       expect(find.byType(ShowsScreen), findsOneWidget);
     },
   );

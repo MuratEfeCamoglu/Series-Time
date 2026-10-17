@@ -90,3 +90,59 @@ class FriendActivity {
   final double? rating;
   final DateTime watchedAt;
 }
+
+enum FriendFeedKind { watched, rated, badge }
+
+/// `get_friends_feed()` satırı: Bildirimler › Arkadaşlar akışında bir olay (F13f).
+class FriendFeedItem {
+  const FriendFeedItem({
+    required this.kind,
+    required this.userId,
+    required this.username,
+    required this.happenedAt,
+    this.avatarPath,
+    this.showId,
+    this.showName,
+    this.posterPath,
+    this.episodeId,
+    this.seasonNumber,
+    this.episodeNumber,
+    this.episodeCount = 1,
+    this.rating,
+    this.badgeCode,
+  });
+
+  factory FriendFeedItem.fromJson(Map<String, dynamic> json) => FriendFeedItem(
+    kind: FriendFeedKind.values.byName(json['kind'] as String),
+    userId: json['user_id'] as String,
+    username: json['username'] as String,
+    avatarPath: json['avatar_path'] as String?,
+    showId: json['show_id'] as int?,
+    showName: json['show_name'] as String?,
+    posterPath: json['poster_path'] as String?,
+    episodeId: json['episode_id'] as int?,
+    seasonNumber: json['season_number'] as int?,
+    episodeNumber: json['episode_number'] as int?,
+    episodeCount: json['episode_count'] as int? ?? 1,
+    rating: (json['rating'] as num?)?.toDouble(),
+    badgeCode: json['badge_code'] as String?,
+    happenedAt: DateTime.parse(json['happened_at'] as String),
+  );
+
+  final FriendFeedKind kind;
+  final String userId;
+  final String username;
+  final String? avatarPath;
+  final int? showId;
+  final String? showName;
+  final String? posterPath;
+
+  /// İzlemede aynı gün izlenen son bölüm; puanda puanlanan bölüm.
+  final int? episodeId;
+  final int? seasonNumber;
+  final int? episodeNumber;
+  final int episodeCount;
+  final double? rating;
+  final String? badgeCode;
+  final DateTime happenedAt;
+}

@@ -44,6 +44,15 @@ class SocialRepository {
     ];
   });
 
+  /// F13(f): Bildirimler › Arkadaşlar akışı.
+  Future<List<FriendFeedItem>> fetchFriendsFeed() => _guard(() async {
+    final rows = await _client.rpc('get_friends_feed') as List;
+    return [
+      for (final row in rows)
+        FriendFeedItem.fromJson(row as Map<String, dynamic>),
+    ];
+  });
+
   Future<ProfileCounts> fetchCounts(String userId) => _guard(() async {
     final rows = await _client.rpc(
       'get_profile_counts',

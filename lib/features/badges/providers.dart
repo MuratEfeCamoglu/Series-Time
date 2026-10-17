@@ -22,3 +22,8 @@ final badgeShelfProvider = FutureProvider.autoDispose
       ).wait;
       return badgeShelf(all, earned);
     });
+
+/// Tüm rozet tanımları (Bildirimler › Arkadaşlar'da rozet adı için, F13f).
+final badgesProvider = FutureProvider.autoDispose<List<BadgeInfo>>(
+  (ref) => ref.watch(badgesRepositoryProvider).fetchBadges(),
+);

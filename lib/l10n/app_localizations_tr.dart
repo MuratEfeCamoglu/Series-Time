@@ -947,4 +947,42 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get posterDefault => 'Varsayılan';
+
+  @override
+  String get tabNotifications => 'Bildirimler';
+
+  @override
+  String get notificationsMe => 'Ben';
+
+  @override
+  String get notificationsFriends => 'Arkadaşlar';
+
+  @override
+  String get friendsFeedEmpty =>
+      'Takip ettiğin kişilerin izlediği bölümler, puanları ve rozetleri burada görünür.';
+
+  @override
+  String feedWatchedOne(String user, String show, String code) {
+    return '@$user izledi: $show · $code';
+  }
+
+  @override
+  String feedWatchedMany(String user, int count, String show) {
+    return '@$user $count bölüm izledi: $show';
+  }
+
+  @override
+  String feedRated(String user, String show, String code, String rating) {
+    return '@$user puan verdi: $show · $code · $rating ★';
+  }
+
+  @override
+  String feedBadge(String user, String badge) {
+    return '@$user \"$badge\" rozetini kazandı';
+  }
+
+  @override
+  String unreadNotifications(int count) {
+    return '$count okunmamış bildirim';
+  }
 }

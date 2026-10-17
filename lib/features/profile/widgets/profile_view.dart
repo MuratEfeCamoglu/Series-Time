@@ -14,8 +14,6 @@ import '../../../shared/widgets/section_header.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_text_styles.dart';
-import '../../notifications/logic.dart';
-import '../../notifications/providers.dart';
 import '../../shows/logic.dart';
 import '../../shows/providers.dart';
 import '../../social/providers.dart';
@@ -83,7 +81,6 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
           expandedHeight: AppSpacing.profileHeaderHeight,
           actions: [
             if (isMe) ...[
-              const _NotificationBell(),
               _ShareButton(username: profile.username),
               TextButton(
                 key: const Key('profile.edit'),
@@ -488,27 +485,6 @@ class _RecentActivity extends StatelessWidget {
   }
 }
 
-/// F8(b): sarı zil ve okunmamış bildirim sayısı (F13).
-class _NotificationBell extends ConsumerWidget {
-  const _NotificationBell();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final unread = ref.watch(unreadCountProvider).value ?? 0;
-    return IconButton(
-      key: const Key('profile.bell'),
-      tooltip: AppLocalizations.of(context).profileNotifications,
-      onPressed: () => context.push(AppRoutes.notifications),
-      icon: Badge(
-        label: Text(unreadBadgeLabel(unread)),
-        isLabelVisible: unread > 0,
-        child: const Icon(Icons.notifications, color: AppColors.accent),
-      ),
-    );
-  }
-}
-
-/// F8(i): genel bağlantı simgesi ve servis adı; marka logosu kullanılmaz.
 class _Links extends StatelessWidget {
   const _Links({required this.profile});
 

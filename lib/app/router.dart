@@ -187,10 +187,6 @@ final routerProvider = Provider<GoRouter>((ref) {
             BadgesScreen(username: state.uri.queryParameters['user']),
       ),
       GoRoute(
-        path: AppRoutes.notifications,
-        builder: (context, state) => const NotificationsScreen(),
-      ),
-      GoRoute(
         path: '/episode/:id',
         redirect: (context, state) =>
             _intParam(state, 'id') == null ? AppRoutes.shows : null,
@@ -214,6 +210,15 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: AppRoutes.discover,
                 builder: (context, state) => const DiscoverScreen(),
+              ),
+            ],
+          ),
+          // F13(f): Bildirimler, Keşfet ile Profil arasında.
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.notifications,
+                builder: (context, state) => const NotificationsScreen(),
               ),
             ],
           ),

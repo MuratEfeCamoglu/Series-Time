@@ -544,5 +544,73 @@
   },
   "posterPickerTitle": "Afiş",
   "posterPickerEmpty": "Bu dizinin başka afişi yok.",
-  "posterDefault": "Varsayılan"
+  "posterDefault": "Varsayılan",
+  "tabNotifications": "Bildirimler",
+  "notificationsMe": "Ben",
+  "notificationsFriends": "Arkadaşlar",
+  "friendsFeedEmpty": "Takip ettiğin kişilerin izlediği bölümler, puanları ve rozetleri burada görünür.",
+  "feedWatchedOne": "@{user} izledi: {show} · {code}",
+  "@feedWatchedOne": {
+    "placeholders": {
+      "user": {
+        "type": "String"
+      },
+      "show": {
+        "type": "String"
+      },
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "feedWatchedMany": "@{user} {count} bölüm izledi: {show}",
+  "@feedWatchedMany": {
+    "placeholders": {
+      "user": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      },
+      "show": {
+        "type": "String"
+      }
+    }
+  },
+  "feedRated": "@{user} puan verdi: {show} · {code} · {rating} ★",
+  "@feedRated": {
+    "placeholders": {
+      "user": {
+        "type": "String"
+      },
+      "show": {
+        "type": "String"
+      },
+      "code": {
+        "type": "String"
+      },
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
+  "feedBadge": "@{user} \"{badge}\" rozetini kazandı",
+  "@feedBadge": {
+    "placeholders": {
+      "user": {
+        "type": "String"
+      },
+      "badge": {
+        "type": "String"
+      }
+    }
+  },
+  "unreadNotifications": "{count} okunmamış bildirim",
+  "@unreadNotifications": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

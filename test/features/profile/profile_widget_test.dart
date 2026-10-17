@@ -80,7 +80,7 @@ void main() {
   });
 
   testWidgets(
-    'soluk kapaklı başlık: solda avatar, sağında ad, tarih ve takipçi; zil (F8a, F8b, F8c, F8f)',
+    'soluk kapaklı başlık: solda avatar, sağında ad, tarih ve takipçi (F8a, F8c, F8f)',
     (tester) async {
       await _openProfile(tester);
 
@@ -115,7 +115,8 @@ void main() {
         ),
         findsOneWidget,
       );
-      expect(find.byIcon(Icons.notifications), findsOneWidget);
+      // Zil Bildirimler sekmesine taşındı (F13f).
+      expect(find.byKey(const Key('profile.bell')), findsNothing);
       await tester.scrollUntilVisible(
         find.text('Rozet'),
         300,

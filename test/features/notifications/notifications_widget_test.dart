@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:sezonluk/features/badges/data/models.dart';
 import 'package:sezonluk/features/badges/screens/badges_screen.dart';
+import 'package:sezonluk/features/episode_feedback/screens/episode_screen.dart';
 import 'package:sezonluk/features/notifications/data/models.dart';
 import 'package:sezonluk/features/notifications/screens/notifications_screen.dart';
 import 'package:sezonluk/features/social/data/models.dart';
@@ -53,7 +54,7 @@ void main() {
   });
 
   testWidgets(
-    'zilde okunmamış sayısı; ekran açılınca hepsi okundu ve sayaç sıfırlanır (F8b, F13c)',
+    'sekmede okunmamış sayısı; Ben açılınca hepsi okundu ve sayaç sıfırlanır (F13c, F13f)',
     (tester) async {
       final backend = await _openProfile(
         tester,
@@ -83,9 +84,11 @@ void main() {
           ),
         ],
       );
+      // Zil artık alt menüde (F13f); profilde zil yok.
+      expect(find.byKey(const Key('profile.bell')), findsNothing);
       expect(
         find.descendant(
-          of: find.byKey(const Key('profile.bell')),
+          of: find.byKey(const Key('nav.notifications')),
           matching: find.text('2'),
         ),
         findsOneWidget,
@@ -93,7 +96,7 @@ void main() {
 
       when(() => backend.notifications.fetchUnreadCount())
           .thenAnswer((_) async => 0);
-      await tester.tap(find.byKey(const Key('profile.bell')));
+      await tester.tap(_navLabel('Bildirimler'));
       await tester.pumpAndSettle();
 
       expect(find.byType(NotificationsScreen), findsOneWidget);
@@ -102,11 +105,9 @@ void main() {
       expect(find.text('"İlk Bölüm" rozetini kazandın!'), findsOneWidget);
       verify(() => backend.notifications.markAllRead()).called(1);
 
-      Navigator.of(tester.element(find.byType(NotificationsScreen))).pop();
-      await tester.pumpAndSettle();
       expect(
         find.descendant(
-          of: find.byKey(const Key('profile.bell')),
+          of: find.byKey(const Key('nav.notifications')),
           matching: find.text('2'),
         ),
         findsNothing,
@@ -116,7 +117,7 @@ void main() {
 
   testWidgets('bildirim yoksa boş durum (F13d)', (tester) async {
     await _openProfile(tester);
-    await tester.tap(find.byKey(const Key('profile.bell')));
+    await tester.tap(_navLabel('Bildirimler'));
     await tester.pumpAndSettle();
 
     expect(find.text('Son 90 günde bildirim yok.'), findsOneWidget);
@@ -166,4 +167,85 @@ void main() {
       expect(titles, ['İlk Bölüm', 'Koleksiyoncu']);
     },
   );
+
+  testWidgets(
+    'Arkadaşlar: izleme, puan ve rozet olayları; dokununca bölüm açılır (F13f)',
+    (tester) async {
+      final backend = await _openProfile(tester);
+      when(() => backend.badges.fetchBadges()).thenAnswer(
+        (_) async => const [
+          BadgeInfo(
+            code: 'first_episode',
+            name: 'İlk Bölüm',
+            description: 'koşul',
+            icon: 'badge_first_episode',
+          ),
+        ],
+      );
+      when(() => backend.social.fetchFriendsFeed()).thenAnswer(
+        (_) async => [
+          FriendFeedItem(
+            kind: FriendFeedKind.watched,
+            userId: 'u2',
+            username: 'burak',
+            showId: 1399,
+            showName: 'Taht Oyunları',
+            episodeId: 100,
+            seasonNumber: 1,
+            episodeNumber: 3,
+            episodeCount: 3,
+            happenedAt: DateTime.utc(2026, 10, 18, 12),
+          ),
+          FriendFeedItem(
+            kind: FriendFeedKind.rated,
+            userId: 'u2',
+            username: 'burak',
+            showId: 1399,
+            showName: 'Taht Oyunları',
+            episodeId: 100,
+            seasonNumber: 1,
+            episodeNumber: 1,
+            rating: 4.5,
+            happenedAt: DateTime.utc(2026, 10, 18, 11),
+          ),
+          FriendFeedItem(
+            kind: FriendFeedKind.badge,
+            userId: 'u2',
+            username: 'burak',
+            badgeCode: 'first_episode',
+            happenedAt: DateTime.utc(2026, 10, 18, 10),
+          ),
+        ],
+      );
+      await tester.tap(_navLabel('Bildirimler'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Arkadaşlar'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('@burak 3 bölüm izledi: Taht Oyunları'), findsOneWidget);
+      expect(
+        find.text('@burak puan verdi: Taht Oyunları · S01 | B01 · 4,5 ★'),
+        findsOneWidget,
+      );
+      expect(find.text('@burak "İlk Bölüm" rozetini kazandı'), findsOneWidget);
+
+      await tester.tap(find.text('@burak 3 bölüm izledi: Taht Oyunları'));
+      await tester.pumpAndSettle();
+      expect(find.byType(EpisodeScreen), findsOneWidget);
+    },
+  );
+
+  testWidgets('takip edilen yoksa Arkadaşlar boş durumu (F13f)', (
+    tester,
+  ) async {
+    await _openProfile(tester);
+    await tester.tap(_navLabel('Bildirimler'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Arkadaşlar'));
+    await tester.pumpAndSettle();
+    expect(
+      find.textContaining('Takip ettiğin kişilerin izlediği bölümler'),
+      findsOneWidget,
+    );
+  });
 }
