@@ -7,11 +7,15 @@ import 'package:sezonluk/core/preferences.dart';
 import 'package:sezonluk/features/auth/data/repository.dart';
 import 'package:sezonluk/features/auth/logic.dart';
 import 'package:sezonluk/features/auth/providers.dart';
+import 'package:sezonluk/features/badges/data/repository.dart';
+import 'package:sezonluk/features/badges/providers.dart';
 import 'package:sezonluk/features/episode_feedback/data/models.dart';
 import 'package:sezonluk/features/episode_feedback/data/repository.dart';
 import 'package:sezonluk/features/episode_feedback/providers.dart';
 import 'package:sezonluk/features/moderation/data/repository.dart';
 import 'package:sezonluk/features/moderation/providers.dart';
+import 'package:sezonluk/features/notifications/data/repository.dart';
+import 'package:sezonluk/features/notifications/providers.dart';
 import 'package:sezonluk/features/profile/data/models.dart';
 import 'package:sezonluk/features/profile/data/repository.dart';
 import 'package:sezonluk/features/profile/providers.dart';
@@ -19,6 +23,7 @@ import 'package:sezonluk/features/shows/data/models.dart';
 import 'package:sezonluk/features/shows/data/repository.dart';
 import 'package:sezonluk/features/shows/providers.dart';
 import 'package:sezonluk/features/social/data/repository.dart';
+import 'package:sezonluk/features/social/data/models.dart';
 import 'package:sezonluk/features/social/providers.dart';
 import 'package:sezonluk/features/suggest/data/repository.dart';
 import 'package:sezonluk/features/suggest/providers.dart';
@@ -43,6 +48,11 @@ class MockEpisodeFeedbackRepository extends Mock
     implements EpisodeFeedbackRepository {}
 
 class MockModerationRepository extends Mock implements ModerationRepository {}
+
+class MockNotificationsRepository extends Mock
+    implements NotificationsRepository {}
+
+class MockBadgesRepository extends Mock implements BadgesRepository {}
 
 const testUserId = '11111111-1111-1111-1111-111111111111';
 
@@ -110,6 +120,17 @@ class TestBackend {
         .thenAnswer((_) async => const []);
     when(() => moderation.fetchBlockedUsers())
         .thenAnswer((_) async => const []);
+    when(() => social.currentUserId).thenReturn(testUserId);
+    when(() => social.fetchCounts(any())).thenAnswer(
+      (_) async => const ProfileCounts(followers: 0, following: 0, badges: 0),
+    );
+    when(() => social.isFollowing(any())).thenAnswer((_) async => false);
+    when(() => notifications.fetchUnreadCount()).thenAnswer((_) async => 0);
+    when(() => notifications.fetchNotifications())
+        .thenAnswer((_) async => const []);
+    when(() => notifications.markAllRead()).thenAnswer((_) async {});
+    when(() => badges.fetchBadges()).thenAnswer((_) async => const []);
+    when(() => badges.fetchEarned(any())).thenAnswer((_) async => const []);
     when(() => suggest.topGenres()).thenAnswer((_) async => const []);
     when(() => tracking.fetchWatchlist()).thenAnswer((_) async => const []);
     when(() => tracking.fetchUpcoming(any())).thenAnswer((_) async => const []);
@@ -125,6 +146,8 @@ class TestBackend {
   final suggest = MockSuggestRepository();
   final feedback = MockEpisodeFeedbackRepository();
   final moderation = MockModerationRepository();
+  final notifications = MockNotificationsRepository();
+  final badges = MockBadgesRepository();
   late SharedPreferences preferences;
   final statusController = StreamController<AuthStatus>.broadcast();
 
@@ -154,6 +177,8 @@ class TestBackend {
           suggestRepositoryProvider.overrideWithValue(suggest),
           episodeFeedbackRepositoryProvider.overrideWithValue(feedback),
           moderationRepositoryProvider.overrideWithValue(moderation),
+          notificationsRepositoryProvider.overrideWithValue(notifications),
+          badgesRepositoryProvider.overrideWithValue(badges),
           sharedPreferencesProvider.overrideWithValue(preferences),
         ],
         child: const SezonlukApp(),

@@ -560,4 +560,63 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get unblock => 'Engeli kaldır';
+
+  @override
+  String get follow => 'Takip et';
+
+  @override
+  String get following => 'Takip ediliyor';
+
+  @override
+  String get profileMenu => 'Profil seçenekleri';
+
+  @override
+  String get followersTitle => 'Takipçiler';
+
+  @override
+  String get followingTitle => 'Takip edilenler';
+
+  @override
+  String get followersEmpty => 'Henüz takipçi yok.';
+
+  @override
+  String get followingEmpty => 'Henüz kimse takip edilmiyor.';
+
+  @override
+  String get userShowsTitle => 'Diziler';
+
+  @override
+  String get notificationsTitle => 'Bildirimler';
+
+  @override
+  String get notificationsEmpty => 'Son 90 günde bildirim yok.';
+
+  @override
+  String notificationNewFollower(String name) {
+    return '$name seni takip etmeye başladı.';
+  }
+
+  @override
+  String notificationCommentLiked(String name) {
+    return '$name yorumunu beğendi.';
+  }
+
+  @override
+  String notificationBadgeEarned(String badge) {
+    return '\"$badge\" rozetini kazandın!';
+  }
+
+  @override
+  String get notificationDeletedUser => 'Bir kullanıcı';
+
+  @override
+  String get badgesTitle => 'Rozetler';
+
+  @override
+  String badgeEarnedOn(String date) {
+    return '$date tarihinde kazanıldı';
+  }
+
+  @override
+  String get badgeLocked => 'Henüz kazanılmadı';
 }

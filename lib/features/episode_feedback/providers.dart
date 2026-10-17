@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/supabase_client.dart';
+import '../notifications/providers.dart';
+import '../social/providers.dart';
 import 'data/models.dart';
 import 'data/repository.dart';
 import 'logic.dart';
@@ -176,6 +178,10 @@ class CommentsNotifier extends AsyncNotifier<CommentsState> {
   /// hata [AppFailure] olarak ekrana döner.
   Future<void> post({required String body, required bool isSpoiler}) async {
     await _repository.postComment(episodeId, body: body, isSpoiler: isSpoiler);
+    // İlk yorum rozeti ve bildirimi (F14, F13) gelmiş olabilir.
+    ref
+      ..invalidate(profileCountsProvider)
+      ..invalidate(unreadCountProvider);
     final first = await _repository.fetchComments(episodeId);
     state = AsyncData(
       CommentsState(comments: first, hasMore: hasMoreComments(first.length)),

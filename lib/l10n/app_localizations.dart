@@ -1119,6 +1119,108 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Engeli kaldır'**
   String get unblock;
+
+  /// No description provided for @follow.
+  ///
+  /// In tr, this message translates to:
+  /// **'Takip et'**
+  String get follow;
+
+  /// No description provided for @following.
+  ///
+  /// In tr, this message translates to:
+  /// **'Takip ediliyor'**
+  String get following;
+
+  /// No description provided for @profileMenu.
+  ///
+  /// In tr, this message translates to:
+  /// **'Profil seçenekleri'**
+  String get profileMenu;
+
+  /// No description provided for @followersTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Takipçiler'**
+  String get followersTitle;
+
+  /// No description provided for @followingTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Takip edilenler'**
+  String get followingTitle;
+
+  /// No description provided for @followersEmpty.
+  ///
+  /// In tr, this message translates to:
+  /// **'Henüz takipçi yok.'**
+  String get followersEmpty;
+
+  /// No description provided for @followingEmpty.
+  ///
+  /// In tr, this message translates to:
+  /// **'Henüz kimse takip edilmiyor.'**
+  String get followingEmpty;
+
+  /// No description provided for @userShowsTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Diziler'**
+  String get userShowsTitle;
+
+  /// No description provided for @notificationsTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bildirimler'**
+  String get notificationsTitle;
+
+  /// No description provided for @notificationsEmpty.
+  ///
+  /// In tr, this message translates to:
+  /// **'Son 90 günde bildirim yok.'**
+  String get notificationsEmpty;
+
+  /// No description provided for @notificationNewFollower.
+  ///
+  /// In tr, this message translates to:
+  /// **'{name} seni takip etmeye başladı.'**
+  String notificationNewFollower(String name);
+
+  /// No description provided for @notificationCommentLiked.
+  ///
+  /// In tr, this message translates to:
+  /// **'{name} yorumunu beğendi.'**
+  String notificationCommentLiked(String name);
+
+  /// No description provided for @notificationBadgeEarned.
+  ///
+  /// In tr, this message translates to:
+  /// **'\"{badge}\" rozetini kazandın!'**
+  String notificationBadgeEarned(String badge);
+
+  /// No description provided for @notificationDeletedUser.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bir kullanıcı'**
+  String get notificationDeletedUser;
+
+  /// No description provided for @badgesTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Rozetler'**
+  String get badgesTitle;
+
+  /// No description provided for @badgeEarnedOn.
+  ///
+  /// In tr, this message translates to:
+  /// **'{date} tarihinde kazanıldı'**
+  String badgeEarnedOn(String date);
+
+  /// No description provided for @badgeLocked.
+  ///
+  /// In tr, this message translates to:
+  /// **'Henüz kazanılmadı'**
+  String get badgeLocked;
 }
 
 class _AppLocalizationsDelegate

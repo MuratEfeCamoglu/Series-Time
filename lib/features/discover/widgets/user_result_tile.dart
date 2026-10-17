@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../app/router.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_text_styles.dart';
 import '../../profile/data/models.dart';
 import '../../profile/providers.dart';
 import '../../profile/widgets/profile_avatar.dart';
 
-/// Kullanıcı arama sonucu satırı. Profil sayfası (`/user/:username`) Aşama 6'da (F12) bağlanır.
+/// Kullanıcı arama sonucu satırı; dokununca profili açar (F12a).
 class UserResultTile extends ConsumerWidget {
   const UserResultTile({super.key, required this.profile});
 
@@ -29,6 +31,7 @@ class UserResultTile extends ConsumerWidget {
         '@${profile.username}',
         style: AppTextStyles.bodySecondary,
       ),
+      onTap: () => context.push(AppRoutes.userProfile(profile.username)),
     );
   }
 }

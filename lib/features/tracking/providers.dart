@@ -4,7 +4,9 @@ import '../../core/preferences.dart';
 import '../../core/supabase_client.dart';
 import '../auth/logic.dart';
 import '../auth/providers.dart';
+import '../notifications/providers.dart';
 import '../profile/providers.dart';
+import '../social/providers.dart';
 import '../shows/data/models.dart';
 import '../shows/providers.dart';
 import 'data/models.dart';
@@ -41,9 +43,12 @@ class WatchlistNotifier extends AsyncNotifier<List<WatchlistItem>> {
       state = AsyncData(previous);
       rethrow;
     }
+    // Rozet (F14) ve rozet bildirimi (F13) işaretlemeyle gelebilir.
     ref
       ..invalidate(watchedEpisodesProvider(item.showId))
-      ..invalidate(userStatsProvider);
+      ..invalidate(userStatsProvider)
+      ..invalidate(profileCountsProvider)
+      ..invalidate(unreadCountProvider);
     state = AsyncData(await repository.fetchWatchlist());
   }
 }
@@ -120,7 +125,9 @@ class WatchedEpisodesNotifier extends AsyncNotifier<Set<int>> {
     ref
       ..invalidate(watchlistProvider)
       ..invalidate(myShowsProvider)
-      ..invalidate(userStatsProvider);
+      ..invalidate(userStatsProvider)
+      ..invalidate(profileCountsProvider)
+      ..invalidate(unreadCountProvider);
   }
 }
 

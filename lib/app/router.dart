@@ -8,14 +8,19 @@ import '../features/auth/screens/forgot_password_screen.dart';
 import '../features/auth/screens/reset_password_screen.dart';
 import '../features/auth/screens/sign_in_screen.dart';
 import '../features/auth/screens/sign_up_screen.dart';
+import '../features/badges/screens/badges_screen.dart';
 import '../features/discover/screens/discover_screen.dart';
 import '../features/moderation/screens/blocked_users_screen.dart';
+import '../features/notifications/screens/notifications_screen.dart';
 import '../features/episode_feedback/screens/episode_screen.dart';
 import '../features/profile/screens/edit_profile_screen.dart';
 import '../features/profile/screens/profile_screen.dart';
+import '../features/profile/screens/user_profile_screen.dart';
 import '../features/profile/screens/user_shows_screen.dart';
 import '../features/settings/screens/settings_screen.dart';
 import '../features/shows/screens/season_screen.dart';
+import '../features/social/logic.dart';
+import '../features/social/screens/follow_list_screen.dart';
 import '../features/shows/screens/show_detail_screen.dart';
 import '../features/suggest/screens/suggest_screen.dart';
 import '../features/tracking/screens/shows_screen.dart';
@@ -38,7 +43,15 @@ abstract final class AppRoutes {
   static String season(int showId, int seasonNumber) =>
       '/show/$showId/season/$seasonNumber';
   static String episode(int episodeId) => '/episode/$episodeId';
+  static String userProfile(String username) => '/user/$username';
   static String userShows(String username) => '/user/$username/shows';
+  static String followers(String username) => '/user/$username/followers';
+  static String following(String username) => '/user/$username/following';
+  static const notifications = '/notifications';
+
+  /// Rozet rafı; [username] verilmezse oturum sahibininki.
+  static String badges([String? username]) =>
+      username == null ? '/badges' : '/badges?user=$username';
 }
 
 const _authRoutes = {
@@ -124,11 +137,40 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.suggest,
         builder: (context, state) => const SuggestScreen(),
       ),
-      // `/user/:username` profil ekranı Aşama 6'da (F12) gelir.
       GoRoute(
-        path: '/user/:username/shows',
+        path: '/user/:username',
         builder: (context, state) =>
-            UserShowsScreen(username: state.pathParameters['username']!),
+            UserProfileScreen(username: state.pathParameters['username']!),
+        routes: [
+          GoRoute(
+            path: 'shows',
+            builder: (context, state) =>
+                UserShowsScreen(username: state.pathParameters['username']!),
+          ),
+          GoRoute(
+            path: 'followers',
+            builder: (context, state) => FollowListScreen(
+              username: state.pathParameters['username']!,
+              list: FollowList.followers,
+            ),
+          ),
+          GoRoute(
+            path: 'following',
+            builder: (context, state) => FollowListScreen(
+              username: state.pathParameters['username']!,
+              list: FollowList.following,
+            ),
+          ),
+        ],
+      ),
+      GoRoute(
+        path: '/badges',
+        builder: (context, state) =>
+            BadgesScreen(username: state.uri.queryParameters['user']),
+      ),
+      GoRoute(
+        path: AppRoutes.notifications,
+        builder: (context, state) => const NotificationsScreen(),
       ),
       GoRoute(
         path: '/episode/:id',

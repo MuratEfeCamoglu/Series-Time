@@ -279,5 +279,50 @@
   },
   "blockedUsersTitle": "Engellenenler",
   "blockedUsersEmpty": "Kimseyi engellemedin.",
-  "unblock": "Engeli kaldır"
+  "unblock": "Engeli kaldır",
+  "follow": "Takip et",
+  "following": "Takip ediliyor",
+  "profileMenu": "Profil seçenekleri",
+  "followersTitle": "Takipçiler",
+  "followingTitle": "Takip edilenler",
+  "followersEmpty": "Henüz takipçi yok.",
+  "followingEmpty": "Henüz kimse takip edilmiyor.",
+  "userShowsTitle": "Diziler",
+  "notificationsTitle": "Bildirimler",
+  "notificationsEmpty": "Son 90 günde bildirim yok.",
+  "notificationNewFollower": "{name} seni takip etmeye başladı.",
+  "@notificationNewFollower": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationCommentLiked": "{name} yorumunu beğendi.",
+  "@notificationCommentLiked": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationBadgeEarned": "\"{badge}\" rozetini kazandın!",
+  "@notificationBadgeEarned": {
+    "placeholders": {
+      "badge": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationDeletedUser": "Bir kullanıcı",
+  "badgesTitle": "Rozetler",
+  "badgeEarnedOn": "{date} tarihinde kazanıldı",
+  "@badgeEarnedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "badgeLocked": "Henüz kazanılmadı"
 }

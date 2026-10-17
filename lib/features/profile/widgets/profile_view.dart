@@ -12,14 +12,19 @@ import '../../../theme/app_colors.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_text_styles.dart';
 import '../../shows/data/models.dart';
+import '../../notifications/logic.dart';
+import '../../notifications/providers.dart';
 import '../../shows/providers.dart';
+import '../../social/providers.dart';
+import '../../social/widgets/follow_button.dart';
 import '../data/models.dart';
 import '../logic.dart';
 import '../providers.dart';
+import 'profile_actions_menu.dart';
 import 'profile_avatar.dart';
 
-/// F8 profil düzeni. Başka kullanıcının profili de (F12, Aşama 6) bu düzeni kullanır;
-/// o zaman "Düzenle" yerine "Takip et" gelir.
+/// F8 profil düzeni. Başka kullanıcının profili de (F12) bu düzeni kullanır; o zaman
+/// "Düzenle" yerine "Takip et", zil yerine şikayet/engelle menüsü gelir.
 class ProfileView extends ConsumerWidget {
   const ProfileView({super.key, required this.profile, required this.isMe});
 
@@ -44,14 +49,15 @@ class ProfileView extends ConsumerWidget {
           pinned: true,
           expandedHeight: AppSpacing.profileCoverHeight,
           actions: [
-            // F8(b): zil; okunmamış bildirim sayısı Aşama 6'da (F13) bağlanır.
-            const _NotificationBell(unreadCount: 0),
-            if (isMe)
+            if (isMe) ...[
+              const _NotificationBell(),
               IconButton(
                 tooltip: l10n.settingsTitle,
                 icon: const Icon(Icons.settings_outlined),
                 onPressed: () => context.push(AppRoutes.settings),
               ),
+            ] else
+              ProfileActionsMenu(profile: profile),
           ],
           flexibleSpace: FlexibleSpaceBar(
             collapseMode: CollapseMode.parallax,
@@ -106,22 +112,21 @@ class ProfileView extends ConsumerWidget {
   }
 }
 
-class _NotificationBell extends StatelessWidget {
-  const _NotificationBell({required this.unreadCount});
-
-  final int unreadCount;
+/// F8(b): sarı zil ve okunmamış bildirim sayısı (F13).
+class _NotificationBell extends ConsumerWidget {
+  const _NotificationBell();
 
   @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      label: AppLocalizations.of(context).profileNotifications,
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.sm),
-        child: Badge.count(
-          count: unreadCount,
-          isLabelVisible: unreadCount > 0,
-          child: const Icon(Icons.notifications, color: AppColors.accent),
-        ),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final unread = ref.watch(unreadCountProvider).value ?? 0;
+    return IconButton(
+      key: const Key('profile.bell'),
+      tooltip: AppLocalizations.of(context).profileNotifications,
+      onPressed: () => context.push(AppRoutes.notifications),
+      icon: Badge(
+        label: Text(unreadBadgeLabel(unread)),
+        isLabelVisible: unread > 0,
+        child: const Icon(Icons.notifications, color: AppColors.accent),
       ),
     );
   }
@@ -184,16 +189,48 @@ class _Header extends ConsumerWidget {
           OutlinedButton(
             onPressed: () => context.push(AppRoutes.editProfile),
             child: Text(l10n.profileEdit),
-          ),
+          )
+        else
+          FollowButton(userId: profile.id),
         const SizedBox(height: AppSpacing.md),
-        // F8(f): sayılar ve listeleri Aşama 6'da (F12, F14) bağlanır; şimdilik 0.
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            _Count(value: 0, label: l10n.statFollowers),
-            _Count(value: 0, label: l10n.statFollowing),
-            _Count(value: 0, label: l10n.statBadges),
-          ],
+        _Counts(profile: profile, isMe: isMe),
+      ],
+    );
+  }
+}
+
+/// F8(f): takipçi, takip edilen ve rozet sayıları; dokununca ilgili liste açılır.
+class _Counts extends ConsumerWidget {
+  const _Counts({required this.profile, required this.isMe});
+
+  final Profile profile;
+  final bool isMe;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final counts = ref.watch(profileCountsProvider(profile.id)).value;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        _Count(
+          key: const Key('profile.followers'),
+          value: counts?.followers,
+          label: l10n.statFollowers,
+          onTap: () => context.push(AppRoutes.followers(profile.username)),
+        ),
+        _Count(
+          key: const Key('profile.following'),
+          value: counts?.following,
+          label: l10n.statFollowing,
+          onTap: () => context.push(AppRoutes.following(profile.username)),
+        ),
+        _Count(
+          key: const Key('profile.badges'),
+          value: counts?.badges,
+          label: l10n.statBadges,
+          onTap: () =>
+              context.push(AppRoutes.badges(isMe ? null : profile.username)),
         ),
       ],
     );
@@ -201,18 +238,35 @@ class _Header extends ConsumerWidget {
 }
 
 class _Count extends StatelessWidget {
-  const _Count({required this.value, required this.label});
+  const _Count({
+    super.key,
+    required this.value,
+    required this.label,
+    required this.onTap,
+  });
 
-  final int value;
+  /// null: yükleniyor.
+  final int? value;
   final String label;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text('$value', style: AppTextStyles.title),
-        Text(label, style: AppTextStyles.caption),
-      ],
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(AppSpacing.posterRadius),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(
+          minWidth: AppSpacing.minTapTarget * 2,
+          minHeight: AppSpacing.minTapTarget,
+        ),
+        child: Column(
+          children: [
+            Text(value == null ? '–' : '$value', style: AppTextStyles.title),
+            Text(label, style: AppTextStyles.caption),
+          ],
+        ),
+      ),
     );
   }
 }
