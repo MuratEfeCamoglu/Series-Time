@@ -18,6 +18,8 @@ String failureMessage(AppLocalizations l10n, Object error) {
     AppFailureType.rateLimited => l10n.errorRateLimited,
     AppFailureType.fileTooLarge => l10n.errorFileTooLarge,
     AppFailureType.tmdbUnavailable => l10n.errorTmdbUnavailable,
+    AppFailureType.commentRateLimited => l10n.errorCommentRateLimited,
+    AppFailureType.commentBannedWord => l10n.errorCommentBannedWord,
     AppFailureType.unknown => l10n.errorUnknown,
   };
 }

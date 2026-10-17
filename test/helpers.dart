@@ -7,6 +7,11 @@ import 'package:sezonluk/core/preferences.dart';
 import 'package:sezonluk/features/auth/data/repository.dart';
 import 'package:sezonluk/features/auth/logic.dart';
 import 'package:sezonluk/features/auth/providers.dart';
+import 'package:sezonluk/features/episode_feedback/data/models.dart';
+import 'package:sezonluk/features/episode_feedback/data/repository.dart';
+import 'package:sezonluk/features/episode_feedback/providers.dart';
+import 'package:sezonluk/features/moderation/data/repository.dart';
+import 'package:sezonluk/features/moderation/providers.dart';
 import 'package:sezonluk/features/profile/data/models.dart';
 import 'package:sezonluk/features/profile/data/repository.dart';
 import 'package:sezonluk/features/profile/providers.dart';
@@ -34,6 +39,11 @@ class MockTrackingRepository extends Mock implements TrackingRepository {}
 
 class MockSuggestRepository extends Mock implements SuggestRepository {}
 
+class MockEpisodeFeedbackRepository extends Mock
+    implements EpisodeFeedbackRepository {}
+
+class MockModerationRepository extends Mock implements ModerationRepository {}
+
 const testUserId = '11111111-1111-1111-1111-111111111111';
 
 final testProfile = Profile(
@@ -54,9 +64,24 @@ final testShow = Show(
   firstAirDate: DateTime.utc(2011, 4, 17),
 );
 
+/// Varsayılan Bölüm Sonrası ekranı bölümü (dizi 1399, S01B01).
+final testEpisodeInfo = EpisodeInfo(
+  episode: Episode(
+    id: 100,
+    showId: 1399,
+    seasonNumber: 1,
+    episodeNumber: 1,
+    name: 'Kış Geliyor',
+    airDate: DateTime.utc(2011, 4, 17),
+  ),
+  showName: 'Taht Oyunları',
+);
+
 /// Gerçek Supabase'e bağlanmadan uygulamayı açmak için taklit repository'ler.
 class TestBackend {
   TestBackend({AuthStatus initialStatus = AuthStatus.signedIn}) {
+    registerFallbackValue(DateTime.utc(2000));
+    registerFallbackValue(ReactionType.funny);
     when(() => auth.currentStatus).thenReturn(initialStatus);
     when(() => auth.currentUserId)
         .thenReturn(initialStatus == AuthStatus.signedOut ? null : testUserId);
@@ -71,6 +96,20 @@ class TestBackend {
       (_) async => const UserStats(watchedEpisodes: 0, watchMinutes: 0),
     );
     when(() => suggest.fetchGenres()).thenAnswer((_) async => const []);
+    when(() => feedback.currentUserId).thenReturn(testUserId);
+    when(() => feedback.fetchEpisodeInfo(any()))
+        .thenAnswer((invocation) async => testEpisodeInfo);
+    when(() => feedback.fetchMyReaction(any())).thenAnswer((_) async => null);
+    when(() => feedback.fetchReactionCounts(any()))
+        .thenAnswer((_) async => const {});
+    when(() => feedback.fetchCredits(any())).thenAnswer((_) async => const []);
+    when(() => feedback.fetchMyStarVote(any())).thenAnswer((_) async => null);
+    when(() => feedback.fetchStarStats(any()))
+        .thenAnswer((_) async => const []);
+    when(() => feedback.fetchComments(any(), before: any(named: 'before')))
+        .thenAnswer((_) async => const []);
+    when(() => moderation.fetchBlockedUsers())
+        .thenAnswer((_) async => const []);
     when(() => suggest.topGenres()).thenAnswer((_) async => const []);
     when(() => tracking.fetchWatchlist()).thenAnswer((_) async => const []);
     when(() => tracking.fetchUpcoming(any())).thenAnswer((_) async => const []);
@@ -84,6 +123,8 @@ class TestBackend {
   final social = MockSocialRepository();
   final tracking = MockTrackingRepository();
   final suggest = MockSuggestRepository();
+  final feedback = MockEpisodeFeedbackRepository();
+  final moderation = MockModerationRepository();
   late SharedPreferences preferences;
   final statusController = StreamController<AuthStatus>.broadcast();
 
@@ -111,6 +152,8 @@ class TestBackend {
           socialRepositoryProvider.overrideWithValue(social),
           trackingRepositoryProvider.overrideWithValue(tracking),
           suggestRepositoryProvider.overrideWithValue(suggest),
+          episodeFeedbackRepositoryProvider.overrideWithValue(feedback),
+          moderationRepositoryProvider.overrideWithValue(moderation),
           sharedPreferencesProvider.overrideWithValue(preferences),
         ],
         child: const SezonlukApp(),

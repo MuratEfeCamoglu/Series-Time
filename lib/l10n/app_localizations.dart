@@ -688,12 +688,6 @@ abstract class AppLocalizations {
   /// **'Bölüm'**
   String get episodeTitle;
 
-  /// No description provided for @episodeFeedbackSoon.
-  ///
-  /// In tr, this message translates to:
-  /// **'Tepkiler, bölümün yıldızı ve yorumlar burada olacak.'**
-  String get episodeFeedbackSoon;
-
   /// No description provided for @profileNotifications.
   ///
   /// In tr, this message translates to:
@@ -849,6 +843,282 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'{name} listene ekle'**
   String suggestAddShow(String name);
+
+  /// No description provided for @errorCommentRateLimited.
+  ///
+  /// In tr, this message translates to:
+  /// **'Çok hızlı yorum yapıyorsun. Biraz bekleyip tekrar dene.'**
+  String get errorCommentRateLimited;
+
+  /// No description provided for @errorCommentBannedWord.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yorumun uygunsuz bir ifade içeriyor.'**
+  String get errorCommentBannedWord;
+
+  /// No description provided for @reactionsTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu bölüm sana nasıl hissettirdi?'**
+  String get reactionsTitle;
+
+  /// No description provided for @reactionFunny.
+  ///
+  /// In tr, this message translates to:
+  /// **'Komik'**
+  String get reactionFunny;
+
+  /// No description provided for @reactionLove.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bayıldım'**
+  String get reactionLove;
+
+  /// No description provided for @reactionShocked.
+  ///
+  /// In tr, this message translates to:
+  /// **'Şok oldum'**
+  String get reactionShocked;
+
+  /// No description provided for @reactionSad.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hüzünlendim'**
+  String get reactionSad;
+
+  /// No description provided for @reactionAngry.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sinirlendim'**
+  String get reactionAngry;
+
+  /// No description provided for @reactionBored.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sıkıldım'**
+  String get reactionBored;
+
+  /// No description provided for @percent.
+  ///
+  /// In tr, this message translates to:
+  /// **'%{value}'**
+  String percent(int value);
+
+  /// No description provided for @starTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bölümün yıldızı'**
+  String get starTitle;
+
+  /// No description provided for @starNoCast.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu bölüm için oyuncu bilgisi yok'**
+  String get starNoCast;
+
+  /// No description provided for @starResultsTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'En çok oy alanlar'**
+  String get starResultsTitle;
+
+  /// No description provided for @starVoteFor.
+  ///
+  /// In tr, this message translates to:
+  /// **'{name} için oy ver'**
+  String starVoteFor(String name);
+
+  /// No description provided for @commentsTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yorumlar'**
+  String get commentsTitle;
+
+  /// No description provided for @commentHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yorumunu yaz'**
+  String get commentHint;
+
+  /// No description provided for @commentSpoilerSwitch.
+  ///
+  /// In tr, this message translates to:
+  /// **'Spoiler içeriyor'**
+  String get commentSpoilerSwitch;
+
+  /// No description provided for @commentSend.
+  ///
+  /// In tr, this message translates to:
+  /// **'Gönder'**
+  String get commentSend;
+
+  /// No description provided for @commentTooLong.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yorum 1–500 karakter olmalı.'**
+  String get commentTooLong;
+
+  /// No description provided for @commentsEmpty.
+  ///
+  /// In tr, this message translates to:
+  /// **'Henüz yorum yok. İlk yorumu sen yaz.'**
+  String get commentsEmpty;
+
+  /// No description provided for @commentsSpoilerGate.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu bölümü izlemedin, yorumlar spoiler içerebilir'**
+  String get commentsSpoilerGate;
+
+  /// No description provided for @commentsShowAnyway.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yine de göster'**
+  String get commentsShowAnyway;
+
+  /// No description provided for @commentSpoilerHidden.
+  ///
+  /// In tr, this message translates to:
+  /// **'Spoiler içeriyor — görmek için dokun'**
+  String get commentSpoilerHidden;
+
+  /// No description provided for @commentsLoadMore.
+  ///
+  /// In tr, this message translates to:
+  /// **'Daha fazla yorum'**
+  String get commentsLoadMore;
+
+  /// No description provided for @commentLike.
+  ///
+  /// In tr, this message translates to:
+  /// **'Beğen'**
+  String get commentLike;
+
+  /// No description provided for @commentUnlike.
+  ///
+  /// In tr, this message translates to:
+  /// **'Beğeniyi geri al'**
+  String get commentUnlike;
+
+  /// No description provided for @commentMenu.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yorum seçenekleri'**
+  String get commentMenu;
+
+  /// No description provided for @commentDelete.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sil'**
+  String get commentDelete;
+
+  /// No description provided for @commentDeleteConfirm.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yorumun silinsin mi?'**
+  String get commentDeleteConfirm;
+
+  /// No description provided for @report.
+  ///
+  /// In tr, this message translates to:
+  /// **'Şikayet et'**
+  String get report;
+
+  /// No description provided for @reportTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Şikayet nedeni'**
+  String get reportTitle;
+
+  /// No description provided for @reportReasonSpam.
+  ///
+  /// In tr, this message translates to:
+  /// **'Spam'**
+  String get reportReasonSpam;
+
+  /// No description provided for @reportReasonHarassment.
+  ///
+  /// In tr, this message translates to:
+  /// **'Taciz'**
+  String get reportReasonHarassment;
+
+  /// No description provided for @reportReasonSpoiler.
+  ///
+  /// In tr, this message translates to:
+  /// **'Spoiler'**
+  String get reportReasonSpoiler;
+
+  /// No description provided for @reportReasonInappropriate.
+  ///
+  /// In tr, this message translates to:
+  /// **'Uygunsuz içerik'**
+  String get reportReasonInappropriate;
+
+  /// No description provided for @reportReasonOther.
+  ///
+  /// In tr, this message translates to:
+  /// **'Diğer'**
+  String get reportReasonOther;
+
+  /// No description provided for @reportNoteHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Not (isteğe bağlı)'**
+  String get reportNoteHint;
+
+  /// No description provided for @reportSend.
+  ///
+  /// In tr, this message translates to:
+  /// **'Gönder'**
+  String get reportSend;
+
+  /// No description provided for @reportSent.
+  ///
+  /// In tr, this message translates to:
+  /// **'Şikayetin alındı. İnceleyeceğiz.'**
+  String get reportSent;
+
+  /// No description provided for @block.
+  ///
+  /// In tr, this message translates to:
+  /// **'Engelle'**
+  String get block;
+
+  /// No description provided for @blockConfirmTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'{name} engellensin mi?'**
+  String blockConfirmTitle(String name);
+
+  /// No description provided for @blockConfirmBody.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yorumlarını görmeyeceksin ve seni takip edemeyecek.'**
+  String get blockConfirmBody;
+
+  /// No description provided for @blockDone.
+  ///
+  /// In tr, this message translates to:
+  /// **'{name} engellendi.'**
+  String blockDone(String name);
+
+  /// No description provided for @blockedUsersTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Engellenenler'**
+  String get blockedUsersTitle;
+
+  /// No description provided for @blockedUsersEmpty.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kimseyi engellemedin.'**
+  String get blockedUsersEmpty;
+
+  /// No description provided for @unblock.
+  ///
+  /// In tr, this message translates to:
+  /// **'Engeli kaldır'**
+  String get unblock;
 }
 
 class _AppLocalizationsDelegate

@@ -35,4 +35,13 @@ abstract final class AppSpacing {
 
   /// Listenin sonuna bu kadar kala sonraki sayfa istenir.
   static const double loadMoreThreshold = 400;
+
+  /// Spoiler yorumun bulanıklığı (F11b).
+  static const double spoilerBlurSigma = 6;
+  static const double castPhotoSize = 64;
+  static const double castCardWidth = 88;
+  static const double castRowHeight = 150;
+  static const double reactionEmojiSize = 28;
+  static const double avatarSmall = 36;
+  static const double reactionTileAspectRatio = 1.4;
 }

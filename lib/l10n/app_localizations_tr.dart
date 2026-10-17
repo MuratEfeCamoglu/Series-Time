@@ -325,10 +325,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get episodeTitle => 'Bölüm';
 
   @override
-  String get episodeFeedbackSoon =>
-      'Tepkiler, bölümün yıldızı ve yorumlar burada olacak.';
-
-  @override
   String get profileNotifications => 'Bildirimler';
 
   @override
@@ -415,4 +411,153 @@ class AppLocalizationsTr extends AppLocalizations {
   String suggestAddShow(String name) {
     return '$name listene ekle';
   }
+
+  @override
+  String get errorCommentRateLimited =>
+      'Çok hızlı yorum yapıyorsun. Biraz bekleyip tekrar dene.';
+
+  @override
+  String get errorCommentBannedWord => 'Yorumun uygunsuz bir ifade içeriyor.';
+
+  @override
+  String get reactionsTitle => 'Bu bölüm sana nasıl hissettirdi?';
+
+  @override
+  String get reactionFunny => 'Komik';
+
+  @override
+  String get reactionLove => 'Bayıldım';
+
+  @override
+  String get reactionShocked => 'Şok oldum';
+
+  @override
+  String get reactionSad => 'Hüzünlendim';
+
+  @override
+  String get reactionAngry => 'Sinirlendim';
+
+  @override
+  String get reactionBored => 'Sıkıldım';
+
+  @override
+  String percent(int value) {
+    return '%$value';
+  }
+
+  @override
+  String get starTitle => 'Bölümün yıldızı';
+
+  @override
+  String get starNoCast => 'Bu bölüm için oyuncu bilgisi yok';
+
+  @override
+  String get starResultsTitle => 'En çok oy alanlar';
+
+  @override
+  String starVoteFor(String name) {
+    return '$name için oy ver';
+  }
+
+  @override
+  String get commentsTitle => 'Yorumlar';
+
+  @override
+  String get commentHint => 'Yorumunu yaz';
+
+  @override
+  String get commentSpoilerSwitch => 'Spoiler içeriyor';
+
+  @override
+  String get commentSend => 'Gönder';
+
+  @override
+  String get commentTooLong => 'Yorum 1–500 karakter olmalı.';
+
+  @override
+  String get commentsEmpty => 'Henüz yorum yok. İlk yorumu sen yaz.';
+
+  @override
+  String get commentsSpoilerGate =>
+      'Bu bölümü izlemedin, yorumlar spoiler içerebilir';
+
+  @override
+  String get commentsShowAnyway => 'Yine de göster';
+
+  @override
+  String get commentSpoilerHidden => 'Spoiler içeriyor — görmek için dokun';
+
+  @override
+  String get commentsLoadMore => 'Daha fazla yorum';
+
+  @override
+  String get commentLike => 'Beğen';
+
+  @override
+  String get commentUnlike => 'Beğeniyi geri al';
+
+  @override
+  String get commentMenu => 'Yorum seçenekleri';
+
+  @override
+  String get commentDelete => 'Sil';
+
+  @override
+  String get commentDeleteConfirm => 'Yorumun silinsin mi?';
+
+  @override
+  String get report => 'Şikayet et';
+
+  @override
+  String get reportTitle => 'Şikayet nedeni';
+
+  @override
+  String get reportReasonSpam => 'Spam';
+
+  @override
+  String get reportReasonHarassment => 'Taciz';
+
+  @override
+  String get reportReasonSpoiler => 'Spoiler';
+
+  @override
+  String get reportReasonInappropriate => 'Uygunsuz içerik';
+
+  @override
+  String get reportReasonOther => 'Diğer';
+
+  @override
+  String get reportNoteHint => 'Not (isteğe bağlı)';
+
+  @override
+  String get reportSend => 'Gönder';
+
+  @override
+  String get reportSent => 'Şikayetin alındı. İnceleyeceğiz.';
+
+  @override
+  String get block => 'Engelle';
+
+  @override
+  String blockConfirmTitle(String name) {
+    return '$name engellensin mi?';
+  }
+
+  @override
+  String get blockConfirmBody =>
+      'Yorumlarını görmeyeceksin ve seni takip edemeyecek.';
+
+  @override
+  String blockDone(String name) {
+    return '$name engellendi.';
+  }
+
+  @override
+  String get blockedUsersTitle => 'Engellenenler';
+
+  @override
+  String get blockedUsersEmpty => 'Kimseyi engellemedin.';
+
+  @override
+  String get unblock => 'Engeli kaldır';
 }

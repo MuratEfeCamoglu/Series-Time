@@ -9,6 +9,7 @@ import '../features/auth/screens/reset_password_screen.dart';
 import '../features/auth/screens/sign_in_screen.dart';
 import '../features/auth/screens/sign_up_screen.dart';
 import '../features/discover/screens/discover_screen.dart';
+import '../features/moderation/screens/blocked_users_screen.dart';
 import '../features/episode_feedback/screens/episode_screen.dart';
 import '../features/profile/screens/edit_profile_screen.dart';
 import '../features/profile/screens/profile_screen.dart';
@@ -26,6 +27,7 @@ abstract final class AppRoutes {
   static const profile = '/profile';
   static const settings = '/settings';
   static const editProfile = '/settings/profile';
+  static const blockedUsers = '/settings/blocked';
   static const signIn = '/sign-in';
   static const signUp = '/sign-up';
   static const forgotPassword = '/forgot-password';
@@ -91,6 +93,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: 'profile',
             builder: (context, state) => const EditProfileScreen(),
+          ),
+          GoRoute(
+            path: 'blocked',
+            builder: (context, state) => const BlockedUsersScreen(),
           ),
         ],
       ),

@@ -10,6 +10,8 @@ enum AppFailureType {
   rateLimited,
   fileTooLarge,
   tmdbUnavailable,
+  commentRateLimited,
+  commentBannedWord,
   unknown,
 }
 

@@ -146,7 +146,6 @@
   "episodeMarkUntil": "Buraya kadar izledim",
   "episodeMarkWatched": "İzlendi",
   "episodeTitle": "Bölüm",
-  "episodeFeedbackSoon": "Tepkiler, bölümün yıldızı ve yorumlar burada olacak.",
   "profileNotifications": "Bildirimler",
   "profileShare": "Profili paylaş",
   "profileShareText": "Sezonluk'ta izlediğim dizilere göz at: {link}",
@@ -206,5 +205,79 @@
         "type": "String"
       }
     }
-  }
+  },
+  "errorCommentRateLimited": "Çok hızlı yorum yapıyorsun. Biraz bekleyip tekrar dene.",
+  "errorCommentBannedWord": "Yorumun uygunsuz bir ifade içeriyor.",
+  "reactionsTitle": "Bu bölüm sana nasıl hissettirdi?",
+  "reactionFunny": "Komik",
+  "reactionLove": "Bayıldım",
+  "reactionShocked": "Şok oldum",
+  "reactionSad": "Hüzünlendim",
+  "reactionAngry": "Sinirlendim",
+  "reactionBored": "Sıkıldım",
+  "percent": "%{value}",
+  "@percent": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "starTitle": "Bölümün yıldızı",
+  "starNoCast": "Bu bölüm için oyuncu bilgisi yok",
+  "starResultsTitle": "En çok oy alanlar",
+  "starVoteFor": "{name} için oy ver",
+  "@starVoteFor": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "commentsTitle": "Yorumlar",
+  "commentHint": "Yorumunu yaz",
+  "commentSpoilerSwitch": "Spoiler içeriyor",
+  "commentSend": "Gönder",
+  "commentTooLong": "Yorum 1–500 karakter olmalı.",
+  "commentsEmpty": "Henüz yorum yok. İlk yorumu sen yaz.",
+  "commentsSpoilerGate": "Bu bölümü izlemedin, yorumlar spoiler içerebilir",
+  "commentsShowAnyway": "Yine de göster",
+  "commentSpoilerHidden": "Spoiler içeriyor — görmek için dokun",
+  "commentsLoadMore": "Daha fazla yorum",
+  "commentLike": "Beğen",
+  "commentUnlike": "Beğeniyi geri al",
+  "commentMenu": "Yorum seçenekleri",
+  "commentDelete": "Sil",
+  "commentDeleteConfirm": "Yorumun silinsin mi?",
+  "report": "Şikayet et",
+  "reportTitle": "Şikayet nedeni",
+  "reportReasonSpam": "Spam",
+  "reportReasonHarassment": "Taciz",
+  "reportReasonSpoiler": "Spoiler",
+  "reportReasonInappropriate": "Uygunsuz içerik",
+  "reportReasonOther": "Diğer",
+  "reportNoteHint": "Not (isteğe bağlı)",
+  "reportSend": "Gönder",
+  "reportSent": "Şikayetin alındı. İnceleyeceğiz.",
+  "block": "Engelle",
+  "blockConfirmTitle": "{name} engellensin mi?",
+  "@blockConfirmTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "blockConfirmBody": "Yorumlarını görmeyeceksin ve seni takip edemeyecek.",
+  "blockDone": "{name} engellendi.",
+  "@blockDone": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "blockedUsersTitle": "Engellenenler",
+  "blockedUsersEmpty": "Kimseyi engellemedin.",
+  "unblock": "Engeli kaldır"
 }

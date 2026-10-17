@@ -39,6 +39,15 @@ AppFailure toAppFailure(Object error) {
   if (error is FunctionException && error.status == 502) {
     return AppFailure(AppFailureType.tmdbUnavailable, cause: error);
   }
+  // Yorum tetikleyicisinin hataları (F11f, F15d).
+  if (error is PostgrestException && error.code == 'P0001') {
+    final type = switch (error.message) {
+      'comment_rate_limited' => AppFailureType.commentRateLimited,
+      'comment_banned_word' => AppFailureType.commentBannedWord,
+      _ => AppFailureType.unknown,
+    };
+    return AppFailure(type, cause: error);
+  }
   if (error is PostgrestException && error.code == '23505') {
     return AppFailure(AppFailureType.usernameTaken, cause: error);
   }

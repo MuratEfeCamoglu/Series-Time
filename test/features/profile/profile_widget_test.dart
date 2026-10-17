@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:sezonluk/features/episode_feedback/screens/episode_screen.dart';
 import 'package:sezonluk/features/profile/data/models.dart';
 import 'package:sezonluk/features/profile/screens/user_shows_screen.dart';
 import 'package:sezonluk/features/shows/data/models.dart';
@@ -175,7 +176,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('watchlist.check.1')));
       await tester.pumpAndSettle();
-      Navigator.of(tester.element(find.text('Bölüm'))).pop();
+      Navigator.of(tester.element(find.byType(EpisodeScreen))).pop();
       await tester.pumpAndSettle();
       await tester.tap(_navLabel('Profil'));
       await tester.pumpAndSettle();
