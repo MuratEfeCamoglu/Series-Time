@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../../theme/app_colors.dart';
+import '../../../theme/app_motion.dart';
 import '../providers.dart';
 
 /// F8(j): dizi detayında kalp; yalnızca listedeki dizide görünür, en fazla 4 favori.
@@ -22,8 +23,21 @@ class ShowFavoriteButton extends ConsumerWidget {
       key: const Key('showDetail.favorite'),
       tooltip: favorite ? l10n.favoriteRemove : l10n.favoriteAdd,
       isSelected: favorite,
-      icon: const Icon(Icons.favorite_border),
-      selectedIcon: const Icon(Icons.favorite, color: AppColors.danger),
+      // F22(c): kalp dolarken kısa bir ölçek animasyonu.
+      icon: AnimatedSwitcher(
+        duration: MediaQuery.of(context).disableAnimations
+            ? Duration.zero
+            : AppMotion.toggle,
+        transitionBuilder: (child, animation) =>
+            ScaleTransition(scale: animation, child: child),
+        child: favorite
+            ? const Icon(
+                Icons.favorite,
+                key: ValueKey(true),
+                color: AppColors.danger,
+              )
+            : const Icon(Icons.favorite_border, key: ValueKey(false)),
+      ),
       onPressed: () async {
         final messenger = ScaffoldMessenger.of(context);
         try {

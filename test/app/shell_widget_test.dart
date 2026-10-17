@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sezonluk/features/discover/screens/discover_screen.dart';
 import 'package:sezonluk/features/profile/screens/profile_screen.dart';
 import 'package:sezonluk/features/tracking/screens/shows_screen.dart';
@@ -41,5 +42,33 @@ void main() {
     await tester.tap(_navLabel('Profil'));
     await tester.pumpAndSettle();
     expect(find.byType(ProfileScreen), findsOneWidget);
+  });
+
+  testWidgets('açılışta simge katmanı solarak kalkar (F22c)', (tester) async {
+    final backend = TestBackend();
+    SharedPreferences.setMockInitialValues({'app.locale': 'tr'});
+    final preferences = await SharedPreferences.getInstance();
+    await tester.pumpWidget(backend.scope(preferences));
+    await tester.pump();
+    expect(find.byKey(const Key('launch.overlay')), findsOneWidget);
+
+    await tester.pump(const Duration(milliseconds: 800));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('launch.overlay')), findsNothing);
+    expect(find.byType(ShowsScreen), findsOneWidget);
+  });
+
+  testWidgets('animasyonları azalt açıksa açılış katmanı gösterilmez (F22c)', (
+    tester,
+  ) async {
+    tester.platformDispatcher.accessibilityFeaturesTestValue =
+        const FakeAccessibilityFeatures(disableAnimations: true);
+    addTearDown(tester.platformDispatcher.clearAccessibilityFeaturesTestValue);
+    final backend = TestBackend();
+    SharedPreferences.setMockInitialValues({'app.locale': 'tr'});
+    final preferences = await SharedPreferences.getInstance();
+    await tester.pumpWidget(backend.scope(preferences));
+    await tester.pump();
+    expect(find.byKey(const Key('launch.overlay')), findsNothing);
   });
 }

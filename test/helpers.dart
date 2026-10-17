@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:flutter/widgets.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -177,6 +179,27 @@ class TestBackend {
     statusController.add(status);
   }
 
+  /// Taklit repository'lerle kurulmuş uygulama kökü.
+  Widget scope(SharedPreferences preferences) {
+    this.preferences = preferences;
+    return ProviderScope(
+      overrides: [
+        authRepositoryProvider.overrideWithValue(auth),
+        profileRepositoryProvider.overrideWithValue(profiles),
+        showsRepositoryProvider.overrideWithValue(shows),
+        socialRepositoryProvider.overrideWithValue(social),
+        trackingRepositoryProvider.overrideWithValue(tracking),
+        suggestRepositoryProvider.overrideWithValue(suggest),
+        episodeFeedbackRepositoryProvider.overrideWithValue(feedback),
+        moderationRepositoryProvider.overrideWithValue(moderation),
+        notificationsRepositoryProvider.overrideWithValue(notifications),
+        badgesRepositoryProvider.overrideWithValue(badges),
+        sharedPreferencesProvider.overrideWithValue(preferences),
+      ],
+      child: const SezonlukApp(),
+    );
+  }
+
   /// [preferenceValues]: cihazda önceden saklanmış tercihler.
   Future<void> pumpApp(
     WidgetTester tester, {
@@ -189,24 +212,7 @@ class TestBackend {
       ...preferenceValues,
     });
     preferences = await SharedPreferences.getInstance();
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          authRepositoryProvider.overrideWithValue(auth),
-          profileRepositoryProvider.overrideWithValue(profiles),
-          showsRepositoryProvider.overrideWithValue(shows),
-          socialRepositoryProvider.overrideWithValue(social),
-          trackingRepositoryProvider.overrideWithValue(tracking),
-          suggestRepositoryProvider.overrideWithValue(suggest),
-          episodeFeedbackRepositoryProvider.overrideWithValue(feedback),
-          moderationRepositoryProvider.overrideWithValue(moderation),
-          notificationsRepositoryProvider.overrideWithValue(notifications),
-          badgesRepositoryProvider.overrideWithValue(badges),
-          sharedPreferencesProvider.overrideWithValue(preferences),
-        ],
-        child: const SezonlukApp(),
-      ),
-    );
+    await tester.pumpWidget(scope(preferences));
     await tester.pumpAndSettle();
   }
 }

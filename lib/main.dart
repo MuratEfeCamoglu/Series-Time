@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'app/launch_overlay.dart';
 import 'app/router.dart';
 import 'core/app_locale.dart';
 import 'core/config.dart';
@@ -72,7 +73,9 @@ class SezonlukApp extends ConsumerWidget {
         // Bölüm kodu, ondalık ayırıcı ve TMDB dili çözülen dile göre (F21b).
         final code = Localizations.localeOf(context).languageCode;
         AppLocale.apply(code);
-        return KeyedSubtree(key: ValueKey((palette, code)), child: child!);
+        return LaunchOverlay(
+          child: KeyedSubtree(key: ValueKey((palette, code)), child: child!),
+        );
       },
     );
   }

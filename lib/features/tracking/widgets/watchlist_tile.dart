@@ -8,6 +8,7 @@ import '../../../core/tmdb_image.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/poster_card.dart';
 import '../../../theme/app_colors.dart';
+import '../../../theme/app_motion.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_text_styles.dart';
 import '../../shows/logic.dart';
@@ -113,9 +114,18 @@ class NextEpisodeCheck extends ConsumerWidget {
             customBorder: const CircleBorder(),
             // İşaret sunucuya giderken ikinci dokunuş aynı bölümü yeniden göndermesin.
             onTap: done ? null : () => _markNext(context, ref),
-            child: Icon(
-              Icons.check,
-              color: done ? AppColors.onAccent : AppColors.textPrimary,
+            // F22(c): işaretlenince onay simgesi kısa bir ölçekle değişir.
+            child: AnimatedSwitcher(
+              duration: MediaQuery.of(context).disableAnimations
+                  ? Duration.zero
+                  : AppMotion.toggle,
+              transitionBuilder: (child, animation) =>
+                  ScaleTransition(scale: animation, child: child),
+              child: Icon(
+                Icons.check,
+                key: ValueKey(done),
+                color: done ? AppColors.onAccent : AppColors.textPrimary,
+              ),
             ),
           ),
         ),
