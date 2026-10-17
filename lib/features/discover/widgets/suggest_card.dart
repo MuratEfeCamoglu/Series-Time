@@ -24,7 +24,7 @@ class SuggestCard extends StatelessWidget {
       ),
       child: ListTile(
         key: const Key('discover.suggestCard'),
-        leading: const Icon(Icons.auto_awesome, color: AppColors.accent),
+        leading: Icon(Icons.auto_awesome, color: AppColors.accent),
         title: Text(l10n.suggestCardTitle, style: AppTextStyles.body),
         subtitle: Text(l10n.suggestCardBody, style: AppTextStyles.caption),
         trailing: const Icon(Icons.chevron_right),

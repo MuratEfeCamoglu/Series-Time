@@ -116,7 +116,7 @@ class _NotificationTile extends ConsumerWidget {
     return ListTile(
       tileColor: n.isUnread ? AppColors.surface : null,
       leading: n.type == NotificationType.badgeEarned
-          ? const Icon(Icons.emoji_events, color: AppColors.accent)
+          ? Icon(Icons.emoji_events, color: AppColors.accent)
           : ProfileAvatar(
               size: AppSpacing.minTapTarget,
               url: avatarPath == null

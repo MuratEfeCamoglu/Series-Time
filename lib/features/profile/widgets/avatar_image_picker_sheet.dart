@@ -103,7 +103,7 @@ class _Images extends ConsumerWidget {
                       imageUrl: tmdbImageUrl(paths[index], TmdbImageSize.w300)!,
                       fit: BoxFit.cover,
                       errorWidget: (_, _, _) =>
-                          const ColoredBox(color: AppColors.surfaceAlt),
+                          ColoredBox(color: AppColors.surfaceAlt),
                     ),
                   ),
                 ),

@@ -985,4 +985,29 @@ class AppLocalizationsTr extends AppLocalizations {
   String unreadNotifications(int count) {
     return '$count okunmamış bildirim';
   }
+
+  @override
+  String get settingsColors => 'Renk';
+
+  @override
+  String get settingsColorsHint =>
+      'Uygulamanın vurgu rengini ve zemin tonlarını seç. Seçim hemen uygulanır.';
+
+  @override
+  String get paletteYellow => 'Sarı';
+
+  @override
+  String get palettePurple => 'Mor';
+
+  @override
+  String get paletteBlue => 'Mavi';
+
+  @override
+  String get paletteGreen => 'Yeşil';
+
+  @override
+  String get paletteRed => 'Kırmızı';
+
+  @override
+  String get paletteOrange => 'Turuncu';
 }

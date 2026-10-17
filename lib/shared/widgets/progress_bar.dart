@@ -9,13 +9,15 @@ class ProgressBar extends StatelessWidget {
   const ProgressBar({
     super.key,
     required this.value,
-    this.color = AppColors.accent,
+    this.color,
     this.outlined = false,
     this.semanticsLabel,
   });
 
   final double value;
-  final Color color;
+
+  /// null: paletin vurgu rengi (F21a).
+  final Color? color;
   final bool outlined;
 
   /// Renk tek başına bilgi taşımasın diye grup adı burada okunur.
@@ -23,6 +25,7 @@ class ProgressBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final color = this.color ?? AppColors.accent;
     final radius = BorderRadius.circular(AppSpacing.progressBarHeight);
     if (outlined) {
       return Semantics(

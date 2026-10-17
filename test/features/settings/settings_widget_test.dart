@@ -6,8 +6,12 @@ import 'package:sezonluk/core/failures.dart';
 import 'package:sezonluk/features/auth/logic.dart';
 import 'package:sezonluk/features/auth/screens/sign_in_screen.dart';
 import 'package:sezonluk/features/settings/screens/about_screen.dart';
+import 'package:sezonluk/features/settings/screens/color_settings_screen.dart';
 import 'package:sezonluk/features/settings/screens/delete_account_screen.dart';
 import 'package:sezonluk/features/tracking/screens/shows_screen.dart';
+
+import 'package:sezonluk/theme/app_colors.dart';
+import 'package:sezonluk/theme/app_palettes.dart';
 
 import '../../helpers.dart';
 
@@ -113,4 +117,49 @@ void main() {
       expect(find.text('Sürüm dev'), findsOneWidget);
     },
   );
+
+  group('F21 görünüm', () {
+    tearDown(() => AppColors.apply(AppPalette.yellow));
+
+    testWidgets(
+      'Renk: palet seçimi hemen uygulanır, saklanır ve ekran yerinde kalır (F21a)',
+      (tester) async {
+        final backend = await _openSettings(tester);
+        await tester.tap(find.byKey(const Key('settings.colors')));
+        await tester.pumpAndSettle();
+        expect(find.byType(ColorSettingsScreen), findsOneWidget);
+        expect(find.byKey(const Key('palette.orange')), findsOneWidget);
+
+        await tester.tap(find.byKey(const Key('palette.purple')));
+        await tester.pumpAndSettle();
+
+        expect(AppColors.accent, AppPalette.purple.accent);
+        expect(backend.preferences.getString('appearance.palette'), 'purple');
+        expect(find.byType(ColorSettingsScreen), findsOneWidget);
+        final app = tester.widget<MaterialApp>(find.byType(MaterialApp));
+        expect(app.theme!.colorScheme.primary, AppPalette.purple.accent);
+        expect(
+          tester
+              .widget<ListTile>(find.byKey(const Key('palette.purple')))
+              .selected,
+          isTrue,
+        );
+      },
+    );
+
+    testWidgets('saklanan paletle açılır (F21a)', (tester) async {
+      await TestBackend().pumpApp(
+        tester,
+        preferenceValues: {'appearance.palette': 'green'},
+      );
+      expect(AppColors.accent, AppPalette.green.accent);
+      expect(
+        tester
+            .widget<MaterialApp>(find.byType(MaterialApp))
+            .theme!
+            .scaffoldBackgroundColor,
+        AppPalette.green.background,
+      );
+    });
+  });
 }

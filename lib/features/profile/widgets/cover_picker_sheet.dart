@@ -62,7 +62,7 @@ class _CoverPickerSheetState extends ConsumerState<CoverPickerSheet> {
               key: const Key('cover.none'),
               title: Text(l10n.coverNone),
               trailing: widget.selectedPath == null
-                  ? const Icon(Icons.check, color: AppColors.accent)
+                  ? Icon(Icons.check, color: AppColors.accent)
                   : null,
               onTap: () => Navigator.pop(context, const CoverSelection()),
             ),
@@ -136,12 +136,11 @@ class _Backdrops extends ConsumerWidget {
                                   TmdbImageSize.w300,
                                 )!,
                                 fit: BoxFit.cover,
-                                errorWidget: (_, _, _) => const ColoredBox(
-                                  color: AppColors.surfaceAlt,
-                                ),
+                                errorWidget: (_, _, _) =>
+                                    ColoredBox(color: AppColors.surfaceAlt),
                               ),
                               if (selected)
-                                const Align(
+                                Align(
                                   alignment: Alignment.topRight,
                                   child: Padding(
                                     padding: EdgeInsets.all(AppSpacing.xs),

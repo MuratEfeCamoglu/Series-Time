@@ -85,12 +85,12 @@ class _DetailBody extends StatelessWidget {
             title: Text(show.name),
             flexibleSpace: FlexibleSpaceBar(
               background: backdrop == null
-                  ? const ColoredBox(color: AppColors.surface)
+                  ? ColoredBox(color: AppColors.surface)
                   : CachedNetworkImage(
                       imageUrl: backdrop,
                       fit: BoxFit.cover,
                       errorWidget: (_, _, _) =>
-                          const ColoredBox(color: AppColors.surface),
+                          ColoredBox(color: AppColors.surface),
                     ),
             ),
           ),
@@ -347,7 +347,7 @@ class _PosterPicker extends ConsumerWidget {
                           ),
                         ),
                       if (isSelected)
-                        const IgnorePointer(
+                        IgnorePointer(
                           child: Align(
                             alignment: Alignment.topRight,
                             child: Padding(

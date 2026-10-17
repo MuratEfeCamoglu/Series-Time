@@ -176,7 +176,7 @@ class _ListCard extends StatelessWidget {
               child: InkWell(
                 onTap: openShow,
                 child: image == null
-                    ? const ColoredBox(
+                    ? ColoredBox(
                         color: AppColors.surfaceAlt,
                         child: Icon(
                           Icons.movie_outlined,
@@ -187,7 +187,7 @@ class _ListCard extends StatelessWidget {
                         imageUrl: image,
                         fit: BoxFit.cover,
                         errorWidget: (_, _, _) =>
-                            const ColoredBox(color: AppColors.surfaceAlt),
+                            ColoredBox(color: AppColors.surfaceAlt),
                       ),
               ),
             ),

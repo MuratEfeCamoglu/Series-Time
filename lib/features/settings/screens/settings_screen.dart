@@ -8,7 +8,7 @@ import '../../../shared/widgets/error_view.dart';
 import '../../../theme/app_colors.dart';
 import '../../auth/providers.dart';
 
-/// Ayarlar: profil, engellenenler (F15c), Hakkında (F17), çıkış ve hesap silme (F16).
+/// Ayarlar: profil, renk (F21a), engellenenler (F15c), Hakkında (F17), çıkış ve hesap silme (F16).
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
@@ -37,6 +37,12 @@ class SettingsScreen extends ConsumerWidget {
             leading: const Icon(Icons.edit_outlined),
             title: Text(l10n.editProfileTitle),
             onTap: () => context.push(AppRoutes.editProfile),
+          ),
+          ListTile(
+            key: const Key('settings.colors'),
+            leading: const Icon(Icons.palette_outlined),
+            title: Text(l10n.settingsColors),
+            onTap: () => context.push(AppRoutes.colorSettings),
           ),
           ListTile(
             key: const Key('settings.blocked'),

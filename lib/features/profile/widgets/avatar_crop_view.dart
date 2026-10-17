@@ -129,7 +129,7 @@ class _AvatarCropViewState extends State<AvatarCropView> {
                             ),
                           ),
                           // Profilde avatar yuvarlak görünür; kare yine de kaydedilir.
-                          const IgnorePointer(
+                          IgnorePointer(
                             child: DecoratedBox(
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,

@@ -8,7 +8,9 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'app/router.dart';
 import 'core/config.dart';
 import 'core/preferences.dart';
+import 'features/settings/providers.dart';
 import 'l10n/app_localizations.dart';
+import 'theme/app_colors.dart';
 import 'theme/app_theme.dart';
 
 Future<void> main() async {
@@ -37,6 +39,10 @@ class SezonlukApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // F21(a): palet değişince renkleri doğrudan okuyan widget'lar da yeniden çizilsin diye
+    // uygulama ağacı palet anahtarıyla yeniden kurulur (rota yığını korunur).
+    final palette = ref.watch(paletteProvider);
+    AppColors.apply(palette);
     return MaterialApp.router(
       onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
       debugShowCheckedModeBanner: false,
@@ -52,6 +58,8 @@ class SezonlukApp extends ConsumerWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       routerConfig: ref.watch(routerProvider),
+      builder: (context, child) =>
+          KeyedSubtree(key: ValueKey(palette), child: child!),
     );
   }
 }

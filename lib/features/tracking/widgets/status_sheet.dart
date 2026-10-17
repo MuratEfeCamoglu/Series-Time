@@ -38,7 +38,7 @@ Future<void> showStatusSheet(
             leading: StatusDot(status: dot),
             title: Text(title),
             trailing: status == current
-                ? const Icon(Icons.check, color: AppColors.accent)
+                ? Icon(Icons.check, color: AppColors.accent)
                 : null,
             onTap: () => Navigator.pop(sheetContext, (status: status)),
           );

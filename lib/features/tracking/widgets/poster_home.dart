@@ -208,15 +208,14 @@ class _Hero extends StatelessWidget {
           fit: StackFit.expand,
           children: [
             if (url == null)
-              const ColoredBox(color: AppColors.surface)
+              ColoredBox(color: AppColors.surface)
             else
               CachedNetworkImage(
                 imageUrl: url,
                 fit: BoxFit.cover,
-                errorWidget: (_, _, _) =>
-                    const ColoredBox(color: AppColors.surface),
+                errorWidget: (_, _, _) => ColoredBox(color: AppColors.surface),
               ),
-            const DecoratedBox(
+            DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,

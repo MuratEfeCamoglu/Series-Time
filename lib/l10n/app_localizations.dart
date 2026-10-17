@@ -1857,6 +1857,54 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'{count} okunmamış bildirim'**
   String unreadNotifications(int count);
+
+  /// No description provided for @settingsColors.
+  ///
+  /// In tr, this message translates to:
+  /// **'Renk'**
+  String get settingsColors;
+
+  /// No description provided for @settingsColorsHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Uygulamanın vurgu rengini ve zemin tonlarını seç. Seçim hemen uygulanır.'**
+  String get settingsColorsHint;
+
+  /// No description provided for @paletteYellow.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sarı'**
+  String get paletteYellow;
+
+  /// No description provided for @palettePurple.
+  ///
+  /// In tr, this message translates to:
+  /// **'Mor'**
+  String get palettePurple;
+
+  /// No description provided for @paletteBlue.
+  ///
+  /// In tr, this message translates to:
+  /// **'Mavi'**
+  String get paletteBlue;
+
+  /// No description provided for @paletteGreen.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yeşil'**
+  String get paletteGreen;
+
+  /// No description provided for @paletteRed.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kırmızı'**
+  String get paletteRed;
+
+  /// No description provided for @paletteOrange.
+  ///
+  /// In tr, this message translates to:
+  /// **'Turuncu'**
+  String get paletteOrange;
 }
 
 class _AppLocalizationsDelegate

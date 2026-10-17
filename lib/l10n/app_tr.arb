@@ -612,5 +612,13 @@
         "type": "int"
       }
     }
-  }
+  },
+  "settingsColors": "Renk",
+  "settingsColorsHint": "Uygulamanın vurgu rengini ve zemin tonlarını seç. Seçim hemen uygulanır.",
+  "paletteYellow": "Sarı",
+  "palettePurple": "Mor",
+  "paletteBlue": "Mavi",
+  "paletteGreen": "Yeşil",
+  "paletteRed": "Kırmızı",
+  "paletteOrange": "Turuncu"
 }

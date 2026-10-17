@@ -223,17 +223,16 @@ class _HeaderBackground extends ConsumerWidget {
       fit: StackFit.expand,
       children: [
         if (url == null)
-          const ColoredBox(color: AppColors.surface)
+          ColoredBox(color: AppColors.surface)
         else
           CachedNetworkImage(
             key: const Key('profile.cover'),
             imageUrl: url,
             fit: BoxFit.cover,
-            errorWidget: (_, _, _) =>
-                const ColoredBox(color: AppColors.surface),
+            errorWidget: (_, _, _) => ColoredBox(color: AppColors.surface),
           ),
         // Kapak yalnızca soluk bir zemin; yazılar okunsun diye aşağı doğru siyaha geçer.
-        const DecoratedBox(
+        DecoratedBox(
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
@@ -454,12 +453,12 @@ class _RecentActivity extends StatelessWidget {
                       height: imageHeight,
                       width: AppSpacing.recentStillWidth,
                       child: url == null
-                          ? const ColoredBox(color: AppColors.surfaceAlt)
+                          ? ColoredBox(color: AppColors.surfaceAlt)
                           : CachedNetworkImage(
                               imageUrl: url,
                               fit: BoxFit.cover,
                               errorWidget: (_, _, _) =>
-                                  const ColoredBox(color: AppColors.surfaceAlt),
+                                  ColoredBox(color: AppColors.surfaceAlt),
                             ),
                     ),
                   ),

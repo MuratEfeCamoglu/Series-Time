@@ -24,7 +24,7 @@ class GuestGate extends StatelessWidget {
             key: const Key('guestGate'),
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(
+              Icon(
                 Icons.lock_outline,
                 size: AppSpacing.emptyStateIconSize,
                 color: AppColors.accent,

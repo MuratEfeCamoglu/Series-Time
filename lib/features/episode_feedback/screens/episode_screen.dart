@@ -112,17 +112,17 @@ class _EpisodeBody extends ConsumerWidget {
               fit: StackFit.expand,
               children: [
                 if (still == null)
-                  const ColoredBox(color: AppColors.surface)
+                  ColoredBox(color: AppColors.surface)
                 else
                   CachedNetworkImage(
                     key: const Key('episode.still'),
                     imageUrl: still,
                     fit: BoxFit.cover,
                     errorWidget: (_, _, _) =>
-                        const ColoredBox(color: AppColors.surface),
+                        ColoredBox(color: AppColors.surface),
                   ),
                 // Başlık ve geri düğmesi görselin üstünde okunabilsin.
-                const DecoratedBox(
+                DecoratedBox(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,

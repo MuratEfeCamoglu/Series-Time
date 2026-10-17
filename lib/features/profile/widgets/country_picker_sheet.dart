@@ -59,7 +59,7 @@ class _CountryPickerSheetState extends State<CountryPickerSheet> {
                     return ListTile(
                       title: Text(l10n.countryNone),
                       trailing: widget.selected == null
-                          ? const Icon(Icons.check, color: AppColors.accent)
+                          ? Icon(Icons.check, color: AppColors.accent)
                           : null,
                       onTap: () =>
                           Navigator.pop(context, const CountrySelection(null)),
@@ -73,7 +73,7 @@ class _CountryPickerSheetState extends State<CountryPickerSheet> {
                     ),
                     title: Text(code),
                     trailing: code == widget.selected
-                        ? const Icon(Icons.check, color: AppColors.accent)
+                        ? Icon(Icons.check, color: AppColors.accent)
                         : null,
                     onTap: () => Navigator.pop(context, CountrySelection(code)),
                   );

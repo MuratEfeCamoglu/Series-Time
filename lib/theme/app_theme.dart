@@ -7,7 +7,7 @@ import 'app_text_styles.dart';
 abstract final class AppTheme {
   static ThemeData get dark {
     final base = ThemeData.dark(useMaterial3: true);
-    const colorScheme = ColorScheme.dark(
+    final colorScheme = ColorScheme.dark(
       primary: AppColors.accent,
       onPrimary: AppColors.onAccent,
       secondary: AppColors.accent,
@@ -23,7 +23,7 @@ abstract final class AppTheme {
       colorScheme: colorScheme,
       scaffoldBackgroundColor: AppColors.background,
       dividerColor: AppColors.border,
-      appBarTheme: const AppBarTheme(
+      appBarTheme: AppBarTheme(
         backgroundColor: AppColors.background,
         foregroundColor: AppColors.textPrimary,
         elevation: 0,
