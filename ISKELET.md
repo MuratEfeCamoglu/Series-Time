@@ -201,7 +201,8 @@ Series-Time/                      # depo kökü
 │   ├── main.dart                 # Supabase.initialize, ProviderScope, MaterialApp.router
 │   ├── app/
 │   │   ├── router.dart           # go_router rotaları + oturum yönlendirmesi + derin bağlantılar
-│   │   └── shell.dart            # alt menü: Diziler · Keşfet · Profil
+│   │   ├── shell.dart            # alt menü: Diziler · Keşfet · Bildirimler · Profil
+│   │   └── launch_overlay.dart   # F22(c) açılış animasyonu
 │   ├── features/
 │   │   ├── auth/                 # F1: sign_in, sign_up, forgot_password, reset_password ekranları
 │   │   ├── profile/              # F2, F8: profil, düzenle, "Tümü"
@@ -218,8 +219,8 @@ Series-Time/                      # depo kökü
 │   │       # her özellik klasöründe: data/ (repository.dart, models.dart), logic.dart,
 │   │       # providers.dart, screens/, widgets/ — gerekmeyen alt klasör açılmaz
 │   ├── shared/widgets/           # PosterCard, ProgressBar, PrimaryButton, EmptyState, ErrorView
-│   ├── core/                     # config.dart, supabase_client.dart, tmdb_image.dart, format.dart, failures.dart
-│   ├── theme/                    # app_colors.dart, app_palettes.dart, app_spacing.dart, app_text_styles.dart, app_theme.dart
+│   ├── core/                     # config.dart, supabase_client.dart, tmdb_image.dart, format.dart, failures.dart, app_locale.dart
+│   ├── theme/                    # app_colors.dart, app_palettes.dart, app_spacing.dart, app_motion.dart, app_text_styles.dart, app_theme.dart
 │   └── l10n/                     # app_tr.arb, app_en.arb (+ gen-l10n çıktısı, elle düzenlenmez)
 ├── test/                         # lib/ yapısını aynalar: test/features/<özellik>/logic_test.dart, *_widget_test.dart
 ├── supabase/
