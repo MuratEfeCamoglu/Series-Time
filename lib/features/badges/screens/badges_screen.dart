@@ -74,6 +74,8 @@ class _Shelf extends ConsumerWidget {
           ..showSnackBar(SnackBar(content: Text(l10n.badgesShowcaseFull)));
       }
     } catch (error) {
+      // Hata kullanıcıya genel iletiyle gösterilir; ayrıntı günlüğe yazılır.
+      debugPrint('Vitrin kaydedilemedi: $error');
       messenger
         ..hideCurrentSnackBar()
         ..showSnackBar(SnackBar(content: Text(failureMessage(l10n, error))));

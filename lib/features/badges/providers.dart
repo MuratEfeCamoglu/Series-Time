@@ -43,9 +43,21 @@ class FeaturedBadgesNotifier extends AsyncNotifier<List<FeaturedBadge>> {
   Future<List<FeaturedBadge>> build() =>
       ref.read(badgesRepositoryProvider).fetchFeatured(userId);
 
+  // Art arda dokunuşlar sırayla kaydedilir: aynı anda giden iki istek vitrini birlikte silip
+  // yazınca sıra numarası çakışıyor ve biri reddediliyordu.
+  Future<void> _pending = Future.value();
+
   /// false: vitrin dolu (6), rozet eklenmedi. [showName] ve [posterPath] dizi rozetinin
   /// sunucu yanıtı gelene kadar gösterilmesi içindir.
-  Future<bool> toggle(
+  Future<bool> toggle(BadgeRef badge, {String? showName, String? posterPath}) {
+    final run = _pending.then(
+      (_) => _toggle(badge, showName: showName, posterPath: posterPath),
+    );
+    _pending = run.then((_) {}, onError: (_) {});
+    return run;
+  }
+
+  Future<bool> _toggle(
     BadgeRef badge, {
     String? showName,
     String? posterPath,

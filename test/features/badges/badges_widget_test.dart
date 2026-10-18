@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -151,4 +153,36 @@ void main() {
     expect(find.text('En fazla 6 rozet seçebilirsin'), findsOneWidget);
     verifyNever(() => backend.badges.setFeatured(any()));
   });
+
+  testWidgets(
+    'art arda dokunuşlar sırayla kaydedilir, ikisi de vitrinde kalır',
+    (tester) async {
+      final backend = await _openBadges(tester);
+      final first = Completer<void>();
+      var calls = 0;
+      when(() => backend.badges.setFeatured(any())).thenAnswer((_) {
+        calls++;
+        // İlk kayıt sürerken ikinci dokunuş gelir.
+        return calls == 1 ? first.future : Future.value();
+      });
+
+      await tester.tap(find.byKey(const Key('showBadge.1399.0')));
+      await tester.pump();
+      await tester.tap(find.byKey(const Key('badge.genre_18_1')));
+      await tester.pump();
+      // İkinci istek birincinin bitmesini bekler.
+      expect(calls, 1);
+
+      first.complete();
+      await tester.pumpAndSettle();
+
+      final captured = verify(() => backend.badges.setFeatured(captureAny()))
+          .captured;
+      expect(captured, [
+        [const BadgeRef.show(1399, 0)],
+        [const BadgeRef.show(1399, 0), const BadgeRef.general('genre_18_1')],
+      ]);
+      expect(find.byIcon(Icons.push_pin), findsNWidgets(2));
+    },
+  );
 }
