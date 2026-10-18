@@ -16,6 +16,7 @@ import '../../../theme/app_colors.dart';
 import '../../../theme/app_motion.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_text_styles.dart';
+import '../../badges/widgets/badge_showcase.dart';
 import '../../shows/logic.dart';
 import '../../shows/providers.dart';
 import '../../social/providers.dart';
@@ -130,6 +131,14 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
           ),
           sliver: SliverToBoxAdapter(
             child: _Counts(profile: profile, isMe: isMe),
+          ),
+        ),
+        // F14: seçilen rozetler istatistiklerin altında (kullanıcı kararı 2026-10-18).
+        SliverToBoxAdapter(
+          child: BadgeShowcase(
+            userId: profile.id,
+            username: profile.username,
+            isMe: isMe,
           ),
         ),
         if (favorites.isNotEmpty || isMe) ...[

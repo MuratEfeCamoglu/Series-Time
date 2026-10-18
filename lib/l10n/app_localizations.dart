@@ -2233,6 +2233,126 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'bölüm'**
   String get unitEpisodes;
+
+  /// No description provided for @showBadgeFinal.
+  ///
+  /// In tr, this message translates to:
+  /// **'FİNAL'**
+  String get showBadgeFinal;
+
+  /// No description provided for @seasonShort.
+  ///
+  /// In tr, this message translates to:
+  /// **'S{season}'**
+  String seasonShort(int season);
+
+  /// No description provided for @genreTierFan.
+  ///
+  /// In tr, this message translates to:
+  /// **'Meraklısı'**
+  String get genreTierFan;
+
+  /// No description provided for @genreTierEnthusiast.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tutkunu'**
+  String get genreTierEnthusiast;
+
+  /// No description provided for @genreTierMaster.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ustası'**
+  String get genreTierMaster;
+
+  /// No description provided for @genreBadgeTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'{genre} {tier}'**
+  String genreBadgeTitle(String genre, String tier);
+
+  /// No description provided for @genreBadgeCondition.
+  ///
+  /// In tr, this message translates to:
+  /// **'{genre} türünde bitmiş {count} dizinin tüm bölümlerini izle.'**
+  String genreBadgeCondition(int count, String genre);
+
+  /// No description provided for @showBadgeTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'{show} · Final'**
+  String showBadgeTitle(String show);
+
+  /// No description provided for @seasonBadgeTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'{show} · {season}. Sezon'**
+  String seasonBadgeTitle(String show, int season);
+
+  /// No description provided for @notificationShowBadge.
+  ///
+  /// In tr, this message translates to:
+  /// **'\"{show}\" dizisini bitirdin, rozetin hazır!'**
+  String notificationShowBadge(String show);
+
+  /// No description provided for @notificationSeasonBadge.
+  ///
+  /// In tr, this message translates to:
+  /// **'\"{show}\" {season}. sezonunu bitirdin, rozetin hazır!'**
+  String notificationSeasonBadge(String show, int season);
+
+  /// No description provided for @badgesShowSection.
+  ///
+  /// In tr, this message translates to:
+  /// **'Dizi rozetleri'**
+  String get badgesShowSection;
+
+  /// No description provided for @badgesShowEmpty.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bir sezonu veya bitmiş bir diziyi tamamlayınca burada o diziye özel rozet kazanırsın.'**
+  String get badgesShowEmpty;
+
+  /// No description provided for @badgesGenreSection.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tür rozetleri'**
+  String get badgesGenreSection;
+
+  /// No description provided for @badgesGeneralSection.
+  ///
+  /// In tr, this message translates to:
+  /// **'Genel rozetler'**
+  String get badgesGeneralSection;
+
+  /// No description provided for @badgesShowcaseHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Profil vitrinine eklemek için kazandığın rozete dokun ({count}/6).'**
+  String badgesShowcaseHint(int count);
+
+  /// No description provided for @badgesShowcaseFull.
+  ///
+  /// In tr, this message translates to:
+  /// **'En fazla 6 rozet seçebilirsin'**
+  String get badgesShowcaseFull;
+
+  /// No description provided for @badgeShowcased.
+  ///
+  /// In tr, this message translates to:
+  /// **'Vitrinde'**
+  String get badgeShowcased;
+
+  /// No description provided for @profileShowcase.
+  ///
+  /// In tr, this message translates to:
+  /// **'Rozet vitrini'**
+  String get profileShowcase;
+
+  /// No description provided for @profileShowcaseHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Rozetler ekranında kazandığın rozetlere dokunarak en fazla 6 tanesini burada sergile.'**
+  String get profileShowcaseHint;
 }
 
 class _AppLocalizationsDelegate

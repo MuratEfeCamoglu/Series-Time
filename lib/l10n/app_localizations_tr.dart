@@ -1182,4 +1182,82 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get unitEpisodes => 'bölüm';
+
+  @override
+  String get showBadgeFinal => 'FİNAL';
+
+  @override
+  String seasonShort(int season) {
+    return 'S$season';
+  }
+
+  @override
+  String get genreTierFan => 'Meraklısı';
+
+  @override
+  String get genreTierEnthusiast => 'Tutkunu';
+
+  @override
+  String get genreTierMaster => 'Ustası';
+
+  @override
+  String genreBadgeTitle(String genre, String tier) {
+    return '$genre $tier';
+  }
+
+  @override
+  String genreBadgeCondition(int count, String genre) {
+    return '$genre türünde bitmiş $count dizinin tüm bölümlerini izle.';
+  }
+
+  @override
+  String showBadgeTitle(String show) {
+    return '$show · Final';
+  }
+
+  @override
+  String seasonBadgeTitle(String show, int season) {
+    return '$show · $season. Sezon';
+  }
+
+  @override
+  String notificationShowBadge(String show) {
+    return '\"$show\" dizisini bitirdin, rozetin hazır!';
+  }
+
+  @override
+  String notificationSeasonBadge(String show, int season) {
+    return '\"$show\" $season. sezonunu bitirdin, rozetin hazır!';
+  }
+
+  @override
+  String get badgesShowSection => 'Dizi rozetleri';
+
+  @override
+  String get badgesShowEmpty =>
+      'Bir sezonu veya bitmiş bir diziyi tamamlayınca burada o diziye özel rozet kazanırsın.';
+
+  @override
+  String get badgesGenreSection => 'Tür rozetleri';
+
+  @override
+  String get badgesGeneralSection => 'Genel rozetler';
+
+  @override
+  String badgesShowcaseHint(int count) {
+    return 'Profil vitrinine eklemek için kazandığın rozete dokun ($count/6).';
+  }
+
+  @override
+  String get badgesShowcaseFull => 'En fazla 6 rozet seçebilirsin';
+
+  @override
+  String get badgeShowcased => 'Vitrinde';
+
+  @override
+  String get profileShowcase => 'Rozet vitrini';
+
+  @override
+  String get profileShowcaseHint =>
+      'Rozetler ekranında kazandığın rozetlere dokunarak en fazla 6 tanesini burada sergile.';
 }

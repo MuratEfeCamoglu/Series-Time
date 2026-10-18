@@ -1188,4 +1188,82 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get unitEpisodes => 'episodes';
+
+  @override
+  String get showBadgeFinal => 'FINAL';
+
+  @override
+  String seasonShort(int season) {
+    return 'S$season';
+  }
+
+  @override
+  String get genreTierFan => 'Fan';
+
+  @override
+  String get genreTierEnthusiast => 'Enthusiast';
+
+  @override
+  String get genreTierMaster => 'Master';
+
+  @override
+  String genreBadgeTitle(String genre, String tier) {
+    return '$genre $tier';
+  }
+
+  @override
+  String genreBadgeCondition(int count, String genre) {
+    return 'Finish every episode of $count ended $genre shows.';
+  }
+
+  @override
+  String showBadgeTitle(String show) {
+    return '$show · Finale';
+  }
+
+  @override
+  String seasonBadgeTitle(String show, int season) {
+    return '$show · Season $season';
+  }
+
+  @override
+  String notificationShowBadge(String show) {
+    return 'You finished \"$show\" — your badge is ready!';
+  }
+
+  @override
+  String notificationSeasonBadge(String show, int season) {
+    return 'You finished season $season of \"$show\" — your badge is ready!';
+  }
+
+  @override
+  String get badgesShowSection => 'Show badges';
+
+  @override
+  String get badgesShowEmpty =>
+      'Finish a season or an ended show to earn a badge made just for it.';
+
+  @override
+  String get badgesGenreSection => 'Genre badges';
+
+  @override
+  String get badgesGeneralSection => 'General badges';
+
+  @override
+  String badgesShowcaseHint(int count) {
+    return 'Tap an earned badge to add it to your profile showcase ($count/6).';
+  }
+
+  @override
+  String get badgesShowcaseFull => 'You can pick up to 6 badges';
+
+  @override
+  String get badgeShowcased => 'Showcased';
+
+  @override
+  String get profileShowcase => 'Badge showcase';
+
+  @override
+  String get profileShowcaseHint =>
+      'Tap the badges you\'ve earned on the Badges screen to show up to 6 of them here.';
 }

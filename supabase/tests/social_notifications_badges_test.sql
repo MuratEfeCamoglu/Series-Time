@@ -23,7 +23,7 @@ select is(
     'public.user_badges'::regclass, 'public.notifications'::regclass)),
   true, 'Aşama 6 tablolarında RLS açık'
 );
-select is((select count(*)::int from public.badges), 5, '5 rozet tanımlı (F14)');
+select ok((select count(*)::int from public.badges) >= 5, 'ilk 5 rozet tanımlı (F14)');
 
 -- Kullanıcı A
 set local role authenticated;

@@ -37,9 +37,11 @@ void main() {
       'episode_id': 63056,
       'read_at': null,
       'created_at': '2026-10-17T10:00:00+00:00',
+      'show_name': null,
     });
 
     expect(n.id, 'n1');
+    expect(n.showName, isNull);
     expect(n.type, NotificationType.commentLiked);
     expect(n.actorId, 'u1');
     expect(n.actorUsername, 'ayse_1');

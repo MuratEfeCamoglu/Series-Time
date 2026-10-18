@@ -22,6 +22,7 @@ class AppNotification {
     this.badgeName,
     this.episodeId,
     this.readAt,
+    this.showName,
   });
 
   factory AppNotification.fromJson(Map<String, dynamic> json) =>
@@ -40,6 +41,7 @@ class AppNotification {
           _ => null,
         },
         createdAt: DateTime.parse(json['created_at'] as String),
+        showName: json['show_name'] as String?,
       );
 
   final String id;
@@ -57,6 +59,9 @@ class AppNotification {
   final int? episodeId;
   final DateTime? readAt;
   final DateTime createdAt;
+
+  /// Dizi/sezon rozeti bildiriminde (`entity_id` = `show:<dizi>:<sezon>`) dizinin adı.
+  final String? showName;
 
   bool get isUnread => readAt == null;
 }

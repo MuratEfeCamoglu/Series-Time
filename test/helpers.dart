@@ -159,6 +159,8 @@ class TestBackend {
         .thenAnswer((_) async => const []);
     when(() => badges.fetchBadges()).thenAnswer((_) async => const []);
     when(() => badges.fetchEarned(any())).thenAnswer((_) async => const []);
+    when(() => badges.fetchShowBadges(any())).thenAnswer((_) async => const []);
+    when(() => badges.fetchFeatured(any())).thenAnswer((_) async => const []);
     when(() => suggest.topGenres()).thenAnswer((_) async => const []);
     when(() => tracking.fetchWatchlist()).thenAnswer((_) async => const []);
     when(() => tracking.fetchShowProgress(any()))

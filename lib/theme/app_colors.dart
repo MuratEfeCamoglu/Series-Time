@@ -36,6 +36,11 @@ abstract final class AppColors {
 
   /// İstatistik kartlarında vurgu renginin (palete göre) saydamlıkları (F8d).
   static const statGlowAlpha = 0.22;
+
+  /// Rozet madalyası halkaları (F14): tür kademeleri ve dizi/sezon rozetleri.
+  static const badgeBronze = Color(0xFFCD7F32);
+  static const badgeSilver = Color(0xFFC0C7D0);
+  static const badgeGold = Color(0xFFFFC83D);
   static const statBorderAlpha = 0.45;
 
   /// Profil bağlantı simgelerinde (F8i) platformların kendi logo renkleri.

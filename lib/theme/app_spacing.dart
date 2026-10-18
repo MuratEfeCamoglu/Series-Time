@@ -42,6 +42,13 @@ abstract final class AppSpacing {
   static const double statCardRadius = 16;
   static const double statIconSize = 18;
 
+  /// Rozet madalyası (F14): rafta ve vitrinde; halka ve simge boyutun oranıdır.
+  static const double medalSize = 64;
+  static const double medalRingFactor = 0.07;
+  static const double medalIconFactor = 0.5;
+  static const int medalGridColumns = 3;
+  static const double medalTileAspectRatio = 0.72;
+
   /// Profildeki Şu an izlediklerim satırı ve Dizilerim ızgarası: Diziler sekmesinden küçük afiş.
   static const double profilePosterRowHeight = 120;
   static const int profileGridColumns = 4;

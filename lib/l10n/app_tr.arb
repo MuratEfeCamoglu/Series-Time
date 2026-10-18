@@ -708,5 +708,93 @@
   "unitMonths": "ay",
   "unitDays": "gün",
   "unitHours": "saat",
-  "unitEpisodes": "bölüm"
+  "unitEpisodes": "bölüm",
+  "showBadgeFinal": "FİNAL",
+  "seasonShort": "S{season}",
+  "@seasonShort": {
+    "placeholders": {
+      "season": {
+        "type": "int"
+      }
+    }
+  },
+  "genreTierFan": "Meraklısı",
+  "genreTierEnthusiast": "Tutkunu",
+  "genreTierMaster": "Ustası",
+  "genreBadgeTitle": "{genre} {tier}",
+  "@genreBadgeTitle": {
+    "placeholders": {
+      "genre": {
+        "type": "String"
+      },
+      "tier": {
+        "type": "String"
+      }
+    }
+  },
+  "genreBadgeCondition": "{genre} türünde bitmiş {count} dizinin tüm bölümlerini izle.",
+  "@genreBadgeCondition": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "genre": {
+        "type": "String"
+      }
+    }
+  },
+  "showBadgeTitle": "{show} · Final",
+  "@showBadgeTitle": {
+    "placeholders": {
+      "show": {
+        "type": "String"
+      }
+    }
+  },
+  "seasonBadgeTitle": "{show} · {season}. Sezon",
+  "@seasonBadgeTitle": {
+    "placeholders": {
+      "show": {
+        "type": "String"
+      },
+      "season": {
+        "type": "int"
+      }
+    }
+  },
+  "notificationShowBadge": "\"{show}\" dizisini bitirdin, rozetin hazır!",
+  "@notificationShowBadge": {
+    "placeholders": {
+      "show": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationSeasonBadge": "\"{show}\" {season}. sezonunu bitirdin, rozetin hazır!",
+  "@notificationSeasonBadge": {
+    "placeholders": {
+      "show": {
+        "type": "String"
+      },
+      "season": {
+        "type": "int"
+      }
+    }
+  },
+  "badgesShowSection": "Dizi rozetleri",
+  "badgesShowEmpty": "Bir sezonu veya bitmiş bir diziyi tamamlayınca burada o diziye özel rozet kazanırsın.",
+  "badgesGenreSection": "Tür rozetleri",
+  "badgesGeneralSection": "Genel rozetler",
+  "badgesShowcaseHint": "Profil vitrinine eklemek için kazandığın rozete dokun ({count}/6).",
+  "@badgesShowcaseHint": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "badgesShowcaseFull": "En fazla 6 rozet seçebilirsin",
+  "badgeShowcased": "Vitrinde",
+  "profileShowcase": "Rozet vitrini",
+  "profileShowcaseHint": "Rozetler ekranında kazandığın rozetlere dokunarak en fazla 6 tanesini burada sergile."
 }

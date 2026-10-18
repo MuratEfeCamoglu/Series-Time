@@ -305,4 +305,70 @@ void main() {
       expect(find.byType(EpisodeScreen), findsOneWidget);
     },
   );
+
+  testWidgets('dizi ve sezon rozeti bildirimi dizi adıyla yazılır (F14)', (
+    tester,
+  ) async {
+    await _openProfile(
+      tester,
+      notifications: [
+        AppNotification(
+          id: 'n1',
+          type: NotificationType.badgeEarned,
+          entityId: 'show:1399:0',
+          showName: 'Taht Oyunları',
+          createdAt: DateTime.utc(2026, 10, 18, 12),
+        ),
+        AppNotification(
+          id: 'n2',
+          type: NotificationType.badgeEarned,
+          entityId: 'show:1399:2',
+          showName: 'Taht Oyunları',
+          createdAt: DateTime.utc(2026, 10, 18, 11),
+        ),
+      ],
+    );
+    await tester.tap(_navLabel('Bildirimler'));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text('"Taht Oyunları" dizisini bitirdin, rozetin hazır!'),
+      findsOneWidget,
+    );
+    expect(
+      find.text('"Taht Oyunları" 2. sezonunu bitirdin, rozetin hazır!'),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('profilde seçilen rozetler vitrinde görünür (F14)', (
+    tester,
+  ) async {
+    final backend = TestBackend();
+    when(() => backend.badges.fetchFeatured(testUserId)).thenAnswer(
+      (_) async => const [
+        FeaturedBadge(
+          position: 1,
+          showId: 1399,
+          seasonNumber: 0,
+          showName: 'Taht Oyunları',
+        ),
+        FeaturedBadge(position: 2, badgeCode: 'first_episode'),
+      ],
+    );
+    tester.view
+      ..physicalSize = const Size(800, 1600)
+      ..devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await backend.pumpApp(tester);
+    await tester.tap(_navLabel('Profil'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Rozet vitrini'), findsOneWidget);
+    expect(find.byKey(const Key('showcase.show.1399.0')), findsOneWidget);
+    expect(
+      find.byKey(const Key('showcase.badge.first_episode')),
+      findsOneWidget,
+    );
+  });
 }

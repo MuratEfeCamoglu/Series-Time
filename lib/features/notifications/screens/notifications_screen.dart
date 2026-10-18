@@ -21,6 +21,7 @@ import '../../shows/logic.dart';
 import '../data/models.dart';
 import '../logic.dart';
 import '../providers.dart';
+import '../../badges/logic.dart';
 import '../../badges/widgets/badge_texts.dart';
 import '../widgets/friends_feed_tab.dart';
 
@@ -168,9 +169,20 @@ class _NotificationTile extends ConsumerWidget {
     final text = switch (n.type) {
       NotificationType.newFollower => l10n.notificationNewFollower(actor),
       NotificationType.commentLiked => l10n.notificationCommentLiked(actor),
-      NotificationType.badgeEarned => l10n.notificationBadgeEarned(
-        badgeTitle(l10n, n.entityId ?? '', n.badgeName ?? n.entityId ?? ''),
-      ),
+      NotificationType.badgeEarned => switch (parseShowBadgeEntity(
+        n.entityId,
+      )) {
+        (seasonNumber: 0, showId: _) => l10n.notificationShowBadge(
+          n.showName ?? '',
+        ),
+        (:final seasonNumber, showId: _) => l10n.notificationSeasonBadge(
+          n.showName ?? '',
+          seasonNumber,
+        ),
+        null => l10n.notificationBadgeEarned(
+          badgeTitle(l10n, n.entityId ?? '', n.badgeName ?? n.entityId ?? ''),
+        ),
+      },
     };
     final username = n.actorUsername;
     final episodeId = n.episodeId;

@@ -11,7 +11,7 @@ values
   ('33333333-3333-3333-3333-333333333333', 'authenticated', 'authenticated', 'c@test.local', '{"username": "cem"}'),
   ('44444444-4444-4444-4444-444444444444', 'authenticated', 'authenticated', 'd@test.local', '{"username": "deniz"}');
 
-select is((select count(*)::int from public.badges), 15, '15 rozet tanımlı');
+select is((select count(*)::int from public.badges), 63, '15 genel + 48 tür rozeti tanımlı');
 
 -- 1: bitmiş dizi (2 bölüm + sezon 0 + gelecek bölüm), 2: 12 bölümlü yayını süren dizi
 insert into public.shows (id, name, status) values (1, 'Bitti', 'Ended'), (2, 'Sürüyor', 'Returning Series');
