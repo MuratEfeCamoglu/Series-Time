@@ -1160,4 +1160,14 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get categoryTopRated => 'En yüksek puanlılar';
+
+  @override
+  String get settingsAppIcon => 'Uygulama simgesi';
+
+  @override
+  String get settingsAppIconHint =>
+      'Ana ekrandaki simgenin rengini seç. Bazı telefonlarda simge birkaç saniye içinde değişir.';
+
+  @override
+  String get appIconFailed => 'Simge değiştirilemedi, tekrar dene.';
 }

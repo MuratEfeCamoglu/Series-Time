@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_view.dart';
+import '../../../shared/widgets/motion.dart';
 import '../../../theme/app_spacing.dart';
 import '../logic.dart';
 import '../providers.dart';
@@ -127,8 +128,10 @@ class _ShowResults extends ConsumerWidget {
               ? EmptyState(message: AppLocalizations.of(context).noResults)
               : ListView.builder(
                   itemCount: shows.length,
-                  itemBuilder: (context, index) =>
-                      ShowResultTile(show: shows[index]),
+                  itemBuilder: (context, index) => EntranceAnimation(
+                    index: index,
+                    child: ShowResultTile(show: shows[index]),
+                  ),
                 ),
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (error, _) => ErrorView(
@@ -153,8 +156,10 @@ class _UserResults extends ConsumerWidget {
               ? EmptyState(message: AppLocalizations.of(context).noResults)
               : ListView.builder(
                   itemCount: users.length,
-                  itemBuilder: (context, index) =>
-                      UserResultTile(profile: users[index]),
+                  itemBuilder: (context, index) => EntranceAnimation(
+                    index: index,
+                    child: UserResultTile(profile: users[index]),
+                  ),
                 ),
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (error, _) => ErrorView(

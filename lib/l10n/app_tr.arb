@@ -701,5 +701,8 @@
   "categorySpanish": "İspanyol dizileri",
   "categoryMiniseries": "Mini diziler",
   "categoryRecent": "Yeni çıkanlar",
-  "categoryTopRated": "En yüksek puanlılar"
+  "categoryTopRated": "En yüksek puanlılar",
+  "settingsAppIcon": "Uygulama simgesi",
+  "settingsAppIconHint": "Ana ekrandaki simgenin rengini seç. Bazı telefonlarda simge birkaç saniye içinde değişir.",
+  "appIconFailed": "Simge değiştirilemedi, tekrar dene."
 }

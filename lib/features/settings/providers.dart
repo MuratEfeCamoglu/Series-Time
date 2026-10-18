@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/preferences.dart';
 import '../../theme/app_palettes.dart';
+import 'data/repository.dart';
 
 const _paletteKey = 'appearance.palette';
 
@@ -23,6 +24,33 @@ class PaletteNotifier extends Notifier<AppPalette> {
 
 final paletteProvider = NotifierProvider<PaletteNotifier, AppPalette>(
   PaletteNotifier.new,
+);
+
+final appIconRepositoryProvider = Provider<AppIconRepository>(
+  (ref) => const AppIconRepository(),
+);
+
+/// F22: seçili uygulama simgesi; işletim sisteminden okunur, seçim iyimser uygulanır.
+class AppIconNotifier extends AsyncNotifier<AppPalette> {
+  @override
+  Future<AppPalette> build() =>
+      ref.read(appIconRepositoryProvider).currentIcon();
+
+  /// Hata olursa önceki simgeye döner ve hatayı yeniden fırlatır (ekran SnackBar gösterir).
+  Future<void> select(AppPalette icon) async {
+    final previous = state;
+    state = AsyncData(icon);
+    try {
+      await ref.read(appIconRepositoryProvider).setIcon(icon);
+    } catch (_) {
+      state = previous;
+      rethrow;
+    }
+  }
+}
+
+final appIconProvider = AsyncNotifierProvider<AppIconNotifier, AppPalette>(
+  AppIconNotifier.new,
 );
 
 const _languageKey = 'app.locale';

@@ -207,4 +207,57 @@ void main() {
       expect(episodeLabel(1, 5), 'S01 | B05');
     });
   });
+
+  group('F22 uygulama simgesi', () {
+    testWidgets('6 renk listelenir; seçim işletim sistemine iletilir', (
+      tester,
+    ) async {
+      final backend = await _openSettings(tester);
+      when(() => backend.appIcon.setIcon(AppPalette.blue))
+          .thenAnswer((_) async {});
+
+      await tester.tap(find.byKey(const Key('settings.appIcon')));
+      await tester.pumpAndSettle();
+
+      for (final icon in AppPalette.values) {
+        expect(find.byKey(Key('appIcon.${icon.name}')), findsOneWidget);
+      }
+      expect(
+        tester
+            .widget<ListTile>(find.byKey(const Key('appIcon.yellow')))
+            .selected,
+        isTrue,
+      );
+
+      await tester.tap(find.byKey(const Key('appIcon.blue')));
+      await tester.pumpAndSettle();
+
+      verify(() => backend.appIcon.setIcon(AppPalette.blue)).called(1);
+      expect(
+        tester.widget<ListTile>(find.byKey(const Key('appIcon.blue'))).selected,
+        isTrue,
+      );
+    });
+
+    testWidgets('simge değiştirilemezse önceki seçime döner ve ileti çıkar', (
+      tester,
+    ) async {
+      final backend = await _openSettings(tester);
+      when(() => backend.appIcon.setIcon(AppPalette.red))
+          .thenThrow(const AppFailure(AppFailureType.unknown));
+
+      await tester.tap(find.byKey(const Key('settings.appIcon')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('appIcon.red')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Simge değiştirilemedi, tekrar dene.'), findsOneWidget);
+      expect(
+        tester
+            .widget<ListTile>(find.byKey(const Key('appIcon.yellow')))
+            .selected,
+        isTrue,
+      );
+    });
+  });
 }

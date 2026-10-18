@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/error_view.dart';
 import '../../../theme/app_colors.dart';
+import '../../../shared/widgets/motion.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_text_styles.dart';
 import '../logic.dart';
@@ -107,16 +108,19 @@ class _Star extends StatelessWidget {
             leftHalf: details.localPosition.dx < AppSpacing.ratingStarSize / 2,
           ),
         ),
-        child: Icon(
-          switch (fill) {
-            StarFill.full => Icons.star,
-            StarFill.half => Icons.star_half,
-            StarFill.empty => Icons.star_border,
-          },
-          size: AppSpacing.ratingStarSize,
-          color: fill == StarFill.empty
-              ? AppColors.textSecondary
-              : AppColors.accent,
+        child: SelectionBounce(
+          active: fill != StarFill.empty,
+          child: Icon(
+            switch (fill) {
+              StarFill.full => Icons.star,
+              StarFill.half => Icons.star_half,
+              StarFill.empty => Icons.star_border,
+            },
+            size: AppSpacing.ratingStarSize,
+            color: fill == StarFill.empty
+                ? AppColors.textSecondary
+                : AppColors.accent,
+          ),
         ),
       ),
     );

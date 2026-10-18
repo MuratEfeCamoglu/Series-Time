@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/error_view.dart';
 import '../../../theme/app_colors.dart';
+import '../../../shared/widgets/motion.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_text_styles.dart';
 import '../data/models.dart';
@@ -127,37 +128,46 @@ class _ReactionTile extends StatelessWidget {
     return Semantics(
       selected: selected,
       button: true,
-      child: Material(
-        color: selected ? AppColors.accent : AppColors.surfaceAlt,
-        borderRadius: BorderRadius.circular(AppSpacing.posterRadius),
-        child: InkWell(
-          key: Key('reaction.${type.name}'),
-          borderRadius: BorderRadius.circular(AppSpacing.posterRadius),
-          onTap: onTap,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                _emoji[type]!,
-                style: const TextStyle(fontSize: AppSpacing.reactionEmojiSize),
-              ),
-              Text(
-                reactionLabel(l10n, type),
-                style: AppTextStyles.caption.copyWith(
-                  color: selected ? AppColors.onAccent : AppColors.textPrimary,
-                ),
-              ),
-              if (value != null)
-                Text(
-                  l10n.percent(value),
-                  key: Key('reaction.${type.name}.percent'),
-                  style: AppTextStyles.caption.copyWith(
-                    color: selected
-                        ? AppColors.onAccent
-                        : AppColors.textSecondary,
+      child: PressScale(
+        child: SelectionBounce(
+          active: selected,
+          child: Material(
+            color: selected ? AppColors.accent : AppColors.surfaceAlt,
+            borderRadius: BorderRadius.circular(AppSpacing.posterRadius),
+            child: InkWell(
+              key: Key('reaction.${type.name}'),
+              borderRadius: BorderRadius.circular(AppSpacing.posterRadius),
+              onTap: onTap,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    _emoji[type]!,
+                    style: const TextStyle(
+                      fontSize: AppSpacing.reactionEmojiSize,
+                    ),
                   ),
-                ),
-            ],
+                  Text(
+                    reactionLabel(l10n, type),
+                    style: AppTextStyles.caption.copyWith(
+                      color: selected
+                          ? AppColors.onAccent
+                          : AppColors.textPrimary,
+                    ),
+                  ),
+                  if (value != null)
+                    Text(
+                      l10n.percent(value),
+                      key: Key('reaction.${type.name}.percent'),
+                      style: AppTextStyles.caption.copyWith(
+                        color: selected
+                            ? AppColors.onAccent
+                            : AppColors.textSecondary,
+                      ),
+                    ),
+                ],
+              ),
+            ),
           ),
         ),
       ),

@@ -8,6 +8,7 @@ import '../../../core/format.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_view.dart';
+import '../../../shared/widgets/motion.dart';
 import '../../../shared/widgets/poster_card.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_spacing.dart';
@@ -39,8 +40,10 @@ class FriendsFeedTab extends ConsumerWidget {
                   onRefresh: () => ref.refresh(friendsFeedProvider.future),
                   child: ListView.builder(
                     itemCount: items.length,
-                    itemBuilder: (context, index) =>
-                        _FeedTile(item: items[index]),
+                    itemBuilder: (context, index) => EntranceAnimation(
+                      index: index,
+                      child: _FeedTile(item: items[index]),
+                    ),
                   ),
                 ),
           loading: () => const Center(child: CircularProgressIndicator()),

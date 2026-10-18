@@ -8,7 +8,7 @@ import '../../../shared/widgets/error_view.dart';
 import '../../../theme/app_colors.dart';
 import '../../auth/providers.dart';
 
-/// Ayarlar: profil, renk (F21a), engellenenler (F15c), Hakkında (F17), çıkış ve hesap silme (F16).
+/// Ayarlar: profil, renk (F21a), uygulama simgesi (F22), engellenenler (F15c), Hakkında (F17), çıkış ve hesap silme (F16).
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
@@ -43,6 +43,12 @@ class SettingsScreen extends ConsumerWidget {
             leading: const Icon(Icons.palette_outlined),
             title: Text(l10n.settingsColors),
             onTap: () => context.push(AppRoutes.colorSettings),
+          ),
+          ListTile(
+            key: const Key('settings.appIcon'),
+            leading: const Icon(Icons.app_shortcut_outlined),
+            title: Text(l10n.settingsAppIcon),
+            onTap: () => context.push(AppRoutes.appIconSettings),
           ),
           ListTile(
             key: const Key('settings.language'),

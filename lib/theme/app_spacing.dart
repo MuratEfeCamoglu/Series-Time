@@ -99,6 +99,10 @@ abstract final class AppSpacing {
 
   /// Profildeki Letterboxd/Instagram logosu (F8i); dokunma alanı [minTapTarget].
   static const double socialIconSize = 32;
+
+  /// Ayarlar › Uygulama simgesi önizlemesi (F22).
+  static const double appIconPreviewSize = 48;
+  static const double appIconPreviewRadius = 12;
   static const double nextEpisodeBannerHeight = 120;
   static const double bannerCheckScale = 1.4;
   static const double ratingStarSize = 40;

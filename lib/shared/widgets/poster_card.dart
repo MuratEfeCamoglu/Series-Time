@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../core/tmdb_image.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
+import 'motion.dart';
 
 /// 2:3 oranlı, köşeleri yuvarlatılmış dizi afişi. Afiş yoksa dizi adı yazılı boş kart.
 class PosterCard extends StatelessWidget {
@@ -13,12 +14,17 @@ class PosterCard extends StatelessWidget {
     required this.posterPath,
     this.size = TmdbImageSize.w342,
     this.onTap,
+    this.heroTag,
   });
 
   final String title;
   final String? posterPath;
   final TmdbImageSize size;
   final VoidCallback? onTap;
+
+  /// Verilirse afiş dizi detayındaki afişe büyüyerek geçer (Hero). Aynı sayfada
+  /// benzersiz olmalı; bu yüzden bölüm önekiyle verilir (ör. "popular-1399").
+  final String? heroTag;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +43,8 @@ class PosterCard extends StatelessWidget {
         ),
       ),
     );
-    return Semantics(
+    final tag = heroTag;
+    final card = Semantics(
       label: title,
       button: onTap != null,
       child: AspectRatio(
@@ -60,6 +67,10 @@ class PosterCard extends StatelessWidget {
           ),
         ),
       ),
+    );
+    return PressScale(
+      enabled: onTap != null,
+      child: tag == null ? card : Hero(tag: tag, child: card),
     );
   }
 }

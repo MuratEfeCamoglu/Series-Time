@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../app/router.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/error_view.dart';
+import '../../../shared/widgets/motion.dart';
 import '../../../shared/widgets/poster_card.dart';
 import '../../../theme/app_spacing.dart';
 import '../providers.dart';
@@ -81,10 +82,18 @@ class _PopularGrid extends ConsumerWidget {
                   itemCount: state.shows.length,
                   itemBuilder: (context, index) {
                     final show = state.shows[index];
-                    return PosterCard(
-                      title: show.name,
-                      posterPath: show.posterPath,
-                      onTap: () => context.push(AppRoutes.showDetail(show.id)),
+                    final tag = 'popular-${show.id}';
+                    return EntranceAnimation(
+                      index: index,
+                      child: PosterCard(
+                        title: show.name,
+                        posterPath: show.posterPath,
+                        heroTag: tag,
+                        onTap: () => context.push(
+                          AppRoutes.showDetail(show.id),
+                          extra: tag,
+                        ),
+                      ),
                     );
                   },
                 ),

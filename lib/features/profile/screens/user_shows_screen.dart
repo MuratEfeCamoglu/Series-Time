@@ -70,7 +70,7 @@ class _UserShowsScreenState extends ConsumerState<UserShowsScreen> {
                         message: l10n.statusFilterEmpty,
                         icon: Icons.filter_list_off,
                       )
-                    : ShowProgressGrid(shows: filtered),
+                    : ShowProgressGrid(shows: filtered, heroScope: 'allShows'),
               ),
             ],
           );

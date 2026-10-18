@@ -1166,4 +1166,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get categoryTopRated => 'Top rated';
+
+  @override
+  String get settingsAppIcon => 'App icon';
+
+  @override
+  String get settingsAppIconHint =>
+      'Choose the color of the home screen icon. On some phones the icon changes after a few seconds.';
+
+  @override
+  String get appIconFailed => 'Couldn\'t change the icon, try again.';
 }

@@ -18,6 +18,9 @@ import 'package:sezonluk/features/moderation/data/repository.dart';
 import 'package:sezonluk/features/moderation/providers.dart';
 import 'package:sezonluk/features/notifications/data/repository.dart';
 import 'package:sezonluk/features/notifications/providers.dart';
+import 'package:sezonluk/features/settings/data/repository.dart';
+import 'package:sezonluk/features/settings/providers.dart';
+import 'package:sezonluk/theme/app_palettes.dart';
 import 'package:sezonluk/features/profile/data/models.dart';
 import 'package:sezonluk/features/profile/data/repository.dart';
 import 'package:sezonluk/features/profile/providers.dart';
@@ -55,6 +58,8 @@ class MockNotificationsRepository extends Mock
     implements NotificationsRepository {}
 
 class MockBadgesRepository extends Mock implements BadgesRepository {}
+
+class MockAppIconRepository extends Mock implements AppIconRepository {}
 
 const testUserId = '11111111-1111-1111-1111-111111111111';
 
@@ -148,6 +153,8 @@ class TestBackend {
     when(() => notifications.fetchNotifications())
         .thenAnswer((_) async => const []);
     when(() => notifications.markAllRead()).thenAnswer((_) async {});
+    when(() => appIcon.currentIcon())
+        .thenAnswer((_) async => AppPalette.yellow);
     when(() => notifications.fetchMyWatchFeed())
         .thenAnswer((_) async => const []);
     when(() => badges.fetchBadges()).thenAnswer((_) async => const []);
@@ -173,6 +180,7 @@ class TestBackend {
   final moderation = MockModerationRepository();
   final notifications = MockNotificationsRepository();
   final badges = MockBadgesRepository();
+  final appIcon = MockAppIconRepository();
   late SharedPreferences preferences;
   final statusController = StreamController<AuthStatus>.broadcast();
 
@@ -198,6 +206,7 @@ class TestBackend {
         moderationRepositoryProvider.overrideWithValue(moderation),
         notificationsRepositoryProvider.overrideWithValue(notifications),
         badgesRepositoryProvider.overrideWithValue(badges),
+        appIconRepositoryProvider.overrideWithValue(appIcon),
         sharedPreferencesProvider.overrideWithValue(preferences),
       ],
       child: const SezonlukApp(),

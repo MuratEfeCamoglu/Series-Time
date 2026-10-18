@@ -6,6 +6,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/error_view.dart';
 import '../../../shared/widgets/progress_bar.dart';
 import '../../../theme/app_colors.dart';
+import '../../../shared/widgets/motion.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_text_styles.dart';
 import '../../profile/widgets/profile_avatar.dart';
@@ -117,46 +118,51 @@ class _CastCard extends StatelessWidget {
       label: AppLocalizations.of(context).starVoteFor(member.name),
       selected: selected,
       button: true,
-      child: InkWell(
-        key: Key('star.${member.personId}'),
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(AppSpacing.posterRadius),
-        child: SizedBox(
-          width: AppSpacing.castCardWidth,
-          child: Column(
-            children: [
-              DecoratedBox(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: selected ? AppColors.accent : AppColors.border,
-                    width: AppSpacing.progressIndicatorStroke,
+      child: PressScale(
+        child: SelectionBounce(
+          active: selected,
+          child: InkWell(
+            key: Key('star.${member.personId}'),
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(AppSpacing.posterRadius),
+            child: SizedBox(
+              width: AppSpacing.castCardWidth,
+              child: Column(
+                children: [
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: selected ? AppColors.accent : AppColors.border,
+                        width: AppSpacing.progressIndicatorStroke,
+                      ),
+                    ),
+                    child: ProfileAvatar(
+                      size: AppSpacing.castPhotoSize,
+                      url: tmdbImageUrl(member.profilePath, TmdbImageSize.w185),
+                    ),
                   ),
-                ),
-                child: ProfileAvatar(
-                  size: AppSpacing.castPhotoSize,
-                  url: tmdbImageUrl(member.profilePath, TmdbImageSize.w185),
-                ),
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(
+                    member.name,
+                    style: AppTextStyles.caption.copyWith(
+                      color: AppColors.textPrimary,
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  if (character != null)
+                    Text(
+                      character,
+                      style: AppTextStyles.caption,
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                ],
               ),
-              const SizedBox(height: AppSpacing.xs),
-              Text(
-                member.name,
-                style: AppTextStyles.caption.copyWith(
-                  color: AppColors.textPrimary,
-                ),
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              if (character != null)
-                Text(
-                  character,
-                  style: AppTextStyles.caption,
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-            ],
+            ),
           ),
         ),
       ),

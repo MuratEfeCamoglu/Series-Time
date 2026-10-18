@@ -5,6 +5,7 @@ import 'package:sezonluk/features/discover/screens/discover_search_screen.dart';
 import 'package:sezonluk/features/discover/widgets/show_result_tile.dart';
 import 'package:sezonluk/features/discover/widgets/suggest_card.dart';
 import 'package:sezonluk/features/shows/data/models.dart';
+import 'package:sezonluk/features/shows/screens/show_detail_screen.dart';
 import 'package:sezonluk/shared/widgets/poster_card.dart';
 
 import '../../helpers.dart';
@@ -180,5 +181,25 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.text('Ünlü 25'), findsWidgets);
+  });
+
+  testWidgets('afişe dokununca detay aynı Hero etiketiyle açılır (F22d)', (
+    tester,
+  ) async {
+    await _openDiscover(tester, trending: [testShow]);
+
+    expect(
+      tester.widget<Hero>(find.byType(Hero)).tag,
+      'popular-${testShow.id}',
+    );
+    await tester.ensureVisible(find.byType(PosterCard));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byType(PosterCard));
+    await tester.pumpAndSettle();
+
+    expect(
+      tester.widget<ShowDetailScreen>(find.byType(ShowDetailScreen)).heroTag,
+      'popular-${testShow.id}',
+    );
   });
 }

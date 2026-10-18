@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../theme/app_colors.dart';
+import '../../theme/app_motion.dart';
 import '../../theme/app_spacing.dart';
+import 'motion.dart';
 
 /// Afişin altındaki 3 pt ilerleme çubuğu (ISKELET.md §3.7). [value] 0–1.
 /// [outlined] boş, yalnızca kontur çizilen çubuktur (F6j İzleme Listesi).
@@ -42,14 +44,20 @@ class ProgressBar extends StatelessWidget {
         ),
       );
     }
-    return ClipRRect(
-      borderRadius: radius,
-      child: LinearProgressIndicator(
-        value: value,
-        minHeight: AppSpacing.progressBarHeight,
-        color: color,
-        backgroundColor: AppColors.border,
-        semanticsLabel: semanticsLabel,
+    // Çubuk ilk görünüşte boştan dolar; değer değişince yeni değere kayar.
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: value),
+      duration: motionDuration(context, AppMotion.progress),
+      curve: Curves.easeOutCubic,
+      builder: (context, animated, _) => ClipRRect(
+        borderRadius: radius,
+        child: LinearProgressIndicator(
+          value: animated,
+          minHeight: AppSpacing.progressBarHeight,
+          color: color,
+          backgroundColor: AppColors.border,
+          semanticsLabel: semanticsLabel,
+        ),
       ),
     );
   }

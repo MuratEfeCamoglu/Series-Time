@@ -29,9 +29,12 @@ import 'season_screen.dart';
 /// Dizi detayı (F4): arka plan, afiş, ad, yıl, durum, listeye ekleme/çıkarma; Hakkında
 /// (özet) ve Bölümler (sıradaki bölüm, sezon kartları) sekmeleri.
 class ShowDetailScreen extends ConsumerWidget {
-  const ShowDetailScreen({super.key, required this.showId});
+  const ShowDetailScreen({super.key, required this.showId, this.heroTag});
 
   final int showId;
+
+  /// Açan afişin Hero etiketi; afiş buraya büyüyerek geçer.
+  final String? heroTag;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -39,7 +42,7 @@ class ShowDetailScreen extends ConsumerWidget {
       body: ref
           .watch(showDetailProvider(showId))
           .when(
-            data: (detail) => _DetailBody(detail: detail),
+            data: (detail) => _DetailBody(detail: detail, heroTag: heroTag),
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (error, _) => SafeArea(
               child: Column(
@@ -64,9 +67,10 @@ class ShowDetailScreen extends ConsumerWidget {
 
 /// Hakkında / Bölümler sekmeleri; açılışta Bölümler seçilidir.
 class _DetailBody extends StatelessWidget {
-  const _DetailBody({required this.detail});
+  const _DetailBody({required this.detail, this.heroTag});
 
   final ShowDetail detail;
+  final String? heroTag;
 
   @override
   Widget build(BuildContext context) {
@@ -99,6 +103,7 @@ class _DetailBody extends StatelessWidget {
             sliver: SliverToBoxAdapter(
               child: _Header(
                 show: show,
+                heroTag: heroTag,
                 seasonNumbers: [
                   for (final s in seasons.regular) s.seasonNumber,
                 ],
@@ -153,7 +158,13 @@ class _TabBarDelegate extends SliverPersistentHeaderDelegate {
 }
 
 class _Header extends ConsumerWidget {
-  const _Header({required this.show, required this.seasonNumbers});
+  const _Header({
+    required this.show,
+    required this.seasonNumbers,
+    this.heroTag,
+  });
+
+  final String? heroTag;
 
   final Show show;
   final List<int> seasonNumbers;
@@ -175,6 +186,7 @@ class _Header extends ConsumerWidget {
           width: AppSpacing.detailPosterWidth,
           child: PosterCard(
             key: const Key('showDetail.poster'),
+            heroTag: heroTag,
             title: show.name,
             posterPath: mine?.posterPath ?? show.posterPath,
           ),

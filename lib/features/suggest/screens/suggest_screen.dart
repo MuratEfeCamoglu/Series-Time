@@ -8,6 +8,7 @@ import '../../../app/router.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_view.dart';
+import '../../../shared/widgets/motion.dart';
 import '../../../shared/widgets/guest_gate.dart';
 import '../../auth/providers.dart';
 import '../../../shared/widgets/poster_card.dart';
@@ -180,8 +181,10 @@ class _SimilarSection extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
               itemCount: shows.length,
               separatorBuilder: (_, _) => const SizedBox(width: AppSpacing.sm),
-              itemBuilder: (context, index) =>
-                  _SuggestionPoster(show: shows[index]),
+              itemBuilder: (context, index) => EntranceAnimation(
+                index: index,
+                child: _SuggestionPoster(show: shows[index], scope: 'similar'),
+              ),
             ),
           ),
         ],
@@ -223,8 +226,13 @@ class _SuggestionsGrid extends ConsumerWidget {
                           childAspectRatio: AppSpacing.posterAspectRatio,
                         ),
                     itemCount: shows.length,
-                    itemBuilder: (context, index) =>
-                        _SuggestionPoster(show: shows[index]),
+                    itemBuilder: (context, index) => EntranceAnimation(
+                      index: index,
+                      child: _SuggestionPoster(
+                        show: shows[index],
+                        scope: 'suggest',
+                      ),
+                    ),
                   ),
                 ),
                 if (state.loadingMore)
@@ -255,9 +263,12 @@ class _SuggestionsGrid extends ConsumerWidget {
 
 /// Afiş + "+" kısayolu (F18e). Afişe dokunmak dizi detayını açar.
 class _SuggestionPoster extends ConsumerWidget {
-  const _SuggestionPoster({required this.show});
+  const _SuggestionPoster({required this.show, required this.scope});
 
   final Show show;
+
+  /// Hero etiketinin öneki; aynı dizi iki bölümde birden olabilir.
+  final String scope;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -267,7 +278,11 @@ class _SuggestionPoster extends ConsumerWidget {
         PosterCard(
           title: show.name,
           posterPath: show.posterPath,
-          onTap: () => context.push(AppRoutes.showDetail(show.id)),
+          heroTag: '$scope-${show.id}',
+          onTap: () => context.push(
+            AppRoutes.showDetail(show.id),
+            extra: '$scope-${show.id}',
+          ),
         ),
         Positioned(
           right: 0,

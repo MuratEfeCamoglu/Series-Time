@@ -9,6 +9,7 @@ import '../../../core/tmdb_image.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_view.dart';
+import '../../../shared/widgets/motion.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_text_styles.dart';
@@ -90,12 +91,15 @@ class _MeTab extends ConsumerWidget {
       ]),
       child: ListView.builder(
         itemCount: items.length,
-        itemBuilder: (context, index) => switch (items[index]) {
-          NotificationEntry(:final notification) => _NotificationTile(
-            notification: notification,
-          ),
-          WatchEntry(:final watch) => _WatchTile(watch: watch),
-        },
+        itemBuilder: (context, index) => EntranceAnimation(
+          index: index,
+          child: switch (items[index]) {
+            NotificationEntry(:final notification) => _NotificationTile(
+              notification: notification,
+            ),
+            WatchEntry(:final watch) => _WatchTile(watch: watch),
+          },
+        ),
       ),
     );
   }

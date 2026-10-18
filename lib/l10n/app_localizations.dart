@@ -2191,6 +2191,24 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'En yüksek puanlılar'**
   String get categoryTopRated;
+
+  /// No description provided for @settingsAppIcon.
+  ///
+  /// In tr, this message translates to:
+  /// **'Uygulama simgesi'**
+  String get settingsAppIcon;
+
+  /// No description provided for @settingsAppIconHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ana ekrandaki simgenin rengini seç. Bazı telefonlarda simge birkaç saniye içinde değişir.'**
+  String get settingsAppIconHint;
+
+  /// No description provided for @appIconFailed.
+  ///
+  /// In tr, this message translates to:
+  /// **'Simge değiştirilemedi, tekrar dene.'**
+  String get appIconFailed;
 }
 
 class _AppLocalizationsDelegate

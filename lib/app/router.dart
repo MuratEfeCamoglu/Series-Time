@@ -19,6 +19,7 @@ import '../features/profile/screens/profile_screen.dart';
 import '../features/profile/screens/user_profile_screen.dart';
 import '../features/profile/screens/user_shows_screen.dart';
 import '../features/settings/screens/about_screen.dart';
+import '../features/settings/screens/app_icon_settings_screen.dart';
 import '../features/settings/screens/color_settings_screen.dart';
 import '../features/settings/screens/language_settings_screen.dart';
 import '../features/settings/screens/delete_account_screen.dart';
@@ -41,6 +42,7 @@ abstract final class AppRoutes {
   static const blockedUsers = '/settings/blocked';
   static const about = '/settings/about';
   static const colorSettings = '/settings/colors';
+  static const appIconSettings = '/settings/icon';
   static const languageSettings = '/settings/language';
   static const deleteAccount = '/settings/delete-account';
   static const signIn = '/sign-in';
@@ -122,6 +124,10 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const ColorSettingsScreen(),
           ),
           GoRoute(
+            path: 'icon',
+            builder: (context, state) => const AppIconSettingsScreen(),
+          ),
+          GoRoute(
             path: 'language',
             builder: (context, state) => const LanguageSettingsScreen(),
           ),
@@ -148,8 +154,13 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/show/:id',
         redirect: (context, state) =>
             _intParam(state, 'id') == null ? AppRoutes.shows : null,
-        builder: (context, state) =>
-            ShowDetailScreen(showId: _intParam(state, 'id')!),
+        builder: (context, state) => ShowDetailScreen(
+          showId: _intParam(state, 'id')!,
+          heroTag: switch (state.extra) {
+            final String tag => tag,
+            _ => null,
+          },
+        ),
         routes: [
           GoRoute(
             path: 'season/:season',

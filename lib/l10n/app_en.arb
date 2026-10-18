@@ -348,5 +348,8 @@
   "categorySpanish": "Spanish shows",
   "categoryMiniseries": "Miniseries",
   "categoryRecent": "New releases",
-  "categoryTopRated": "Top rated"
+  "categoryTopRated": "Top rated",
+  "settingsAppIcon": "App icon",
+  "settingsAppIconHint": "Choose the color of the home screen icon. On some phones the icon changes after a few seconds.",
+  "appIconFailed": "Couldn't change the icon, try again."
 }

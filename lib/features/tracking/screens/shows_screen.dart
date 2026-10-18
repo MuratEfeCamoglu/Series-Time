@@ -113,7 +113,7 @@ class _RecentShows extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           SectionHeader(title: AppLocalizations.of(context).recentShowsTitle),
-          ShowProgressRow(shows: shows),
+          ShowProgressRow(shows: shows, heroScope: 'recent'),
         ],
       ),
     );

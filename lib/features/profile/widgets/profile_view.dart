@@ -9,9 +9,11 @@ import '../../../core/app_locale.dart';
 import '../../../core/format.dart';
 import '../../../core/tmdb_image.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/widgets/motion.dart';
 import '../../../shared/widgets/poster_card.dart';
 import '../../../shared/widgets/section_header.dart';
 import '../../../theme/app_colors.dart';
+import '../../../theme/app_motion.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_text_styles.dart';
 import '../../shows/logic.dart';
@@ -160,6 +162,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                 : ShowProgressRow(
                     shows: watching,
                     height: AppSpacing.profilePosterRowHeight,
+                    heroScope: 'watching',
                   ),
           ),
         ],
@@ -193,6 +196,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
             SliverShowProgressGrid(
               shows: filtered,
               columns: AppSpacing.profileGridColumns,
+              heroScope: 'myShows',
             ),
         ],
         const SliverPadding(padding: EdgeInsets.only(bottom: AppSpacing.xl)),
@@ -417,8 +421,11 @@ class _Favorites extends StatelessWidget {
                         key: Key('profile.favorite.${shows[i].showId}'),
                         title: shows[i].name,
                         posterPath: shows[i].posterPath,
-                        onTap: () =>
-                            context.push(AppRoutes.showDetail(shows[i].showId)),
+                        heroTag: 'favorite-${shows[i].showId}',
+                        onTap: () => context.push(
+                          AppRoutes.showDetail(shows[i].showId),
+                          extra: 'favorite-${shows[i].showId}',
+                        ),
                       ),
                     )
                   : const SizedBox.shrink(),
@@ -576,14 +583,25 @@ class _RatingsChart extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(
                           horizontal: AppSpacing.ratingBarGap / 2,
                         ),
-                        child: FractionallySizedBox(
-                          key: Key('profile.ratingBar.${bar.rating}'),
-                          alignment: Alignment.bottomCenter,
+                        // Sütunlar ilk görünüşte tabandan yükselir.
+                        child: TweenAnimationBuilder<double>(
                           // Boş sütun da ince bir çizgi olarak görünsün.
-                          heightFactor: bar.count == 0
-                              ? AppSpacing.ratingBarGap /
-                                    AppSpacing.ratingChartHeight
-                              : bar.count / highest,
+                          tween: Tween(
+                            begin: 0,
+                            end: bar.count == 0
+                                ? AppSpacing.ratingBarGap /
+                                      AppSpacing.ratingChartHeight
+                                : bar.count / highest,
+                          ),
+                          duration: motionDuration(context, AppMotion.progress),
+                          curve: Curves.easeOutCubic,
+                          builder: (context, factor, child) =>
+                              FractionallySizedBox(
+                                key: Key('profile.ratingBar.${bar.rating}'),
+                                alignment: Alignment.bottomCenter,
+                                heightFactor: factor,
+                                child: child,
+                              ),
                           child: DecoratedBox(
                             decoration: BoxDecoration(
                               color: bar.count == 0
@@ -706,16 +724,21 @@ class _Stats extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final stats = ref.watch(userStatsProvider(userId));
     final value = stats.value;
-    final time = value == null ? null : splitWatchTime(value.watchMinutes);
     return Row(
       children: [
         Expanded(
           child: _StatCard(
             key: const Key('profile.watchTime'),
             title: l10n.statWatchTimeTitle,
-            value: time == null
-                ? null
-                : l10n.statWatchTimeValue(time.months, time.days, time.hours),
+            value: value?.watchMinutes,
+            format: (minutes) {
+              final time = splitWatchTime(minutes);
+              return l10n.statWatchTimeValue(
+                time.months,
+                time.days,
+                time.hours,
+              );
+            },
           ),
         ),
         const SizedBox(width: AppSpacing.sm),
@@ -723,7 +746,8 @@ class _Stats extends ConsumerWidget {
           child: _StatCard(
             key: const Key('profile.episodes'),
             title: l10n.statEpisodesTitle,
-            value: value?.watchedEpisodes.toString(),
+            value: value?.watchedEpisodes,
+            format: (count) => '$count',
           ),
         ),
       ],
@@ -732,16 +756,22 @@ class _Stats extends ConsumerWidget {
 }
 
 class _StatCard extends StatelessWidget {
-  const _StatCard({super.key, required this.title, required this.value});
+  const _StatCard({
+    super.key,
+    required this.title,
+    required this.value,
+    required this.format,
+  });
 
   final String title;
 
-  /// null: yükleniyor.
-  final String? value;
+  /// null: yükleniyor. Sayı sıfırdan sayarak gelir.
+  final int? value;
+  final String Function(int value) format;
 
   @override
   Widget build(BuildContext context) {
-    final text = value;
+    final target = value;
     return Card(
       color: AppColors.surface,
       margin: EdgeInsets.zero,
@@ -752,10 +782,14 @@ class _StatCard extends StatelessWidget {
           children: [
             Text(title, style: AppTextStyles.caption),
             const SizedBox(height: AppSpacing.xs),
-            if (text == null)
+            if (target == null)
               const LinearProgressIndicator()
             else
-              Text(text, style: AppTextStyles.body),
+              CountUp(
+                value: target,
+                builder: (context, current) =>
+                    Text(format(current), style: AppTextStyles.body),
+              ),
           ],
         ),
       ),
