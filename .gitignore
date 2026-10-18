@@ -56,3 +56,8 @@ supabase/.branches/
 supabase/.temp/
 *.jks
 key.properties
+
+# Tasarım referansı olarak kullanılan başka uygulamaların ekran görüntüleri: yerelde kalır,
+# depoya girmez (marka riski R2 ve üçüncü kişilerin profil bilgileri).
+assets/images/images.jpg
+assets/images/WhatsApp Image *.jpeg
