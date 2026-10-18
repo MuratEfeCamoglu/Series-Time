@@ -12,6 +12,9 @@ abstract final class AppSpacing {
   static const double progressBarOutline = 1;
   static const double statusDotSize = 10;
   static const double minTapTarget = 44;
+
+  /// Yüzen alt menü kapsülünün yüksekliği; köşe yarıçapı bunun yarısıdır.
+  static const double navBarHeight = 64;
   static const double buttonHeight = 48;
   static const double progressIndicatorSize = 20;
   static const double progressIndicatorStroke = 2;
@@ -76,6 +79,9 @@ abstract final class AppSpacing {
   static const double stillThumbWidth = 112;
   static const double stillAspectRatio = 16 / 9;
 
+  /// Bildirimler › Ben'deki izleme satırının sahne görseli (F13f).
+  static const double feedStillWidth = 80;
+
   /// İzleme Listesi satırı (F6b): afiş ve büyük yuvarlak onay düğmesi.
   static const double watchlistPosterWidth = 56;
   static const double checkButtonSize = 48;
@@ -83,6 +89,12 @@ abstract final class AppSpacing {
   static const double episodeHeaderHeight = 240;
   static const double watchlistImageWidth = 128;
   static const double pillRadius = 24;
+
+  /// Keşfet'teki kompakt "Sana Özel Öneriler" bandı (F18a).
+  static const double suggestBandHeight = 48;
+
+  /// Profildeki Letterboxd/Instagram logosu (F8i); dokunma alanı [minTapTarget].
+  static const double socialIconSize = 32;
   static const double nextEpisodeBannerHeight = 120;
   static const double bannerCheckScale = 1.4;
   static const double ratingStarSize = 40;

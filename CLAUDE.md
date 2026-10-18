@@ -68,7 +68,7 @@ Node.js gerekmez. Tam yerel Supabase yığını (`supabase start`) kullanılmaz;
 - İsimlendirme: dosyalar `snake_case.dart`, sınıflar `PascalCase`, provider'lar `camelCaseProvider`,
   ekranlar `XxxScreen`, SQL tablo/kolon `snake_case`, migration `YYYYMMDDHHMMSS_kisa_aciklama.sql`.
 - Veritabanı adları ISKELET.md §3.3 ile aynıdır; özellik kodları (F1…) commit ve PR başlıklarında kullanılır.
-- Rotalar yalnızca `lib/app/router.dart` içinde tanımlanır; yollar: `/shows`, `/discover`, `/profile`, `/show/:id`,
+- Rotalar yalnızca `lib/app/router.dart` içinde tanımlanır; yollar: `/shows`, `/discover` (+ `/search`), `/profile`, `/show/:id`,
   `/show/:id/season/:season`, `/episode/:id`, `/user/:username` (+ `/followers`, `/following`, `/shows`),
   `/suggest`, `/badges`, `/notifications`, `/settings/...`, `/sign-in`, `/sign-up`, `/forgot-password`, `/reset-password`.
 - Renk, boşluk, yazı stili yalnızca `lib/theme/*` üzerinden; widget'ta `Color(0x...)` veya sabit sayı stil yazılmaz.

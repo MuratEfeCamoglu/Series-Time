@@ -100,11 +100,13 @@ void main() {
       expect(find.text('@ayse_1'), findsOneWidget);
       expect(find.text('1 Ekim 2026 tarihinden beri'), findsOneWidget);
       expect(find.byKey(const Key('profile.headerFollowers')), findsOneWidget);
-      // Paylaş ve Düzenle üst çubukta.
+      // Paylaş ve Ayarlar üst çubukta; "Düzenle" yalnızca Ayarlar'da.
+      expect(find.byKey(const Key('profile.edit')), findsNothing);
+      expect(find.text('Düzenle'), findsNothing);
       expect(
         find.descendant(
           of: find.byType(SliverAppBar),
-          matching: find.byKey(const Key('profile.edit')),
+          matching: find.byKey(const Key('profile.settings')),
         ),
         findsOneWidget,
       );
@@ -306,7 +308,10 @@ void main() {
       // Kapak seçilmemiş ve hiç izleme yok: kapak düz renk (V9).
       expect(find.byKey(const Key('profile.cover')), findsNothing);
 
-      await tester.tap(find.text('Düzenle'));
+      // Profili düzenleme yalnızca Ayarlar'dan açılır.
+      await tester.tap(find.byKey(const Key('profile.settings')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Profili düzenle'));
       await tester.pumpAndSettle();
       expect(find.text('Otomatik'), findsOneWidget);
       await tester.tap(find.byKey(const Key('editProfile.cover')));
@@ -333,6 +338,8 @@ void main() {
               as ProfileEdit;
       expect(edit.coverShowId, 2);
       expect(edit.coverPath, '/arka2.jpg');
+      await tester.tap(find.byType(BackButton));
+      await tester.pumpAndSettle();
       expect(find.byKey(const Key('profile.cover')), findsOneWidget);
     },
   );
@@ -346,7 +353,10 @@ void main() {
             const ShowImages(backdrops: ['/arka.jpg'], posters: ['/afis.jpg']),
       );
 
-      await tester.tap(find.text('Düzenle'));
+      // Profili düzenleme yalnızca Ayarlar'dan açılır.
+      await tester.tap(find.byKey(const Key('profile.settings')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Profili düzenle'));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('editProfile.avatar')));
       await tester.pumpAndSettle();
@@ -375,7 +385,10 @@ void main() {
       when(() => backend.profiles.saveProfile(any(), any()))
           .thenAnswer((_) async => testProfile);
 
-      await tester.tap(find.text('Düzenle'));
+      // Profili düzenleme yalnızca Ayarlar'dan açılır.
+      await tester.tap(find.byKey(const Key('profile.settings')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Profili düzenle'));
       await tester.pumpAndSettle();
       final letterboxd = find.byKey(const Key('editProfile.letterboxd'));
       final instagram = find.byKey(const Key('editProfile.instagram'));
@@ -409,31 +422,30 @@ void main() {
     },
   );
 
-  testWidgets('dolu bağlantılar profilde bağlantı metni olarak görünür (F8i)', (
-    tester,
-  ) async {
-    await _openProfile(
-      tester,
-      profile: Profile(
-        id: testUserId,
-        username: 'ayse_1',
-        displayName: 'Ayşe',
-        bio: '',
-        letterboxdUsername: 'ayse_lb',
-        createdAt: testProfile.createdAt,
-      ),
-    );
+  testWidgets(
+    'dolu bağlantılar profilde yalnızca logolu simge olarak görünür (F8i)',
+    (tester) async {
+      await _openProfile(
+        tester,
+        profile: Profile(
+          id: testUserId,
+          username: 'ayse_1',
+          displayName: 'Ayşe',
+          bio: '',
+          letterboxdUsername: 'ayse_lb',
+          createdAt: testProfile.createdAt,
+        ),
+      );
 
-    final button = find.byKey(const Key('profile.letterboxd'));
-    expect(button, findsOneWidget);
-    expect(
-      find.descendant(of: button, matching: find.byIcon(Icons.link)),
-      findsOneWidget,
-    );
-    // Kullanıcı adı değil, bağlantı metni görünür (F8i).
-    expect(find.text('letterboxd.com/ayse_lb'), findsOneWidget);
-    expect(find.byKey(const Key('profile.instagram')), findsNothing);
-  });
+      final button = find.byKey(const Key('profile.letterboxd'));
+      expect(button, findsOneWidget);
+      // Bağlantı metni yok; ekran okuyucu etiketi platform ve kullanıcı adını söyler.
+      expect(find.text('letterboxd.com/ayse_lb'), findsNothing);
+      expect(find.bySemanticsLabel('Letterboxd: ayse_lb'), findsOneWidget);
+      expect(tester.getSize(button).width, greaterThanOrEqualTo(44));
+      expect(find.byKey(const Key('profile.instagram')), findsNothing);
+    },
+  );
 
   testWidgets(
     'profildeki Dizilerim ızgarası grup renginde çubuklu ve çiplerle süzülür (F6j, F8e)',
@@ -560,7 +572,10 @@ void main() {
         createdAt: testProfile.createdAt,
       ),
     );
-    await tester.tap(find.text('Düzenle'));
+    // Profili düzenleme yalnızca Ayarlar'dan açılır.
+    await tester.tap(find.byKey(const Key('profile.settings')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Profili düzenle'));
     await tester.pumpAndSettle();
     final instagram = find.byKey(const Key('editProfile.instagram'));
     await tester.ensureVisible(instagram);

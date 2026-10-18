@@ -26,7 +26,10 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Düzenle'));
+    // Profili düzenleme yalnızca Ayarlar'dan açılır.
+    await tester.tap(find.byKey(const Key('profile.settings')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Profili düzenle'));
     await tester.pumpAndSettle();
     expect(find.byType(EditProfileScreen), findsOneWidget);
     return backend;
@@ -91,6 +94,9 @@ void main() {
     expect(edit.username, 'ayse_yeni');
     expect(edit.avatarBytes, isNull);
 
+    // Kaydet Ayarlar'a döner; oradan geri çıkınca profil yenilemeden güncel.
+    await tester.tap(find.byType(BackButton));
+    await tester.pumpAndSettle();
     expect(find.byType(ProfileScreen), findsOneWidget);
     expect(find.text('Ayşe Y.'), findsOneWidget);
     expect(find.text('@ayse_yeni'), findsOneWidget);

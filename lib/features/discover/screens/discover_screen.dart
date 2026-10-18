@@ -1,125 +1,38 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/router.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_view.dart';
 import '../../../shared/widgets/poster_card.dart';
 import '../../../theme/app_spacing.dart';
-import '../logic.dart';
 import '../providers.dart';
 import '../widgets/on_the_air_row.dart';
-import '../widgets/show_result_tile.dart';
 import '../widgets/suggest_card.dart';
-import '../widgets/user_result_tile.dart';
 
-enum DiscoverMode { shows, users }
-
-/// Keşfet sekmesi (F3): dizi/kullanıcı araması; boş aramada "Şu an yayında" ve en ünlü diziler.
-class DiscoverScreen extends ConsumerStatefulWidget {
+/// Keşfet sekmesi (F3): üstte kompakt öneri bandı, "Şu an yayında" ve en ünlü diziler;
+/// arama üst çubuktaki simgeyle ayrı sayfada açılır (kullanıcı kararı 2026-10-18).
+class DiscoverScreen extends StatelessWidget {
   const DiscoverScreen({super.key});
-
-  @override
-  ConsumerState<DiscoverScreen> createState() => _DiscoverScreenState();
-}
-
-class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
-  final _controller = TextEditingController();
-  Timer? _debounce;
-  DiscoverMode _mode = DiscoverMode.shows;
-  // Yazma durduktan [searchDebounce] sonra güncellenir; istek bu değerle atılır (F3b).
-  String _query = '';
-
-  @override
-  void dispose() {
-    _debounce?.cancel();
-    _controller.dispose();
-    super.dispose();
-  }
-
-  void _onChanged(String value) {
-    _debounce?.cancel();
-    final trimmed = value.trim();
-    if (trimmed.isEmpty) {
-      // Kutu temizlenince trendler beklemeden geri gelir.
-      setState(() => _query = '');
-      return;
-    }
-    _debounce = Timer(searchDebounce, () => setState(() => _query = trimmed));
-  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.tabDiscover)),
-      body: Column(
-        children: [
-          const SuggestCard(),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-            child: SizedBox(
-              width: double.infinity,
-              child: SegmentedButton<DiscoverMode>(
-                showSelectedIcon: false,
-                segments: [
-                  ButtonSegment(
-                    value: DiscoverMode.shows,
-                    label: Text(l10n.discoverSegmentShows),
-                  ),
-                  ButtonSegment(
-                    value: DiscoverMode.users,
-                    label: Text(l10n.discoverSegmentUsers),
-                  ),
-                ],
-                selected: {_mode},
-                onSelectionChanged: (selection) =>
-                    setState(() => _mode = selection.single),
-              ),
-            ),
+      appBar: AppBar(
+        title: Text(l10n.tabDiscover),
+        actions: [
+          IconButton(
+            key: const Key('discover.searchButton'),
+            tooltip: l10n.discoverSearchTooltip,
+            icon: const Icon(Icons.search),
+            onPressed: () => context.push(AppRoutes.discoverSearch),
           ),
-          Padding(
-            padding: const EdgeInsets.all(AppSpacing.md),
-            child: TextField(
-              key: const Key('discover.search'),
-              controller: _controller,
-              onChanged: _onChanged,
-              textInputAction: TextInputAction.search,
-              decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.search),
-                hintText: _mode == DiscoverMode.shows
-                    ? l10n.discoverSearchShowsHint
-                    : l10n.discoverSearchUsersHint,
-              ),
-            ),
-          ),
-          Expanded(child: _results(l10n)),
         ],
       ),
+      body: const _PopularGrid(),
     );
-  }
-
-  Widget _results(AppLocalizations l10n) {
-    if (_query.isEmpty) {
-      // F3(g): "Şu an yayında" öneri kartının altında, en ünlü dizilerin üstünde.
-      return _mode == DiscoverMode.shows
-          ? const _PopularGrid()
-          : const SizedBox.shrink();
-    }
-    if (!canSearch(_query)) {
-      return EmptyState(
-        message: l10n.discoverSearchMinChars,
-        icon: Icons.keyboard,
-      );
-    }
-    return switch (_mode) {
-      DiscoverMode.shows => _ShowResults(query: _query),
-      DiscoverMode.users => _UserResults(query: _query),
-    };
   }
 }
 
@@ -132,6 +45,8 @@ class _PopularGrid extends ConsumerWidget {
     final popular = ref.watch(popularShowsProvider);
     return CustomScrollView(
       slivers: [
+        const SliverToBoxAdapter(child: SuggestCard()),
+        // F3(g): "Şu an yayında" öneri bandının altında, en ünlü dizilerin üstünde.
         const SliverToBoxAdapter(child: OnTheAirRow()),
         ...popular.when(
           data: (shows) => [
@@ -185,57 +100,5 @@ class _PopularGrid extends ConsumerWidget {
         ),
       ],
     );
-  }
-}
-
-class _ShowResults extends ConsumerWidget {
-  const _ShowResults({required this.query});
-
-  final String query;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return ref
-        .watch(showSearchProvider(query))
-        .when(
-          data: (shows) => shows.isEmpty
-              ? EmptyState(message: AppLocalizations.of(context).noResults)
-              : ListView.builder(
-                  itemCount: shows.length,
-                  itemBuilder: (context, index) =>
-                      ShowResultTile(show: shows[index]),
-                ),
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (error, _) => ErrorView(
-            error: error,
-            onRetry: () => ref.invalidate(showSearchProvider(query)),
-          ),
-        );
-  }
-}
-
-class _UserResults extends ConsumerWidget {
-  const _UserResults({required this.query});
-
-  final String query;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return ref
-        .watch(userSearchProvider(query))
-        .when(
-          data: (users) => users.isEmpty
-              ? EmptyState(message: AppLocalizations.of(context).noResults)
-              : ListView.builder(
-                  itemCount: users.length,
-                  itemBuilder: (context, index) =>
-                      UserResultTile(profile: users[index]),
-                ),
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (error, _) => ErrorView(
-            error: error,
-            onRetry: () => ref.invalidate(userSearchProvider(query)),
-          ),
-        );
   }
 }

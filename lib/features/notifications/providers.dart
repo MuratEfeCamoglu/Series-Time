@@ -29,3 +29,8 @@ final notificationsProvider = FutureProvider.autoDispose<List<AppNotification>>(
     return items;
   },
 );
+
+/// Bildirimler › Ben'deki kendi izlemeler (F13f); okunmamış sayacına girmez.
+final myWatchFeedProvider = FutureProvider.autoDispose<List<MyWatchItem>>(
+  (ref) => ref.read(notificationsRepositoryProvider).fetchMyWatchFeed(),
+);

@@ -155,11 +155,6 @@ String letterboxdUrl(String username) => 'https://letterboxd.com/$username/';
 
 String instagramUrl(String username) => 'https://www.instagram.com/$username/';
 
-/// Profilde gösterilen bağlantı metni: "https://www." ve sondaki "/" atılır (F8i).
-String socialLinkLabel(String url) => url
-    .replaceFirst(RegExp(r'^https?://(www\.)?'), '')
-    .replaceFirst(RegExp(r'/$'), '');
-
 /// F8(l): grafiğin sütunları, 0,5 adımla 0,5–5.
 const ratingSteps = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0];
 

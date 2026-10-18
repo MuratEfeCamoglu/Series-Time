@@ -18,6 +18,14 @@ class NotificationsRepository {
     ];
   });
 
+  /// F13(f): Bildirimler › Ben'deki kendi izlemeler (son 90 gün).
+  Future<List<MyWatchItem>> fetchMyWatchFeed() => _guard(() async {
+    final rows = await _client.rpc('get_my_watch_feed') as List;
+    return [
+      for (final row in rows) MyWatchItem.fromJson(row as Map<String, dynamic>),
+    ];
+  });
+
   /// F8(b) zil sayacı.
   Future<int> fetchUnreadCount() => _guard(() async {
     final response = await _client

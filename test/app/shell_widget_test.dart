@@ -32,6 +32,28 @@ void main() {
     },
   );
 
+  testWidgets(
+    'alt menü ekranın altına yapışık değil, kenarlardan boşluklu yüzen kapsüldür',
+    (tester) async {
+      await TestBackend().pumpApp(tester);
+
+      final screen = tester.getSize(find.byType(MaterialApp));
+      final bar = tester.getRect(find.byKey(const Key('nav.floatingBar')));
+      expect(bar.left, greaterThan(0));
+      expect(bar.right, lessThan(screen.width));
+      expect(bar.bottom, lessThan(screen.height));
+      expect(bar.height, greaterThanOrEqualTo(44));
+      final shape =
+          tester
+                  .widget<DecoratedBox>(
+                    find.byKey(const Key('nav.floatingBar')),
+                  )
+                  .decoration
+              as BoxDecoration;
+      expect(shape.borderRadius, BorderRadius.circular(bar.height / 2));
+    },
+  );
+
   testWidgets('sekmeye dokununca ilgili ekran açılır', (tester) async {
     await TestBackend().pumpApp(tester);
 

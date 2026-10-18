@@ -50,7 +50,6 @@
   "resetPasswordTitle": "Set a new password",
   "resetPasswordButton": "Save password",
   "resetPasswordDone": "Your password has been updated.",
-  "profileEdit": "Edit",
   "editProfileTitle": "Edit profile",
   "changeAvatar": "Change avatar",
   "countryNone": "Not specified",
@@ -113,7 +112,6 @@
   "coverPickerTitle": "Choose cover",
   "coverPickerHint": "Pick a show, then make one of its backdrops your cover. If you don't choose, the show you watched last is used.",
   "suggestCardTitle": "Picked for you",
-  "suggestCardBody": "Discover new shows from the categories you love.",
   "suggestTitle": "Picked for you",
   "suggestMaxGenres": "You can pick up to 3 categories",
   "suggestPickGenre": "Pick at least one category to get suggestions",
@@ -336,5 +334,10 @@
   "badgeComments10Name": "Chatterbox",
   "badgeComments10Desc": "Write 10 comments.",
   "badgeComments50Name": "Critic",
-  "badgeComments50Desc": "Write 50 comments."
+  "badgeComments50Desc": "Write 50 comments.",
+  "meWatchedOne": "You watched: {show} · {code}",
+  "meWatchedMany": "You watched {count} episodes: {show}",
+  "discoverSearchTooltip": "Search",
+  "socialLetterboxdLabel": "Letterboxd: {name}",
+  "socialInstagramLabel": "Instagram: {name}"
 }

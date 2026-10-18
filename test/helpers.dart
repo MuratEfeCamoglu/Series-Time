@@ -146,6 +146,8 @@ class TestBackend {
     when(() => notifications.fetchNotifications())
         .thenAnswer((_) async => const []);
     when(() => notifications.markAllRead()).thenAnswer((_) async {});
+    when(() => notifications.fetchMyWatchFeed())
+        .thenAnswer((_) async => const []);
     when(() => badges.fetchBadges()).thenAnswer((_) async => const []);
     when(() => badges.fetchEarned(any())).thenAnswer((_) async => const []);
     when(() => suggest.topGenres()).thenAnswer((_) async => const []);

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../app/router.dart';
 import '../../../core/app_locale.dart';
@@ -28,9 +27,10 @@ import '../logic.dart';
 import '../providers.dart';
 import 'profile_actions_menu.dart';
 import 'profile_avatar.dart';
+import 'social_link_button.dart';
 
 /// F8 profil düzeni. Başka kullanıcının profili de (F12) bu düzeni kullanır; o zaman
-/// "Düzenle" yerine "Takip et", zil yerine şikayet/engelle menüsü gelir.
+/// Ayarlar yerine "Takip et" ve şikayet/engelle menüsü gelir.
 /// Sıra (F8e): başlık → biyografi/bağlantılar → Favoriler → Şu an izlediklerim →
 /// Son etkinlik → Dizilerim → istatistikler ve sayılar.
 class ProfileView extends ConsumerStatefulWidget {
@@ -83,12 +83,9 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
           actions: [
             if (isMe) ...[
               _ShareButton(username: profile.username),
-              TextButton(
-                key: const Key('profile.edit'),
-                onPressed: () => context.push(AppRoutes.editProfile),
-                child: Text(l10n.profileEdit),
-              ),
+              // Profili düzenleme yalnızca Ayarlar'dan açılır (kullanıcı kararı 2026-10-18).
               IconButton(
+                key: const Key('profile.settings'),
                 tooltip: l10n.settingsTitle,
                 icon: const Icon(Icons.settings_outlined),
                 onPressed: () => context.push(AppRoutes.settings),
@@ -492,49 +489,26 @@ class _Links extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
     final letterboxd = profile.letterboxdUsername;
     final instagram = profile.instagramUsername;
     if (letterboxd == null && instagram == null) return const SizedBox.shrink();
-
-    Widget link(Key key, String url) => InkWell(
-      key: key,
-      onTap: () async {
-        final messenger = ScaffoldMessenger.of(context);
-        final opened = await launchUrl(
-          Uri.parse(url),
-          mode: LaunchMode.externalApplication,
-        );
-        if (!opened) {
-          messenger.showSnackBar(SnackBar(content: Text(l10n.errorLinkOpen)));
-        }
-      },
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: AppSpacing.minTapTarget),
-        child: Row(
-          children: [
-            const Icon(Icons.link, size: AppSpacing.md + AppSpacing.xs),
-            const SizedBox(width: AppSpacing.xs),
-            Flexible(
-              child: Text(
-                socialLinkLabel(url),
-                style: AppTextStyles.body.copyWith(color: AppColors.accent),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    // F8(i): yalnızca logolu simgeler; bağlantı metni gösterilmez (kullanıcı kararı 2026-10-18).
+    return Row(
       children: [
         if (letterboxd != null)
-          link(const Key('profile.letterboxd'), letterboxdUrl(letterboxd)),
+          SocialLinkButton(
+            key: const Key('profile.letterboxd'),
+            platform: SocialPlatform.letterboxd,
+            username: letterboxd,
+            url: letterboxdUrl(letterboxd),
+          ),
         if (instagram != null)
-          link(const Key('profile.instagram'), instagramUrl(instagram)),
+          SocialLinkButton(
+            key: const Key('profile.instagram'),
+            platform: SocialPlatform.instagram,
+            username: instagram,
+            url: instagramUrl(instagram),
+          ),
       ],
     );
   }

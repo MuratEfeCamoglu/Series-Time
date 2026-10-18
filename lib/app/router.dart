@@ -10,6 +10,7 @@ import '../features/auth/screens/sign_in_screen.dart';
 import '../features/auth/screens/sign_up_screen.dart';
 import '../features/badges/screens/badges_screen.dart';
 import '../features/discover/screens/discover_screen.dart';
+import '../features/discover/screens/discover_search_screen.dart';
 import '../features/moderation/screens/blocked_users_screen.dart';
 import '../features/notifications/screens/notifications_screen.dart';
 import '../features/episode_feedback/screens/episode_screen.dart';
@@ -33,6 +34,7 @@ import 'shell.dart';
 abstract final class AppRoutes {
   static const shows = '/shows';
   static const discover = '/discover';
+  static const discoverSearch = '/discover/search';
   static const profile = '/profile';
   static const settings = '/settings';
   static const editProfile = '/settings/profile';
@@ -222,6 +224,13 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: AppRoutes.discover,
                 builder: (context, state) => const DiscoverScreen(),
+                // Arama Keşfet sekmesinin içinde açılır; alt menü görünür kalır.
+                routes: [
+                  GoRoute(
+                    path: 'search',
+                    builder: (context, state) => const DiscoverSearchScreen(),
+                  ),
+                ],
               ),
             ],
           ),

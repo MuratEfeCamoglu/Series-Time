@@ -7,28 +7,49 @@ import '../../../theme/app_colors.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_text_styles.dart';
 
-/// Keşfet'in en üstündeki "Sana Özel Öneriler" kartı (F18a, V24).
+/// Keşfet'in en üstündeki kompakt "Sana Özel Öneriler" bandı (F18a, V24).
 class SuggestCard extends StatelessWidget {
   const SuggestCard({super.key});
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Card(
-      color: AppColors.surfaceAlt,
-      margin: const EdgeInsets.fromLTRB(
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
         AppSpacing.md,
-        0,
+        AppSpacing.xs,
         AppSpacing.md,
-        AppSpacing.md,
+        AppSpacing.sm,
       ),
-      child: ListTile(
-        key: const Key('discover.suggestCard'),
-        leading: Icon(Icons.auto_awesome, color: AppColors.accent),
-        title: Text(l10n.suggestCardTitle, style: AppTextStyles.body),
-        subtitle: Text(l10n.suggestCardBody, style: AppTextStyles.caption),
-        trailing: const Icon(Icons.chevron_right),
-        onTap: () => context.push(AppRoutes.suggest),
+      child: Material(
+        color: AppColors.surfaceAlt,
+        borderRadius: BorderRadius.circular(AppSpacing.pillRadius),
+        child: InkWell(
+          key: const Key('discover.suggestCard'),
+          borderRadius: BorderRadius.circular(AppSpacing.pillRadius),
+          onTap: () => context.push(AppRoutes.suggest),
+          child: SizedBox(
+            height: AppSpacing.suggestBandHeight,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+              child: Row(
+                children: [
+                  Icon(Icons.auto_awesome, color: AppColors.accent),
+                  const SizedBox(width: AppSpacing.sm),
+                  Expanded(
+                    child: Text(
+                      l10n.suggestCardTitle,
+                      style: AppTextStyles.body,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const Icon(Icons.chevron_right),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

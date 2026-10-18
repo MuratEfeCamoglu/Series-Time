@@ -33,4 +33,17 @@ abstract final class AppColors {
 
   /// Profil başlığındaki kapağı soluklaştıran üst ton (F8a).
   static const coverScrim = Color(0xB3000000);
+
+  /// Profil bağlantı simgelerinde (F8i) platformların kendi logo renkleri.
+  static const letterboxdBackground = Color(0xFF14181C);
+  static const letterboxdOrange = Color(0xFFFF8000);
+  static const letterboxdGreen = Color(0xFF00E054);
+  static const letterboxdBlue = Color(0xFF40BCF4);
+  static const instagramGradient = [
+    Color(0xFFFEDA75),
+    Color(0xFFFA7E1E),
+    Color(0xFFD62976),
+    Color(0xFF962FBF),
+    Color(0xFF4F5BD5),
+  ];
 }

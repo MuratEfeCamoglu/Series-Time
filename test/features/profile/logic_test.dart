@@ -209,16 +209,5 @@ void main() {
       expect(averageRating(counts), closeTo(3.875, 1e-9));
       expect(averageRating(const []), isNull);
     });
-
-    test('bağlantı metni', () {
-      expect(
-        socialLinkLabel('https://letterboxd.com/ayse/'),
-        'letterboxd.com/ayse',
-      );
-      expect(
-        socialLinkLabel('https://www.instagram.com/ayse.dizi/'),
-        'instagram.com/ayse.dizi',
-      );
-    });
   });
 }

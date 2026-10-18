@@ -169,9 +169,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get resetPasswordDone => 'Şifren güncellendi.';
 
   @override
-  String get profileEdit => 'Düzenle';
-
-  @override
   String get editProfileTitle => 'Profili düzenle';
 
   @override
@@ -370,10 +367,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get suggestCardTitle => 'Sana Özel Öneriler';
-
-  @override
-  String get suggestCardBody =>
-      'Sevdiğin kategorilere göre yeni diziler keşfet.';
 
   @override
   String get suggestTitle => 'Sana Özel Öneriler';
@@ -1117,4 +1110,27 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get badgeComments50Desc => '50 yorum yaz.';
+
+  @override
+  String meWatchedOne(String show, String code) {
+    return 'İzledin: $show · $code';
+  }
+
+  @override
+  String meWatchedMany(int count, String show) {
+    return '$count bölüm izledin: $show';
+  }
+
+  @override
+  String get discoverSearchTooltip => 'Ara';
+
+  @override
+  String socialLetterboxdLabel(String name) {
+    return 'Letterboxd: $name';
+  }
+
+  @override
+  String socialInstagramLabel(String name) {
+    return 'Instagram: $name';
+  }
 }

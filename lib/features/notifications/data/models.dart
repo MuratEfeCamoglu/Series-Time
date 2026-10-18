@@ -60,3 +60,46 @@ class AppNotification {
 
   bool get isUnread => readAt == null;
 }
+
+/// `get_my_watch_feed()` satırı: Bildirimler › Ben'de kendi izlemen (F13f).
+/// Aynı gün aynı dizide izlenen bölümler tek satırdır; okunmamış sayacına girmez.
+class MyWatchItem {
+  const MyWatchItem({
+    required this.showId,
+    required this.showName,
+    required this.episodeId,
+    required this.seasonNumber,
+    required this.episodeNumber,
+    required this.happenedAt,
+    this.posterPath,
+    this.backdropPath,
+    this.stillPath,
+    this.episodeCount = 1,
+  });
+
+  factory MyWatchItem.fromJson(Map<String, dynamic> json) => MyWatchItem(
+    showId: json['show_id'] as int,
+    showName: json['show_name'] as String,
+    posterPath: json['poster_path'] as String?,
+    backdropPath: json['backdrop_path'] as String?,
+    stillPath: json['still_path'] as String?,
+    episodeId: json['episode_id'] as int,
+    seasonNumber: json['season_number'] as int,
+    episodeNumber: json['episode_number'] as int,
+    episodeCount: json['episode_count'] as int? ?? 1,
+    happenedAt: DateTime.parse(json['happened_at'] as String),
+  );
+
+  final int showId;
+  final String showName;
+  final String? posterPath;
+  final String? backdropPath;
+  final String? stillPath;
+
+  /// O gün izlenen en son bölüm.
+  final int episodeId;
+  final int seasonNumber;
+  final int episodeNumber;
+  final int episodeCount;
+  final DateTime happenedAt;
+}

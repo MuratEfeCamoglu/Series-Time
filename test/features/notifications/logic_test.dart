@@ -61,4 +61,65 @@ void main() {
     expect(parse('badge_earned').type, NotificationType.badgeEarned);
     expect(parse('badge_earned').isUnread, isFalse);
   });
+
+  test('MyWatchItem.fromJson get_my_watch_feed kolonlarını ayrıştırır', () {
+    final w = MyWatchItem.fromJson({
+      'show_id': 1399,
+      'show_name': 'Taht Oyunları',
+      'poster_path': '/p.jpg',
+      'backdrop_path': '/b.jpg',
+      'still_path': '/s.jpg',
+      'episode_id': 63056,
+      'season_number': 1,
+      'episode_number': 3,
+      'episode_count': 3,
+      'happened_at': '2026-10-18T10:00:00+00:00',
+    });
+
+    expect(w.showId, 1399);
+    expect(w.showName, 'Taht Oyunları');
+    expect(w.posterPath, '/p.jpg');
+    expect(w.backdropPath, '/b.jpg');
+    expect(w.stillPath, '/s.jpg');
+    expect(w.episodeId, 63056);
+    expect(w.seasonNumber, 1);
+    expect(w.episodeNumber, 3);
+    expect(w.episodeCount, 3);
+    expect(w.happenedAt, DateTime.utc(2026, 10, 18, 10));
+  });
+
+  group('mergeMeFeed', () {
+    MyWatchItem watch(int hour) => MyWatchItem(
+      showId: 1,
+      showName: 'Bir',
+      episodeId: hour,
+      seasonNumber: 1,
+      episodeNumber: 1,
+      happenedAt: DateTime.utc(2026, 10, 18, hour),
+    );
+    AppNotification notification(int hour) => AppNotification(
+      id: 'n$hour',
+      type: NotificationType.newFollower,
+      createdAt: DateTime.utc(2026, 10, 18, hour),
+    );
+
+    test('bildirimler ve izlemeler en yeniden eskiye karışık sıralanır', () {
+      final merged = mergeMeFeed(
+        [notification(12), notification(9)],
+        [watch(11), watch(8)],
+      );
+      expect(merged.map((e) => e.time.hour), [12, 11, 9, 8]);
+      expect(merged[0], isA<NotificationEntry>());
+      expect(merged[1], isA<WatchEntry>());
+    });
+
+    test('aynı anda olanlarda bildirim önce gelir', () {
+      final merged = mergeMeFeed([notification(10)], [watch(10)]);
+      expect(merged.first, isA<NotificationEntry>());
+    });
+
+    test('ikisi de boşsa liste boş', () {
+      expect(mergeMeFeed(const [], const []), isEmpty);
+    });
+  });
 }

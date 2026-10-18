@@ -81,6 +81,8 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('discover.searchButton')));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Kullanıcılar'));
     await tester.pumpAndSettle();
     await tester.enterText(find.byKey(const Key('discover.search')), 'bu');

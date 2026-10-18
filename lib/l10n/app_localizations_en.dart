@@ -172,9 +172,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get resetPasswordDone => 'Your password has been updated.';
 
   @override
-  String get profileEdit => 'Edit';
-
-  @override
   String get editProfileTitle => 'Edit profile';
 
   @override
@@ -373,10 +370,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get suggestCardTitle => 'Picked for you';
-
-  @override
-  String get suggestCardBody =>
-      'Discover new shows from the categories you love.';
 
   @override
   String get suggestTitle => 'Picked for you';
@@ -1123,4 +1116,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get badgeComments50Desc => 'Write 50 comments.';
+
+  @override
+  String meWatchedOne(String show, String code) {
+    return 'You watched: $show · $code';
+  }
+
+  @override
+  String meWatchedMany(int count, String show) {
+    return 'You watched $count episodes: $show';
+  }
+
+  @override
+  String get discoverSearchTooltip => 'Search';
+
+  @override
+  String socialLetterboxdLabel(String name) {
+    return 'Letterboxd: $name';
+  }
+
+  @override
+  String socialInstagramLabel(String name) {
+    return 'Instagram: $name';
+  }
 }

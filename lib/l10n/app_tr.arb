@@ -69,7 +69,6 @@
   "resetPasswordTitle": "Yeni şifre belirle",
   "resetPasswordButton": "Şifreyi kaydet",
   "resetPasswordDone": "Şifren güncellendi.",
-  "profileEdit": "Düzenle",
   "editProfileTitle": "Profili düzenle",
   "changeAvatar": "Avatarı değiştir",
   "countryNone": "Belirtilmemiş",
@@ -180,7 +179,6 @@
   "coverPickerTitle": "Kapak seç",
   "coverPickerHint": "Bir dizi seç, sonra o dizinin arka plan görsellerinden birini kapak yap. Seçmezsen en son izlediğin dizi kullanılır.",
   "suggestCardTitle": "Sana Özel Öneriler",
-  "suggestCardBody": "Sevdiğin kategorilere göre yeni diziler keşfet.",
   "suggestTitle": "Sana Özel Öneriler",
   "suggestMaxGenres": "En fazla 3 kategori seçebilirsin",
   "suggestPickGenre": "Öneri almak için en az bir kategori seç",
@@ -655,5 +653,44 @@
   "badgeComments10Name": "Sohbetçi",
   "badgeComments10Desc": "10 yorum yaz.",
   "badgeComments50Name": "Eleştirmen",
-  "badgeComments50Desc": "50 yorum yaz."
+  "badgeComments50Desc": "50 yorum yaz.",
+  "meWatchedOne": "İzledin: {show} · {code}",
+  "@meWatchedOne": {
+    "placeholders": {
+      "show": {
+        "type": "String"
+      },
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "meWatchedMany": "{count} bölüm izledin: {show}",
+  "@meWatchedMany": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "show": {
+        "type": "String"
+      }
+    }
+  },
+  "discoverSearchTooltip": "Ara",
+  "socialLetterboxdLabel": "Letterboxd: {name}",
+  "@socialLetterboxdLabel": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "socialInstagramLabel": "Instagram: {name}",
+  "@socialInstagramLabel": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  }
 }

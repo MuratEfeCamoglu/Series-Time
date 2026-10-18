@@ -248,4 +248,61 @@ void main() {
       findsOneWidget,
     );
   });
+
+  testWidgets(
+    'Ben: kendi izlemeler bildirimlerle zaman sırasında; sayaca girmez, dokununca bölüm açılır (F13f)',
+    (tester) async {
+      final backend = await _openProfile(
+        tester,
+        notifications: [
+          AppNotification(
+            id: 'n1',
+            type: NotificationType.newFollower,
+            actorUsername: 'burak',
+            createdAt: DateTime.utc(2026, 10, 18, 11),
+            readAt: DateTime.utc(2026, 10, 18, 11, 5),
+          ),
+        ],
+      );
+      when(() => backend.notifications.fetchMyWatchFeed()).thenAnswer(
+        (_) async => [
+          MyWatchItem(
+            showId: 1399,
+            showName: 'Taht Oyunları',
+            episodeId: 100,
+            seasonNumber: 1,
+            episodeNumber: 3,
+            episodeCount: 3,
+            happenedAt: DateTime.utc(2026, 10, 18, 12),
+          ),
+          MyWatchItem(
+            showId: 1399,
+            showName: 'Taht Oyunları',
+            episodeId: 99,
+            seasonNumber: 1,
+            episodeNumber: 1,
+            happenedAt: DateTime.utc(2026, 10, 17, 9),
+          ),
+        ],
+      );
+      await tester.tap(_navLabel('Bildirimler'));
+      await tester.pumpAndSettle();
+
+      final many = find.text('3 bölüm izledin: Taht Oyunları');
+      final follower = find.text('@burak seni takip etmeye başladı.');
+      final one = find.text('İzledin: Taht Oyunları · S01 | B01');
+      expect(many, findsOneWidget);
+      expect(follower, findsOneWidget);
+      expect(one, findsOneWidget);
+      double y(Finder f) => tester.getTopLeft(f).dy;
+      expect(y(many), lessThan(y(follower)));
+      expect(y(follower), lessThan(y(one)));
+      // İzlemeler okunmamış sayılmaz: sekme rozeti yok, okundu işaretlemesi gerekmez.
+      verifyNever(() => backend.notifications.markAllRead());
+
+      await tester.tap(many);
+      await tester.pumpAndSettle();
+      expect(find.byType(EpisodeScreen), findsOneWidget);
+    },
+  );
 }

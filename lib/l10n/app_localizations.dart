@@ -398,12 +398,6 @@ abstract class AppLocalizations {
   /// **'Şifren güncellendi.'**
   String get resetPasswordDone;
 
-  /// No description provided for @profileEdit.
-  ///
-  /// In tr, this message translates to:
-  /// **'Düzenle'**
-  String get profileEdit;
-
   /// No description provided for @editProfileTitle.
   ///
   /// In tr, this message translates to:
@@ -775,12 +769,6 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Sana Özel Öneriler'**
   String get suggestCardTitle;
-
-  /// No description provided for @suggestCardBody.
-  ///
-  /// In tr, this message translates to:
-  /// **'Sevdiğin kategorilere göre yeni diziler keşfet.'**
-  String get suggestCardBody;
 
   /// No description provided for @suggestTitle.
   ///
@@ -2119,6 +2107,36 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'50 yorum yaz.'**
   String get badgeComments50Desc;
+
+  /// No description provided for @meWatchedOne.
+  ///
+  /// In tr, this message translates to:
+  /// **'İzledin: {show} · {code}'**
+  String meWatchedOne(String show, String code);
+
+  /// No description provided for @meWatchedMany.
+  ///
+  /// In tr, this message translates to:
+  /// **'{count} bölüm izledin: {show}'**
+  String meWatchedMany(int count, String show);
+
+  /// No description provided for @discoverSearchTooltip.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ara'**
+  String get discoverSearchTooltip;
+
+  /// No description provided for @socialLetterboxdLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Letterboxd: {name}'**
+  String socialLetterboxdLabel(String name);
+
+  /// No description provided for @socialInstagramLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Instagram: {name}'**
+  String socialInstagramLabel(String name);
 }
 
 class _AppLocalizationsDelegate
