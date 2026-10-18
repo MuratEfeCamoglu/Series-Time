@@ -80,4 +80,23 @@ void main() {
     expect(genreLabel(id: 18, cachedName: 'Dram', english: false), 'Dram');
     expect(genreLabel(id: 1, cachedName: 'Yeni', english: true), 'Yeni');
   });
+
+  group('ek kategoriler (F18b)', () {
+    test('negatif kimlikle bulunur, bilinmeyen kimlik null', () {
+      expect(SuggestCategory.byId(-2), SuggestCategory.korean);
+      expect(SuggestCategory.byId(-99), isNull);
+      expect(SuggestCategory.byId(18), isNull);
+    });
+
+    test('seçim türler ve kategori anahtarları olarak ayrılır', () {
+      final split = splitSelection({35, -2, 18, -7, -99});
+      expect(split.genreIds, [18, 35]);
+      expect(split.categories, ['miniseries', 'korean']);
+    });
+
+    test('ek kategoriler de 3 sınırına sayılır', () {
+      final result = toggleGenre({18, -2, -3}, -1);
+      expect(result.rejected, isTrue);
+    });
+  });
 }

@@ -157,7 +157,10 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
           SliverToBoxAdapter(
             child: watching.isEmpty
                 ? _Hint(l10n.profileWatchingEmpty)
-                : ShowProgressRow(shows: watching),
+                : ShowProgressRow(
+                    shows: watching,
+                    height: AppSpacing.profilePosterRowHeight,
+                  ),
           ),
         ],
         if (recent.isNotEmpty) ...[
@@ -187,7 +190,10 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
           if (filtered.isEmpty)
             SliverToBoxAdapter(child: _Hint(l10n.statusFilterEmpty))
           else
-            SliverShowProgressGrid(shows: filtered),
+            SliverShowProgressGrid(
+              shows: filtered,
+              columns: AppSpacing.profileGridColumns,
+            ),
         ],
         const SliverPadding(padding: EdgeInsets.only(bottom: AppSpacing.xl)),
       ],
@@ -229,13 +235,20 @@ class _HeaderBackground extends ConsumerWidget {
             fit: BoxFit.cover,
             errorWidget: (_, _, _) => ColoredBox(color: AppColors.surface),
           ),
-        // Kapak yalnızca soluk bir zemin; yazılar okunsun diye aşağı doğru siyaha geçer.
+        // Kapak net görünür; yalnızca üstte simgeler, altta yazılar okunsun diye kararır
+        // (kullanıcı kararı 2026-10-18).
         DecoratedBox(
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [AppColors.coverScrim, AppColors.background],
+              colors: [
+                AppColors.coverScrim,
+                AppColors.scrimClear,
+                AppColors.scrimClear,
+                AppColors.background,
+              ],
+              stops: const [0, 0.25, 0.5, 1],
             ),
           ),
         ),
@@ -247,8 +260,12 @@ class _HeaderBackground extends ConsumerWidget {
             maxScaleFactor: AppSpacing.profileNameMaxTextScale,
             child: Row(
               children: [
-                ProfileAvatar(key: const Key('profile.avatar'), url: avatarUrl),
-                const SizedBox(width: AppSpacing.md),
+                ProfileAvatar(
+                  key: const Key('profile.avatar'),
+                  url: avatarUrl,
+                  size: AppSpacing.profileAvatarSize,
+                ),
+                const SizedBox(width: AppSpacing.sm),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -259,7 +276,7 @@ class _HeaderBackground extends ConsumerWidget {
                           Flexible(
                             child: Text(
                               profile.displayName,
-                              style: AppTextStyles.title,
+                              style: AppTextStyles.profileName,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -268,14 +285,14 @@ class _HeaderBackground extends ConsumerWidget {
                             const SizedBox(width: AppSpacing.xs),
                             Text(
                               countryFlag(country),
-                              style: AppTextStyles.title,
+                              style: AppTextStyles.profileName,
                             ),
                           ],
                         ],
                       ),
                       Text(
                         '@${profile.username}',
-                        style: AppTextStyles.bodySecondary,
+                        style: AppTextStyles.caption,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),

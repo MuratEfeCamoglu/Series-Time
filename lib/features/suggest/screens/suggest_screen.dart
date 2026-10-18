@@ -94,21 +94,28 @@ class _GenreChips extends ConsumerWidget {
               spacing: AppSpacing.sm,
               runSpacing: AppSpacing.sm,
               children: [
-                for (final genre in genres)
-                  FilterChip(
-                    key: Key('genre.${genre.id}'),
-                    label: Text(
+                // Ek kategoriler (F18b) türlerden önce gelir.
+                for (final (id, label) in [
+                  for (final category in SuggestCategory.values)
+                    (category.id, categoryLabel(l10n, category)),
+                  for (final genre in genres)
+                    (
+                      genre.id,
                       genreLabel(
                         id: genre.id,
                         cachedName: genre.name,
                         english: AppLocale.isEnglish,
                       ),
                     ),
-                    selected: selected.contains(genre.id),
+                ])
+                  FilterChip(
+                    key: Key('genre.$id'),
+                    label: Text(label),
+                    selected: selected.contains(id),
                     selectedColor: AppColors.accent,
                     checkmarkColor: AppColors.onAccent,
                     labelStyle: TextStyle(
-                      color: selected.contains(genre.id)
+                      color: selected.contains(id)
                           ? AppColors.onAccent
                           : AppColors.textPrimary,
                     ),
@@ -116,7 +123,7 @@ class _GenreChips extends ConsumerWidget {
                       final messenger = ScaffoldMessenger.of(context);
                       final accepted = await ref
                           .read(selectedGenresProvider.notifier)
-                          .toggle(genre.id);
+                          .toggle(id);
                       if (!accepted) {
                         messenger
                           ..hideCurrentSnackBar()
@@ -286,3 +293,16 @@ class _SuggestionPoster extends ConsumerWidget {
     );
   }
 }
+
+String categoryLabel(AppLocalizations l10n, SuggestCategory category) =>
+    switch (category) {
+      SuggestCategory.anime => l10n.categoryAnime,
+      SuggestCategory.korean => l10n.categoryKorean,
+      SuggestCategory.turkish => l10n.categoryTurkish,
+      SuggestCategory.japanese => l10n.categoryJapanese,
+      SuggestCategory.british => l10n.categoryBritish,
+      SuggestCategory.spanish => l10n.categorySpanish,
+      SuggestCategory.miniseries => l10n.categoryMiniseries,
+      SuggestCategory.recent => l10n.categoryRecent,
+      SuggestCategory.topRated => l10n.categoryTopRated,
+    };

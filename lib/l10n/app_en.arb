@@ -339,5 +339,14 @@
   "meWatchedMany": "You watched {count} episodes: {show}",
   "discoverSearchTooltip": "Search",
   "socialLetterboxdLabel": "Letterboxd: {name}",
-  "socialInstagramLabel": "Instagram: {name}"
+  "socialInstagramLabel": "Instagram: {name}",
+  "categoryAnime": "Anime",
+  "categoryKorean": "Korean shows",
+  "categoryTurkish": "Turkish shows",
+  "categoryJapanese": "Japanese shows",
+  "categoryBritish": "British shows",
+  "categorySpanish": "Spanish shows",
+  "categoryMiniseries": "Miniseries",
+  "categoryRecent": "New releases",
+  "categoryTopRated": "Top rated"
 }

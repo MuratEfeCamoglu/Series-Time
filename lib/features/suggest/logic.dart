@@ -6,6 +6,51 @@ import '../shows/data/models.dart';
 /// F18(b): aynı anda en fazla 3 kategori.
 const maxSelectedGenres = 3;
 
+/// F18(b): TMDB türlerinin yanındaki ek kategoriler (kullanıcı kararı 2026-10-18). Seçimde
+/// tür kimlikleriyle karışmasın diye negatif kimlik taşırlar; sunucuya [key] ile gider ve
+/// `tmdb-proxy` bunları TMDB keşif filtrelerine çevirir.
+enum SuggestCategory {
+  anime(-1, 'anime'),
+  korean(-2, 'korean'),
+  turkish(-3, 'turkish'),
+  japanese(-4, 'japanese'),
+  british(-5, 'british'),
+  spanish(-6, 'spanish'),
+  miniseries(-7, 'miniseries'),
+  recent(-8, 'recent'),
+  topRated(-9, 'top_rated');
+
+  const SuggestCategory(this.id, this.key);
+
+  final int id;
+  final String key;
+
+  static SuggestCategory? byId(int id) {
+    for (final category in values) {
+      if (category.id == id) return category;
+    }
+    return null;
+  }
+}
+
+/// Seçimi sunucunun beklediği iki listeye ayırır: TMDB tür kimlikleri ve ek kategori
+/// anahtarları. Bilinmeyen negatif kimlik (eski sürümden kalan) atılır.
+({List<int> genreIds, List<String> categories}) splitSelection(
+  Iterable<int> ids,
+) {
+  final sorted = ids.toList()..sort();
+  return (
+    genreIds: [
+      for (final id in sorted)
+        if (id > 0) id,
+    ],
+    categories: [
+      for (final id in sorted)
+        if (SuggestCategory.byId(id) case final category?) category.key,
+    ],
+  );
+}
+
 /// Seçili türe dokunmak onu kaldırır; seçili değilse ekler. 3 tür seçiliyken yeni tür
 /// eklenmez ve [rejected] true döner (ekran "En fazla 3 kategori" iletisini gösterir).
 ({Set<int> selection, bool rejected}) toggleGenre(

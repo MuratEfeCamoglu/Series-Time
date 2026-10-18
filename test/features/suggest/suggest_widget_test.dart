@@ -136,6 +136,8 @@ void main() {
     when(() => backend.shows.fetchSeasonEpisodes(1, 1))
         .thenAnswer((_) async => const []);
 
+    await tester.ensureVisible(find.byKey(const Key('suggest.add.1')));
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('suggest.add.1')));
     await tester.pumpAndSettle();
 
@@ -210,6 +212,30 @@ void main() {
     expect(find.textContaining('izlediğin için'), findsNothing);
     verifyNever(() => backend.suggest.recommendations(any()));
   });
+
+  testWidgets(
+    'türlerin yanında ek kategoriler; Kore dizileri seçilince keşfe gider (F18b)',
+    (tester) async {
+      final backend = await _openSuggest(tester);
+
+      expect(find.text('Anime'), findsOneWidget);
+      expect(find.text('Kore dizileri'), findsOneWidget);
+      expect(find.text('Türk dizileri'), findsOneWidget);
+      expect(find.text('Mini diziler'), findsOneWidget);
+      // Ek kategoriler türlerden önce.
+      expect(
+        tester.getTopLeft(find.text('Anime')).dy,
+        lessThanOrEqualTo(tester.getTopLeft(find.text('Dram')).dy),
+      );
+
+      await tester.tap(find.byKey(const Key('genre.-2')));
+      await tester.pumpAndSettle();
+
+      expect(_chip(tester, -2).selected, isTrue);
+      expect(backend.preferences.getStringList('suggest.genres'), ['-2']);
+      verify(() => backend.suggest.discover([-2])).called(1);
+    },
+  );
 }
 
 Future<void> _openSuggestWithBackend(

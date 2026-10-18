@@ -692,5 +692,14 @@
         "type": "String"
       }
     }
-  }
+  },
+  "categoryAnime": "Anime",
+  "categoryKorean": "Kore dizileri",
+  "categoryTurkish": "Türk dizileri",
+  "categoryJapanese": "Japon dizileri",
+  "categoryBritish": "İngiliz dizileri",
+  "categorySpanish": "İspanyol dizileri",
+  "categoryMiniseries": "Mini diziler",
+  "categoryRecent": "Yeni çıkanlar",
+  "categoryTopRated": "En yüksek puanlılar"
 }

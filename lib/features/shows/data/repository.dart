@@ -30,9 +30,10 @@ class ShowsRepository {
   });
 
   /// F3(d): en ünlü diziler (TMDB'de en çok oy alanlar).
-  Future<List<Show>> popularShows() => _guard(() async {
-    final data = await _invoke({'action': 'popular'});
-    return showsFromJson(data['results'] as List);
+  /// F3(d): en ünlü diziler, 20'şerli sayfalar.
+  Future<ShowSearchPage> popularShows({int page = 1}) => _guard(() async {
+    final data = await _invoke({'action': 'popular', 'page': page});
+    return ShowSearchPage.fromJson(data);
   });
 
   /// F4(a) Hakkında: dizinin oyuncuları.

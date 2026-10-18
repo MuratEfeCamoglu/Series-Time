@@ -4,6 +4,7 @@ import '../../../core/app_locale.dart';
 import '../../../core/failures.dart';
 import '../../../core/supabase_client.dart';
 import '../../shows/data/models.dart';
+import '../logic.dart';
 import 'models.dart';
 
 const _tmdbProxy = 'tmdb-proxy';
@@ -23,11 +24,14 @@ class SuggestRepository {
     ];
   });
 
-  Future<ShowSearchPage> discover(List<int> genreIds, {int page = 1}) =>
+  /// [ids]: seçili tür kimlikleri ve ek kategoriler ([SuggestCategory.id], negatif).
+  Future<ShowSearchPage> discover(List<int> ids, {int page = 1}) =>
       _guard(() async {
+        final selection = splitSelection(ids);
         final data = await _invoke({
           'action': 'discover',
-          'genreIds': genreIds,
+          'genreIds': selection.genreIds,
+          'categories': selection.categories,
           'page': page,
         });
         return ShowSearchPage.fromJson(data);

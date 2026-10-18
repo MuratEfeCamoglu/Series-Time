@@ -24,5 +24,12 @@ abstract final class AppTextStyles {
     fontSize: 12,
     color: AppColors.textSecondary,
   );
+
+  /// Profil başlığındaki görünen ad (F8c).
+  static const profileName = TextStyle(
+    fontSize: 17,
+    fontWeight: FontWeight.w700,
+    color: AppColors.textPrimary,
+  );
   static const navLabel = TextStyle(fontSize: 12, fontWeight: FontWeight.w600);
 }

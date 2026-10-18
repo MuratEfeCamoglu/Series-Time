@@ -12,9 +12,12 @@ import '../../helpers.dart';
 Future<TestBackend> _openDiscover(
   WidgetTester tester, {
   List<Show> trending = const [],
+  int totalPages = 1,
 }) async {
   final backend = TestBackend();
-  when(() => backend.shows.popularShows()).thenAnswer((_) async => trending);
+  when(() => backend.shows.popularShows()).thenAnswer(
+    (_) async => ShowSearchPage(results: trending, totalPages: totalPages),
+  );
   await backend.pumpApp(tester);
   await tester.tap(
     find.descendant(
@@ -145,5 +148,37 @@ void main() {
     expect(tester.widget<TextField>(_search).autofocus, isTrue);
     // Arama sekmenin içinde açılır; alt menü görünür kalır.
     expect(find.byType(NavigationBar), findsOneWidget);
+  });
+
+  testWidgets('en ünlü diziler aşağı kaydırınca sonraki sayfayla artar (F3d)', (
+    tester,
+  ) async {
+    final backend = await _openDiscover(
+      tester,
+      trending: [for (var i = 1; i <= 20; i++) Show(id: i, name: 'Ünlü $i')],
+      totalPages: 3,
+    );
+    when(() => backend.shows.popularShows(page: 2)).thenAnswer(
+      (_) async => ShowSearchPage(
+        results: [for (var i = 21; i <= 25; i++) Show(id: i, name: 'Ünlü $i')],
+        totalPages: 3,
+      ),
+    );
+
+    await tester.fling(
+      find.byType(CustomScrollView),
+      const Offset(0, -5000),
+      3000,
+    );
+    await tester.pumpAndSettle();
+
+    verify(() => backend.shows.popularShows(page: 2)).called(1);
+    await tester.fling(
+      find.byType(CustomScrollView),
+      const Offset(0, -5000),
+      3000,
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Ünlü 25'), findsWidgets);
   });
 }

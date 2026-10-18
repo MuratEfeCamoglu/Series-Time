@@ -31,8 +31,8 @@ abstract final class AppColors {
   static const scrimTop = Color(0x99000000);
   static const scrimClear = Color(0x00000000);
 
-  /// Profil başlığındaki kapağı soluklaştıran üst ton (F8a).
-  static const coverScrim = Color(0xB3000000);
+  /// Profil kapağının üstünde üst çubuk simgeleri okunsun diye hafif koyu ton (F8a).
+  static const coverScrim = Color(0x59000000);
 
   /// Profil bağlantı simgelerinde (F8i) platformların kendi logo renkleri.
   static const letterboxdBackground = Color(0xFF14181C);

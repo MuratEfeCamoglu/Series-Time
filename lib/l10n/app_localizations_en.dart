@@ -1139,4 +1139,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String socialInstagramLabel(String name) {
     return 'Instagram: $name';
   }
+
+  @override
+  String get categoryAnime => 'Anime';
+
+  @override
+  String get categoryKorean => 'Korean shows';
+
+  @override
+  String get categoryTurkish => 'Turkish shows';
+
+  @override
+  String get categoryJapanese => 'Japanese shows';
+
+  @override
+  String get categoryBritish => 'British shows';
+
+  @override
+  String get categorySpanish => 'Spanish shows';
+
+  @override
+  String get categoryMiniseries => 'Miniseries';
+
+  @override
+  String get categoryRecent => 'New releases';
+
+  @override
+  String get categoryTopRated => 'Top rated';
 }

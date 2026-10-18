@@ -28,6 +28,54 @@ const tmdbId = z.number().int().positive();
 // F21(b): önbelleğe yazılmayan eylemler bu dilde döner; önbellekli eylemler hep Türkçedir.
 const Language = z.object({ language: z.enum(["tr", "en"]).default("tr") });
 
+// F18(b): ek kategoriler ve karşılık gelen TMDB keşif filtreleri. Türler kendi aralarında
+// "veya"dır; ülkeler kendi aralarında "veya"dır; farklı filtre türleri birlikte daraltır
+// (ör. Kore dizileri + Komedi = Kore komedileri).
+const CATEGORY_KEYS = [
+  "anime",
+  "korean",
+  "turkish",
+  "japanese",
+  "british",
+  "spanish",
+  "miniseries",
+  "recent",
+  "top_rated",
+] as const;
+type CategoryKey = (typeof CATEGORY_KEYS)[number];
+
+const CATEGORY_COUNTRIES: Partial<Record<CategoryKey, string>> = {
+  korean: "KR",
+  turkish: "TR",
+  japanese: "JP",
+  british: "GB",
+  spanish: "ES",
+};
+const ANIME_KEYWORD = "210024";
+const MINISERIES_TYPE = "2";
+const RECENT_DAYS = 365;
+
+function discoverFilters(genreIds: number[], categories: CategoryKey[]) {
+  const params: Record<string, string> = {
+    sort_by: "popularity.desc",
+    "vote_count.gte": "100",
+  };
+  if (genreIds.length > 0) params.with_genres = genreIds.join("|");
+  const countries = categories.flatMap((c) => CATEGORY_COUNTRIES[c] ?? []);
+  if (countries.length > 0) params.with_origin_country = countries.join("|");
+  if (categories.includes("anime")) params.with_keywords = ANIME_KEYWORD;
+  if (categories.includes("miniseries")) params.with_type = MINISERIES_TYPE;
+  if (categories.includes("recent")) {
+    const since = new Date(Date.now() - RECENT_DAYS * 24 * 60 * 60 * 1000);
+    params["first_air_date.gte"] = since.toISOString().slice(0, 10);
+  }
+  if (categories.includes("top_rated")) {
+    params.sort_by = "vote_average.desc";
+    params["vote_count.gte"] = "500";
+  }
+  return params;
+}
+
 const Body = z.discriminatedUnion("action", [
   z.object({
     action: z.literal("search"),
@@ -45,12 +93,17 @@ const Body = z.discriminatedUnion("action", [
   z.object({ action: z.literal("genres") }),
   z.object({
     action: z.literal("discover"),
-    genreIds: z.array(tmdbId).min(1).max(3),
+    genreIds: z.array(tmdbId).max(3),
+    // F18(b): türlerin yanındaki ek kategoriler (kullanıcı kararı 2026-10-18).
+    categories: z.array(z.enum(CATEGORY_KEYS)).max(3).default([]),
     page: z.number().int().min(1).max(500).default(1),
   }),
   z.object({ action: z.literal("recommendations"), showId: tmdbId }),
   z.object({ action: z.literal("on_the_air") }),
-  z.object({ action: z.literal("popular") }),
+  z.object({
+    action: z.literal("popular"),
+    page: z.number().int().min(1).max(500).default(1),
+  }),
   z.object({ action: z.literal("show_credits"), showId: tmdbId }),
   z.object({ action: z.literal("show_images"), showId: tmdbId }),
 ]);
@@ -102,13 +155,19 @@ Deno.serve(async (req) => {
       case "genres":
         return await genres(db);
       case "discover":
-        return json(await discover(db, userData.user.id, body.genreIds, body.page, lang));
+        if (body.genreIds.length + body.categories.length === 0 ||
+          body.genreIds.length + body.categories.length > 3) {
+          return json({ error: "invalid_body" }, 400);
+        }
+        return json(
+          await discover(db, userData.user.id, body.genreIds, body.categories, body.page, lang),
+        );
       case "recommendations":
         return json(await recommendations(db, userData.user.id, body.showId, lang));
       case "on_the_air":
         return json(await onTheAir(db, lang));
       case "popular":
-        return json(await popular(db, lang));
+        return json(await popular(db, body.page, lang));
       case "show_credits":
         return json(await showCredits(body.showId, lang));
       case "show_images":
@@ -131,10 +190,18 @@ async function search(db: SupabaseClient, query: string, page: number, lang: Lan
 }
 
 // F6(i): yeni bölümü yayında olan diziler; kullanıcının listesindekiler de gösterilir.
-// F3(d): en ünlü diziler — TMDB'de en çok oy alanlar (anlık popülerlik değil).
-async function popular(db: SupabaseClient, lang: Lang) {
-  const data = await tmdb("/discover/tv", { sort_by: "vote_count.desc", ...langParams(lang) });
-  return { results: await upsertSummaries(db, data.results ?? [], lang) };
+// F3(d): en ünlü diziler — TMDB'de en çok oy alanlar (anlık popülerlik değil); aşağı
+// kaydırdıkça sonraki sayfa istenir (kullanıcı kararı 2026-10-18).
+async function popular(db: SupabaseClient, page: number, lang: Lang) {
+  const data = await tmdb("/discover/tv", {
+    sort_by: "vote_count.desc",
+    page: String(page),
+    ...langParams(lang),
+  });
+  return {
+    results: await upsertSummaries(db, data.results ?? [], lang),
+    totalPages: data.total_pages ?? 0,
+  };
 }
 
 // F4(a) Hakkında: dizinin tüm sezonlardaki oyuncuları, en çok bölümde oynayan önce
@@ -292,13 +359,12 @@ async function discover(
   db: SupabaseClient,
   userId: string,
   genreIds: number[],
+  categories: CategoryKey[],
   page: number,
   lang: Lang,
 ) {
   const data = await tmdb("/discover/tv", {
-    with_genres: genreIds.join("|"),
-    sort_by: "popularity.desc",
-    "vote_count.gte": "100",
+    ...discoverFilters(genreIds, categories),
     page: String(page),
     ...langParams(lang),
   });

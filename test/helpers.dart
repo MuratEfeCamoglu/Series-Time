@@ -104,7 +104,9 @@ class TestBackend {
         .thenReturn('https://example.test/a.jpg');
     when(() => shows.fetchMyShows()).thenAnswer((_) async => const []);
     when(() => shows.trendingShows()).thenAnswer((_) async => const []);
-    when(() => shows.popularShows()).thenAnswer((_) async => const []);
+    when(
+      () => shows.popularShows(page: any(named: 'page')),
+    ).thenAnswer((_) async => const ShowSearchPage(results: [], totalPages: 0));
     when(() => shows.fetchShowCast(any())).thenAnswer((_) async => const []);
     when(() => shows.onTheAirShows()).thenAnswer((_) async => const []);
     when(() => shows.fetchCachedEpisodes(any()))

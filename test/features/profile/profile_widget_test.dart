@@ -93,6 +93,12 @@ void main() {
       );
       final avatar = tester.getRect(find.byKey(const Key('profile.avatar')));
       expect(avatar.left, lessThan(800 / 4));
+      // Kapak büyük, avatar küçük (kullanıcı kararı 2026-10-18).
+      expect(avatar.width, 64);
+      expect(
+        tester.widget<SliverAppBar>(find.byType(SliverAppBar)).expandedHeight,
+        280,
+      );
       expect(
         tester.getTopLeft(find.text('Ayşe')).dx,
         greaterThan(avatar.right),
@@ -467,6 +473,11 @@ void main() {
       );
       expect(find.byKey(const Key('statusBar.1')), findsOneWidget);
       expect(find.byKey(const Key('statusBar.2')), findsOneWidget);
+      // Profilde afişler küçük: 4 sütun (kullanıcı kararı 2026-10-18).
+      final delegate =
+          tester.widget<SliverGrid>(find.byType(SliverGrid)).gridDelegate
+              as SliverGridDelegateWithFixedCrossAxisCount;
+      expect(delegate.crossAxisCount, 4);
 
       await tester.tap(chip);
       await tester.pumpAndSettle();

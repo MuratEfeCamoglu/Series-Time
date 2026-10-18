@@ -34,9 +34,13 @@ abstract final class AppSpacing {
   /// Dizilerim/Tümü ızgara hücresi: 2:3 afiş + renkli ilerleme çubuğu.
   static const double progressGridAspectRatio = 0.62;
 
-  /// Profil kapağı (F8a); avatar kapağın alt kenarına taşar.
-  /// Profil başlığı (F8a, F8c): üst çubuk + avatar satırı; arkasında soluk kapak.
-  static const double profileHeaderHeight = 190;
+  /// Profil başlığı (F8a, F8c): üst çubuk + avatar satırı; arkasında net görünen kapak.
+  static const double profileHeaderHeight = 280;
+  static const double profileAvatarSize = 64;
+
+  /// Profildeki Şu an izlediklerim satırı ve Dizilerim ızgarası: Diziler sekmesinden küçük afiş.
+  static const double profilePosterRowHeight = 120;
+  static const int profileGridColumns = 4;
 
   /// Afiş görünümü (F6k): üst görsel ve yatay satır afiş genişliği.
   static const double homeHeroHeight = 240;

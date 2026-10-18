@@ -114,21 +114,26 @@ class ShowProgressGrid extends StatelessWidget {
 
 /// Yatay afiş satırı (Son izlenenler, Şu an izlediklerim).
 class ShowProgressRow extends StatelessWidget {
-  const ShowProgressRow({super.key, required this.shows});
+  const ShowProgressRow({
+    super.key,
+    required this.shows,
+    this.height = AppSpacing.posterRowHeight,
+  });
 
   final List<ShowProgress> shows;
+  final double height;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: AppSpacing.posterRowHeight,
+      height: height,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
         itemCount: shows.length,
         separatorBuilder: (_, _) => const SizedBox(width: AppSpacing.sm),
         itemBuilder: (context, index) => SizedBox(
-          width: AppSpacing.posterRowHeight * AppSpacing.posterAspectRatio,
+          width: height * AppSpacing.posterAspectRatio,
           child: ShowProgressPoster(
             key: ValueKey(shows[index].showId),
             show: shows[index],
@@ -141,17 +146,22 @@ class ShowProgressRow extends StatelessWidget {
 
 /// Kaydırılan sayfanın içindeki 3'lü tembel ızgara (profil Dizilerim, F6h).
 class SliverShowProgressGrid extends StatelessWidget {
-  const SliverShowProgressGrid({super.key, required this.shows});
+  const SliverShowProgressGrid({
+    super.key,
+    required this.shows,
+    this.columns = AppSpacing.posterGridColumns,
+  });
 
   final List<ShowProgress> shows;
+  final int columns;
 
   @override
   Widget build(BuildContext context) {
     return SliverPadding(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
       sliver: SliverGrid.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: AppSpacing.posterGridColumns,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: columns,
           mainAxisSpacing: AppSpacing.md,
           crossAxisSpacing: AppSpacing.sm,
           childAspectRatio: AppSpacing.progressGridAspectRatio,

@@ -2137,6 +2137,60 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Instagram: {name}'**
   String socialInstagramLabel(String name);
+
+  /// No description provided for @categoryAnime.
+  ///
+  /// In tr, this message translates to:
+  /// **'Anime'**
+  String get categoryAnime;
+
+  /// No description provided for @categoryKorean.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kore dizileri'**
+  String get categoryKorean;
+
+  /// No description provided for @categoryTurkish.
+  ///
+  /// In tr, this message translates to:
+  /// **'Türk dizileri'**
+  String get categoryTurkish;
+
+  /// No description provided for @categoryJapanese.
+  ///
+  /// In tr, this message translates to:
+  /// **'Japon dizileri'**
+  String get categoryJapanese;
+
+  /// No description provided for @categoryBritish.
+  ///
+  /// In tr, this message translates to:
+  /// **'İngiliz dizileri'**
+  String get categoryBritish;
+
+  /// No description provided for @categorySpanish.
+  ///
+  /// In tr, this message translates to:
+  /// **'İspanyol dizileri'**
+  String get categorySpanish;
+
+  /// No description provided for @categoryMiniseries.
+  ///
+  /// In tr, this message translates to:
+  /// **'Mini diziler'**
+  String get categoryMiniseries;
+
+  /// No description provided for @categoryRecent.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yeni çıkanlar'**
+  String get categoryRecent;
+
+  /// No description provided for @categoryTopRated.
+  ///
+  /// In tr, this message translates to:
+  /// **'En yüksek puanlılar'**
+  String get categoryTopRated;
 }
 
 class _AppLocalizationsDelegate
