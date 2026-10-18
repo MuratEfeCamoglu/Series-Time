@@ -1176,4 +1176,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get appIconFailed => 'Couldn\'t change the icon, try again.';
+
+  @override
+  String get unitMonths => 'mo';
+
+  @override
+  String get unitDays => 'd';
+
+  @override
+  String get unitHours => 'h';
+
+  @override
+  String get unitEpisodes => 'episodes';
 }

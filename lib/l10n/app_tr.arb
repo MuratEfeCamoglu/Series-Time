@@ -704,5 +704,9 @@
   "categoryTopRated": "En yüksek puanlılar",
   "settingsAppIcon": "Uygulama simgesi",
   "settingsAppIconHint": "Ana ekrandaki simgenin rengini seç. Bazı telefonlarda simge birkaç saniye içinde değişir.",
-  "appIconFailed": "Simge değiştirilemedi, tekrar dene."
+  "appIconFailed": "Simge değiştirilemedi, tekrar dene.",
+  "unitMonths": "ay",
+  "unitDays": "gün",
+  "unitHours": "saat",
+  "unitEpisodes": "bölüm"
 }

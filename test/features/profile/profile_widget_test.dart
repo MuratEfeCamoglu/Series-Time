@@ -146,8 +146,11 @@ void main() {
       ),
     );
 
-    expect(find.text('1 ay 1 gün 5 saat'), findsOneWidget);
-    expect(find.text('73'), findsOneWidget);
+    // Ekran okuyucu tam süreyi okur; kartta birimler ayrı ayrı büyük sayılarla.
+    expect(find.bySemanticsLabel('1 ay 1 gün 5 saat'), findsOneWidget);
+    expect(find.text('1 ay', findRichText: true), findsOneWidget);
+    expect(find.text('5 saat', findRichText: true), findsOneWidget);
+    expect(find.text('73 bölüm', findRichText: true), findsOneWidget);
   });
 
   testWidgets(

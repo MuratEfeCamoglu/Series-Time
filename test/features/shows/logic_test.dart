@@ -112,4 +112,45 @@ void main() {
     expect(episodeCode(1, 5), 'S01B05');
     expect(episodeCode(12, 103), 'S12B103');
   });
+
+  group('missingSeasonNumbers', () {
+    final now = DateTime.utc(2026, 10, 18);
+    Season season(int number, {DateTime? airDate, int? count}) => Season(
+      id: number,
+      showId: 1,
+      seasonNumber: number,
+      airDate: airDate,
+      episodeCount: count,
+    );
+
+    test(
+      'bölümleri eksik yayınlanmış sezon bulunur (1. bitti, 2. hiç çekilmedi)',
+      () {
+        final missing = missingSeasonNumbers(
+          seasons: [
+            season(0, airDate: DateTime.utc(2020), count: 3),
+            season(1, airDate: DateTime.utc(2025), count: 1),
+            season(2, airDate: DateTime.utc(2026, 9), count: 2),
+            season(3, airDate: DateTime.utc(2027), count: 8),
+            season(4, count: 8),
+          ],
+          cached: [_episode(season: 1, airDate: DateTime.utc(2025))],
+          now: now,
+        );
+        // Özel bölümler, gelecek ve tarihsiz sezonlar istenmez.
+        expect(missing, [2]);
+      },
+    );
+
+    test('tüm bölümler önbellekteyse boş', () {
+      expect(
+        missingSeasonNumbers(
+          seasons: [season(1, airDate: DateTime.utc(2025), count: 1)],
+          cached: [_episode(season: 1, airDate: DateTime.utc(2025))],
+          now: now,
+        ),
+        isEmpty,
+      );
+    });
+  });
 }

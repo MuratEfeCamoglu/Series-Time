@@ -1170,4 +1170,16 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get appIconFailed => 'Simge değiştirilemedi, tekrar dene.';
+
+  @override
+  String get unitMonths => 'ay';
+
+  @override
+  String get unitDays => 'gün';
+
+  @override
+  String get unitHours => 'saat';
+
+  @override
+  String get unitEpisodes => 'bölüm';
 }

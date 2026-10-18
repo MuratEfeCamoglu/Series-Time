@@ -67,3 +67,26 @@ String episodeLabel(int seasonNumber, int episodeNumber) =>
 String episodeCode(int seasonNumber, int episodeNumber) =>
     'S${seasonNumber.toString().padLeft(2, '0')}'
     '${AppLocale.episodeLetter}${episodeNumber.toString().padLeft(2, '0')}';
+
+/// Bölümleri önbellekte eksik olan yayınlanmış sezonlar. Sıradaki bölüm ve ilerleme
+/// yalnızca önbellekteki bölümlerden hesaplandığı için, çekilmemiş bir sezon diziyi
+/// "bitti" gösterir (ör. 1. sezon bitince 2. sezon hiç görünmez); bunlar tamamlanır.
+List<int> missingSeasonNumbers({
+  required List<Season> seasons,
+  required List<Episode> cached,
+  required DateTime now,
+}) {
+  final counts = <int, int>{};
+  for (final episode in cached) {
+    counts.update(episode.seasonNumber, (n) => n + 1, ifAbsent: () => 1);
+  }
+  final today = utcDate(now);
+  return [
+    for (final season in seasons)
+      if (season.seasonNumber != specialsSeasonNumber &&
+          season.airDate != null &&
+          !season.airDate!.isAfter(today) &&
+          (season.episodeCount ?? 0) > (counts[season.seasonNumber] ?? 0))
+        season.seasonNumber,
+  ];
+}

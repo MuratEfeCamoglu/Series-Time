@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/preferences.dart';
@@ -61,6 +62,31 @@ final watchlistProvider =
     AsyncNotifierProvider<WatchlistNotifier, List<WatchlistItem>>(
       WatchlistNotifier.new,
     );
+
+/// Listedeki dizilerin bölümleri eksik sezonlarını oturum başına bir kez tamamlar
+/// (ör. eklendiğinde çekilemeyen 2. sezon). Bir şey çekildiyse Sıradaki ve ilerleme yenilenir.
+final seasonBackfillProvider = FutureProvider<void>((ref) async {
+  if (!isRegistered(ref.watch(authStatusProvider))) return;
+  final missing = await ref
+      .read(trackingRepositoryProvider)
+      .fetchMissingSeasons();
+  if (missing.isEmpty) return;
+  final shows = ref.read(showsRepositoryProvider);
+  for (final season in missing) {
+    try {
+      await shows.fetchSeasonEpisodes(season.showId, season.seasonNumber);
+    } catch (error) {
+      // Biri çekilemezse diğerleri yine tamamlanır; kalan bir sonraki açılışta denenir.
+      debugPrint(
+        'Sezon tamamlanamadı (${season.showId}/${season.seasonNumber}): $error',
+      );
+    }
+  }
+  ref
+    ..invalidate(watchlistProvider)
+    ..invalidate(myShowProgressProvider)
+    ..invalidate(upcomingProvider);
+});
 
 final upcomingProvider = FutureProvider.autoDispose<List<UpcomingEpisode>>(
   (ref) => ref.watch(trackingRepositoryProvider).fetchUpcoming(upcomingDays),

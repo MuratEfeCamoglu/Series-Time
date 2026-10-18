@@ -351,5 +351,9 @@
   "categoryTopRated": "Top rated",
   "settingsAppIcon": "App icon",
   "settingsAppIconHint": "Choose the color of the home screen icon. On some phones the icon changes after a few seconds.",
-  "appIconFailed": "Couldn't change the icon, try again."
+  "appIconFailed": "Couldn't change the icon, try again.",
+  "unitMonths": "mo",
+  "unitDays": "d",
+  "unitHours": "h",
+  "unitEpisodes": "episodes"
 }

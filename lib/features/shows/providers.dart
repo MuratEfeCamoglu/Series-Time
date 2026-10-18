@@ -39,6 +39,28 @@ final showEpisodesProvider = FutureProvider.autoDispose
           ref.watch(showsRepositoryProvider).fetchCachedEpisodes(showId),
     );
 
+/// Dizi detayında, listedeki dizinin bölümleri eksik yayınlanmış sezonlarını çeker; böylece
+/// "Sıradaki" bandı 1. sezon bitince 2. sezonun ilk bölümünü gösterir.
+final seasonBackfillForShowProvider = FutureProvider.autoDispose
+    .family<void, int>((ref, showId) async {
+      final detail = await ref.watch(showDetailProvider(showId).future);
+      final repository = ref.read(showsRepositoryProvider);
+      final missing = missingSeasonNumbers(
+        seasons: detail.seasons,
+        cached: await repository.fetchCachedEpisodes(showId),
+        now: DateTime.now(),
+      );
+      if (missing.isEmpty) return;
+      await Future.wait([
+        for (final n in missing) repository.fetchSeasonEpisodes(showId, n),
+      ]);
+      ref
+        ..invalidate(showEpisodesProvider(showId))
+        ..invalidate(watchlistProvider)
+        ..invalidate(myShowProgressProvider)
+        ..invalidate(upcomingProvider);
+    });
+
 final seasonEpisodesProvider = FutureProvider.autoDispose
     .family<List<Episode>, ({int showId, int seasonNumber})>(
       (ref, key) => ref

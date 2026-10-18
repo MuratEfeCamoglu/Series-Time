@@ -56,8 +56,10 @@ const MINISERIES_TYPE = "2";
 const RECENT_DAYS = 365;
 
 function discoverFilters(genreIds: number[], categories: CategoryKey[]) {
+  // Seçilen kategorinin en ünlü dizileri en üstte: en çok oy alan önce (kullanıcı kararı
+  // 2026-10-18; anlık popülerlik yeni çıkan az bilinen dizileri öne alıyordu).
   const params: Record<string, string> = {
-    sort_by: "popularity.desc",
+    sort_by: "vote_count.desc",
     "vote_count.gte": "100",
   };
   if (genreIds.length > 0) params.with_genres = genreIds.join("|");

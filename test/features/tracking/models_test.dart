@@ -66,6 +66,8 @@ void main() {
       'episode_number': 1,
       'episode_name': 'Yeni',
       'air_date': '2026-10-18',
+      'still_path': '/sahne.jpg',
+      'backdrop_path': '/arka.jpg',
     });
 
     expect(episode.episodeId, 5);
@@ -76,6 +78,8 @@ void main() {
     expect(episode.episodeNumber, 1);
     expect(episode.episodeName, 'Yeni');
     expect(episode.airDate, DateTime.utc(2026, 10, 18));
+    expect(episode.stillPath, '/sahne.jpg');
+    expect(episode.backdropPath, '/arka.jpg');
   });
 
   test(

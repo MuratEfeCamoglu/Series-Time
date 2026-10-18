@@ -38,6 +38,10 @@ abstract final class AppSpacing {
   static const double profileHeaderHeight = 280;
   static const double profileAvatarSize = 64;
 
+  /// Profil istatistik kartları (F8d).
+  static const double statCardRadius = 16;
+  static const double statIconSize = 18;
+
   /// Profildeki Şu an izlediklerim satırı ve Dizilerim ızgarası: Diziler sekmesinden küçük afiş.
   static const double profilePosterRowHeight = 120;
   static const int profileGridColumns = 4;

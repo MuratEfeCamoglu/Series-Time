@@ -105,6 +105,8 @@ class UpcomingEpisode {
     required this.airDate,
     this.posterPath,
     this.episodeName,
+    this.stillPath,
+    this.backdropPath,
   });
 
   factory UpcomingEpisode.fromJson(Map<String, dynamic> json) =>
@@ -117,6 +119,8 @@ class UpcomingEpisode {
         episodeNumber: json['episode_number'] as int,
         episodeName: json['episode_name'] as String?,
         airDate: parseDbDate(json['air_date'])!,
+        stillPath: json['still_path'] as String?,
+        backdropPath: json['backdrop_path'] as String?,
       );
 
   final int episodeId;
@@ -127,6 +131,10 @@ class UpcomingEpisode {
   final int episodeNumber;
   final String? episodeName;
   final DateTime airDate;
+
+  /// Satırın görseli: bölümün sahne görseli, yoksa dizinin arka planı (F7).
+  final String? stillPath;
+  final String? backdropPath;
 }
 
 /// `get_user_show_progress()` satırı: listedeki dizi, ilerleme sayıları ve grup bilgisi (F6j).

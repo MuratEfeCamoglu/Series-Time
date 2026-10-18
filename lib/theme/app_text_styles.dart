@@ -31,5 +31,11 @@ abstract final class AppTextStyles {
     fontWeight: FontWeight.w700,
     color: AppColors.textPrimary,
   );
+
+  /// İstatistik kartındaki büyük sayı (F8d); rengi paletten verilir.
+  static const statNumber = TextStyle(
+    fontSize: 24,
+    fontWeight: FontWeight.w800,
+  );
   static const navLabel = TextStyle(fontSize: 12, fontWeight: FontWeight.w600);
 }

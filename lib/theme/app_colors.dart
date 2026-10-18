@@ -34,6 +34,10 @@ abstract final class AppColors {
   /// Profil kapağının üstünde üst çubuk simgeleri okunsun diye hafif koyu ton (F8a).
   static const coverScrim = Color(0x59000000);
 
+  /// İstatistik kartlarında vurgu renginin (palete göre) saydamlıkları (F8d).
+  static const statGlowAlpha = 0.22;
+  static const statBorderAlpha = 0.45;
+
   /// Profil bağlantı simgelerinde (F8i) platformların kendi logo renkleri.
   static const letterboxdBackground = Color(0xFF14181C);
   static const letterboxdOrange = Color(0xFFFF8000);

@@ -32,6 +32,8 @@ class ShowsScreen extends ConsumerWidget {
         body: const GuestGate(),
       );
     }
+    // Eksik sezonlar tamamlanınca Sıradaki kendiliğinden yenilenir.
+    ref.watch(seasonBackfillProvider);
     final layout = ref.watch(watchlistLayoutProvider);
     final hasShows = ref.watch(myShowsProvider).value?.isNotEmpty;
     return Scaffold(

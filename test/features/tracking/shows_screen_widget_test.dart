@@ -211,7 +211,13 @@ void main() {
 
     expect(find.text('Bugün'), findsOneWidget);
     expect(find.text('Yarın'), findsOneWidget);
-    expect(find.text('S02B03 · Bölüm 3'), findsOneWidget);
+    // Sıradaki kartıyla aynı düzen: geniş görsel, "S02 | B03" ve bölüm adı ayrı satırda.
+    expect(find.text('S02 | B03'), findsOneWidget);
+    expect(find.text('Bölüm 3'), findsOneWidget);
+    expect(
+      tester.getSize(find.byKey(const Key('upcoming.3'))).height,
+      greaterThanOrEqualTo(72),
+    );
   });
 
   testWidgets('yaklaşan bölüm yoksa boş durum (F7)', (tester) async {
@@ -410,4 +416,25 @@ void main() {
     expect(find.text('Arkadaşların ne izliyor'), findsNothing);
     expect(find.text('İzleyecek yeni bölüm yok'), findsOneWidget);
   });
+
+  testWidgets(
+    'bölümleri eksik sezon çekilir ve Sıradaki yenilenir (1. sezon bitince 2. sezon)',
+    (tester) async {
+      final backend = TestBackend();
+      when(() => backend.shows.fetchMyShows()).thenAnswer(
+        (_) async => [
+          UserShow(show: testShow, addedAt: DateTime.utc(2026, 1, 1)),
+        ],
+      );
+      when(() => backend.tracking.fetchMissingSeasons())
+          .thenAnswer((_) async => [(showId: testShow.id, seasonNumber: 2)]);
+      when(() => backend.shows.fetchSeasonEpisodes(testShow.id, 2))
+          .thenAnswer((_) async => const []);
+      await backend.pumpApp(tester);
+
+      verify(() => backend.shows.fetchSeasonEpisodes(testShow.id, 2)).called(1);
+      // İlk yükleme + sezon tamamlandıktan sonra yenileme.
+      verify(() => backend.tracking.fetchWatchlist()).called(2);
+    },
+  );
 }

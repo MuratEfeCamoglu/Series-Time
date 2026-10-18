@@ -722,76 +722,168 @@ class _Stats extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final stats = ref.watch(userStatsProvider(userId));
-    final value = stats.value;
-    return Row(
-      children: [
-        Expanded(
-          child: _StatCard(
-            key: const Key('profile.watchTime'),
-            title: l10n.statWatchTimeTitle,
-            value: value?.watchMinutes,
-            format: (minutes) {
-              final time = splitWatchTime(minutes);
-              return l10n.statWatchTimeValue(
-                time.months,
-                time.days,
-                time.hours,
-              );
-            },
+    final value = ref.watch(userStatsProvider(userId)).value;
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            child: EntranceAnimation(
+              index: 0,
+              child: _StatCard(
+                key: const Key('profile.watchTime'),
+                icon: Icons.schedule,
+                title: l10n.statWatchTimeTitle,
+                value: value?.watchMinutes,
+                semanticsLabel: (minutes) {
+                  final time = splitWatchTime(minutes);
+                  return l10n.statWatchTimeValue(
+                    time.months,
+                    time.days,
+                    time.hours,
+                  );
+                },
+                builder: (minutes) {
+                  final time = splitWatchTime(minutes);
+                  return Wrap(
+                    spacing: AppSpacing.sm,
+                    crossAxisAlignment: WrapCrossAlignment.end,
+                    children: [
+                      _StatNumber(value: time.months, unit: l10n.unitMonths),
+                      _StatNumber(value: time.days, unit: l10n.unitDays),
+                      _StatNumber(value: time.hours, unit: l10n.unitHours),
+                    ],
+                  );
+                },
+              ),
+            ),
           ),
-        ),
-        const SizedBox(width: AppSpacing.sm),
-        Expanded(
-          child: _StatCard(
-            key: const Key('profile.episodes'),
-            title: l10n.statEpisodesTitle,
-            value: value?.watchedEpisodes,
-            format: (count) => '$count',
+          const SizedBox(width: AppSpacing.sm),
+          Expanded(
+            child: EntranceAnimation(
+              index: 1,
+              child: _StatCard(
+                key: const Key('profile.episodes'),
+                icon: Icons.play_circle_outline,
+                title: l10n.statEpisodesTitle,
+                value: value?.watchedEpisodes,
+                semanticsLabel: (count) => '$count',
+                builder: (count) =>
+                    _StatNumber(value: count, unit: l10n.unitEpisodes),
+              ),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
 
+/// F8(d) istatistik kartı: paletin vurgu rengine göre renk geçişli zemin, ikon ve
+/// sıfırdan sayarak gelen değer (kullanıcı kararı 2026-10-18).
 class _StatCard extends StatelessWidget {
   const _StatCard({
     super.key,
+    required this.icon,
     required this.title,
     required this.value,
-    required this.format,
+    required this.builder,
+    required this.semanticsLabel,
   });
 
+  final IconData icon;
   final String title;
 
-  /// null: yükleniyor. Sayı sıfırdan sayarak gelir.
+  /// null: yükleniyor.
   final int? value;
-  final String Function(int value) format;
+  final Widget Function(int value) builder;
+
+  /// Ekran okuyucu tam değeri tek seferde okusun diye.
+  final String Function(int value) semanticsLabel;
 
   @override
   Widget build(BuildContext context) {
     final target = value;
-    return Card(
-      color: AppColors.surface,
-      margin: EdgeInsets.zero,
+    final accent = AppColors.accent;
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(AppSpacing.statCardRadius),
+        border: Border.all(
+          color: accent.withValues(alpha: AppColors.statBorderAlpha),
+        ),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            accent.withValues(alpha: AppColors.statGlowAlpha),
+            AppColors.surface,
+          ],
+        ),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: AppTextStyles.caption),
-            const SizedBox(height: AppSpacing.xs),
+            Row(
+              children: [
+                DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: accent.withValues(alpha: AppColors.statGlowAlpha),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(AppSpacing.xs),
+                    child: Icon(
+                      icon,
+                      size: AppSpacing.statIconSize,
+                      color: accent,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: Text(title, style: AppTextStyles.caption, maxLines: 2),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.sm),
             if (target == null)
               const LinearProgressIndicator()
             else
-              CountUp(
-                value: target,
-                builder: (context, current) =>
-                    Text(format(current), style: AppTextStyles.body),
+              Semantics(
+                label: semanticsLabel(target),
+                excludeSemantics: true,
+                child: CountUp(
+                  value: target,
+                  builder: (context, current) => builder(current),
+                ),
               ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Büyük vurgu renkli sayı ve yanında küçük birim ("12 gün").
+class _StatNumber extends StatelessWidget {
+  const _StatNumber({required this.value, required this.unit});
+
+  final int value;
+  final String unit;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(
+            text: '$value',
+            style: AppTextStyles.statNumber.copyWith(color: AppColors.accent),
+          ),
+          TextSpan(text: ' $unit', style: AppTextStyles.caption),
+        ],
       ),
     );
   }

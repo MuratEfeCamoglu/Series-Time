@@ -440,6 +440,10 @@ class _EpisodesTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    // Listedeki dizide eksik sezonlar arka planda tamamlanır (Sıradaki bandı için).
+    if (ref.watch(myShowEntryProvider(showId)) != null) {
+      ref.watch(seasonBackfillForShowProvider(showId));
+    }
     final episodes = ref.watch(showEpisodesProvider(showId)).value ?? const [];
     final watched =
         ref.watch(watchedEpisodesProvider(showId)).value ?? const {};

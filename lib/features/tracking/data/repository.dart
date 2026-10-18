@@ -113,6 +113,19 @@ class TrackingRepository {
     );
   });
 
+  /// Bölümleri önbellekte eksik yayınlanmış sezonlar (listedeki dizilerde).
+  Future<List<({int showId, int seasonNumber})>> fetchMissingSeasons() =>
+      _guard(() async {
+        final rows = await _client.rpc('get_missing_seasons') as List;
+        return [
+          for (final row in rows.cast<Map<String, dynamic>>())
+            (
+              showId: row['show_id'] as int,
+              seasonNumber: row['season_number'] as int,
+            ),
+        ];
+      });
+
   String get _userId {
     final id = _client.auth.currentUser?.id;
     if (id == null) throw const AppFailure(AppFailureType.unknown);

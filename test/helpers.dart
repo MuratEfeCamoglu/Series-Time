@@ -166,6 +166,8 @@ class TestBackend {
     when(() => tracking.fetchRecentActivity(any()))
         .thenAnswer((_) async => const []);
     when(() => tracking.fetchUpcoming(any())).thenAnswer((_) async => const []);
+    when(() => tracking.fetchMissingSeasons())
+        .thenAnswer((_) async => const []);
     when(() => tracking.fetchWatchedEpisodeIds(any()))
         .thenAnswer((_) async => <int>{});
   }

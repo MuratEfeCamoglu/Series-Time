@@ -2209,6 +2209,30 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Simge değiştirilemedi, tekrar dene.'**
   String get appIconFailed;
+
+  /// No description provided for @unitMonths.
+  ///
+  /// In tr, this message translates to:
+  /// **'ay'**
+  String get unitMonths;
+
+  /// No description provided for @unitDays.
+  ///
+  /// In tr, this message translates to:
+  /// **'gün'**
+  String get unitDays;
+
+  /// No description provided for @unitHours.
+  ///
+  /// In tr, this message translates to:
+  /// **'saat'**
+  String get unitHours;
+
+  /// No description provided for @unitEpisodes.
+  ///
+  /// In tr, this message translates to:
+  /// **'bölüm'**
+  String get unitEpisodes;
 }
 
 class _AppLocalizationsDelegate
