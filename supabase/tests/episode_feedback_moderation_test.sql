@@ -69,6 +69,11 @@ select throws_ok(
   format($$insert into public.comments (user_id, episode_id, body) values ('11111111-1111-1111-1111-111111111111', 11, %L)$$, repeat('a', 501)),
   '23514', null, '500 karakteri aşan yorum reddedilir (F11a)'
 );
+-- Hız sınırı (dakikada 5 yorum) devreye girmeden önce: yetki hatası tetikleyiciden önce gelmeli.
+select throws_ok(
+  $$insert into public.comments (user_id, episode_id, body, hidden_at) values ('11111111-1111-1111-1111-111111111111', 12, 'x', now())$$,
+  '42501', null, 'istemci gizli yorum oluşturamaz'
+);
 select throws_ok(
   $$insert into public.comments (user_id, episode_id, body) values ('11111111-1111-1111-1111-111111111111', 11, 'Bu sahne PİÇ gibiydi')$$,
   'P0001', 'comment_banned_word', 'yasaklı kelime büyük harf ve Türkçe karakterle de yakalanır (F15d)'
@@ -93,10 +98,6 @@ select throws_ok(
 select throws_ok(
   $$insert into public.comments (user_id, episode_id, body) values ('22222222-2222-2222-2222-222222222222', 11, 'Sahte')$$,
   '42501', null, 'başkası adına yorum yazılamaz'
-);
-select throws_ok(
-  $$insert into public.comments (user_id, episode_id, body, hidden_at) values ('11111111-1111-1111-1111-111111111111', 12, 'x', now())$$,
-  '42501', null, 'istemci gizli yorum oluşturamaz'
 );
 reset role;
 

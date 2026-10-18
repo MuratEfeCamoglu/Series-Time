@@ -68,10 +68,12 @@ reset role;
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub": "11111111-1111-1111-1111-111111111111", "role": "authenticated"}', true);
 
+-- seed.sql'deki test hesapları da bulunabilir; yalnızca bu testin kullanıcıları sayılır.
 select is(
-  (select count(*)::int from public.profiles),
+  (select count(*)::int from public.profiles
+   where id in ('11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222')),
   2,
-  'oturum açmış kullanıcı tüm profilleri okur'
+  'oturum açmış kullanıcı başkasının profilini de okur'
 );
 
 update public.profiles set bio = 'merhaba' where id = '11111111-1111-1111-1111-111111111111';

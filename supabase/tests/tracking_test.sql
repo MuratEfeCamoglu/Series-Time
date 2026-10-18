@@ -138,10 +138,12 @@ select is(
   'işaretlenen bölümün dizisi listeye eklenir'
 );
 
--- F6(g): sıralama
+-- F6(g): sıralama. TMDB önbellek tabloları istemciye salt okunurdur; veri yönetici bağlamında eklenir.
+reset role;
 insert into public.shows (id, name) values (4, 'Dört');
 insert into public.episodes (id, show_id, season_number, episode_number, air_date)
 values (401, 4, 1, 1, current_date - 3), (402, 4, 1, 2, current_date - 2);
+set local role authenticated;
 insert into public.user_shows (user_id, show_id) values ('11111111-1111-1111-1111-111111111111', 4);
 select is(
   (select array_agg(show_id) from public.get_watchlist()),

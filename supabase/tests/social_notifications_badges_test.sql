@@ -129,7 +129,9 @@ select is(
 
 delete from public.watched_episodes where user_id = '33333333-3333-3333-3333-333333333333';
 select is(
-  (select count(*)::int from public.user_badges where user_id = '33333333-3333-3333-3333-333333333333'),
+  (select count(*)::int from public.user_badges
+   where user_id = '33333333-3333-3333-3333-333333333333'
+     and badge_code in ('first_episode', 'episodes_100')),
   2, 'koşul bozulsa da rozet geri alınmaz (F14)'
 );
 
